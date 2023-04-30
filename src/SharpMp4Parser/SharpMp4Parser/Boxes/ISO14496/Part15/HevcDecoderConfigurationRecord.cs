@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part15
 {
@@ -551,7 +552,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part15
                     byte[] o1 = e1.next();
                     byte[] o2 = e2.next();
 
-                    if (!(o1 == null ? o2 == null : System.Array.Equals(o1, o2)))
+                    if (!(o1 == null ? o2 == null : Enumerable.SequenceEqual(o1, o2)))
                         return false;
                 }
                 return !(e1.hasNext() || e2.hasNext());

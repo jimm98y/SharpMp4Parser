@@ -16,6 +16,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
@@ -1344,7 +1345,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
             {
                 return false;
             }
-            if (!Array.Equals(configBytes, that.configBytes))
+            if (!Enumerable.SequenceEqual(configBytes, that.configBytes))
             {
                 return false;
             }
