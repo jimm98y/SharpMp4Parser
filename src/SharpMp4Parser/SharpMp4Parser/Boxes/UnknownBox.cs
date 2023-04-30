@@ -14,7 +14,8 @@
  * limitations under the License. 
  */
 
-using System;
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
 
 namespace SharpMp4Parser.Boxes
 {
@@ -34,15 +35,15 @@ namespace SharpMp4Parser.Boxes
             return data.limit();
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             data = content;
-            ((Buffer)content).position(content.position() + content.remaining());
+            ((Java.Buffer)content).position(content.position() + content.remaining());
         }
 
         protected override void getContent(ByteBuffer byteBuffer)
         {
-            ((Buffer)data).rewind();
+            ((Java.Buffer)data).rewind();
             byteBuffer.put(data);
         }
 

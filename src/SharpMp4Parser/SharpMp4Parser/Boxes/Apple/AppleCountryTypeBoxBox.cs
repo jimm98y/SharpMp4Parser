@@ -6,8 +6,6 @@
     public class AppleCountryTypeBoxBox : AppleVariableSignedIntegerBox
     {
         public AppleCountryTypeBoxBox() : base("sfID")
-        {
-
-        }
+        {  }
     }
 }

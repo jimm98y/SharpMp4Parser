@@ -1,4 +1,7 @@
-﻿using System;
+﻿using SharpMp4Parser.Boxes.SampleEntry;
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
+using System;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
 {
@@ -13,7 +16,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
         {
             ByteBuffer b1 = ByteBuffer.allocate(8);
             dataSource.read(b1);
-            ((Buffer)b1).position(6);
+            ((Java.Buffer)b1).position(6);
             dataReferenceIndex = IsoTypeReader.readUInt16(b1);
             data = new byte[CastUtils.l2i(contentSize - 8)];
             dataSource.read(ByteBuffer.wrap(data));
@@ -24,9 +27,9 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             writableByteChannel.write(getHeader());
 
             ByteBuffer byteBuffer = ByteBuffer.allocate(8);
-            ((Buffer)byteBuffer).position(6);
+            ((Java.Buffer)byteBuffer).position(6);
             IsoTypeWriter.writeUInt16(byteBuffer, dataReferenceIndex);
-            ((Buffer)byteBuffer).rewind();
+            ((Java.Buffer)byteBuffer).rewind();
             writableByteChannel.write(byteBuffer);
             writableByteChannel.write(ByteBuffer.wrap(data));
         }

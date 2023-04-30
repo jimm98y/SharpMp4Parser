@@ -16,13 +16,16 @@
 
 using System.Collections.Generic;
 using System;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
 
 namespace SharpMp4Parser.Boxes.Apple
 {
     /**
      * <h1>4cc = "{@value #TYPE}"</h1>
      */
-    public class TimeCodeBox : AbstractBox, SampleEntry, Container
+    public class TimeCodeBox : AbstractBox, SampleEntry.SampleEntry, Container
     {
         public const string TYPE = "tmcd";
 
@@ -40,8 +43,7 @@ namespace SharpMp4Parser.Boxes.Apple
 
         protected override long getContentSize()
         {
-            return 8 + 4 + 4 + 4 + 4 + 1 + 3 + rest.length;
-
+            return 8 + 4 + 4 + 4 + 4 + 1 + 3 + rest.Length;
         }
 
         protected override void getContent(ByteBuffer bb)
@@ -55,13 +57,12 @@ namespace SharpMp4Parser.Boxes.Apple
             IsoTypeWriter.writeUInt8(bb, numberOfFrames);
             IsoTypeWriter.writeUInt24(bb, reserved2);
             bb.put(rest);
-
         }
 
 
         protected override void _parseDetails(ByteBuffer content)
         {
-            ((Buffer)content).position(6);// ignore 6 reserved bytes;
+            ((Java.Buffer)content).position(6);// ignore 6 reserved bytes;
             dataReferenceIndex = IsoTypeReader.readUInt16(content);   // 8
             reserved1 = content.getInt();
             flags = IsoTypeReader.readUInt32(content);
@@ -85,7 +86,7 @@ namespace SharpMp4Parser.Boxes.Apple
         }
 
 
-        public override string toString()
+        public override string ToString()
         {
             return "TimeCodeBox{" +
                     "timeScale=" + timeScale +
@@ -178,12 +179,12 @@ namespace SharpMp4Parser.Boxes.Apple
             throw new NotSupportedException("Time Code Box doesn't accept any children");
         }
 
-        public List<T> getBoxes<T>(T clazz) where T : Box
+        public List<T> getBoxes<T>(Type clazz) where T : Box
         {
             return new List<T>();
         }
 
-        public List<T> getBoxes<T>(T clazz, bool recursive) where T : Box
+        public List<T> getBoxes<T>(Type clazz, bool recursive) where T : Box
         {
             return new List<T>();
         }

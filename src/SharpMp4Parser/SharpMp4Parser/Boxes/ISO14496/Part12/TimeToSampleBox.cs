@@ -14,6 +14,9 @@
  * limitations under the License. 
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -87,12 +90,12 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             }
         }
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
-            return 8 + entries.size() * 8;
+            return 8 + entries.Count * 8;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             int entryCount = CastUtils.l2i(IsoTypeReader.readUInt32(content));
@@ -108,7 +111,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
         protected override void getContent(ByteBuffer byteBuffer)
         {
             writeVersionAndFlags(byteBuffer);
-            IsoTypeWriter.writeUInt32(byteBuffer, entries.size());
+            IsoTypeWriter.writeUInt32(byteBuffer, entries.Count);
             foreach (Entry entry in entries)
             {
                 IsoTypeWriter.writeUInt32(byteBuffer, entry.getCount());
@@ -128,7 +131,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
         public string toString()
         {
-            return "TimeToSampleBox[entryCount=" + entries.size() + "]";
+            return "TimeToSampleBox[entryCount=" + entries.Count + "]";
         }
 
         public sealed class Entry

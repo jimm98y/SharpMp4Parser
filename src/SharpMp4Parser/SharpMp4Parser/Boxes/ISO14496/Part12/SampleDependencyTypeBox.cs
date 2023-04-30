@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
 using System.Collections.Generic;
 using System.Text;
 
@@ -43,7 +46,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
         protected override long getContentSize()
         {
-            return 4 + entries.size();
+            return 4 + entries.Count;
         }
 
         protected override void getContent(ByteBuffer byteBuffer)
@@ -55,7 +58,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             }
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             while (content.remaining() > 0)
@@ -74,7 +77,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             this.entries = entries;
         }
 
-        public override string toString()
+        public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("SampleDependencyTypeBox");
@@ -145,7 +148,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             public override bool Equals(object o)
             {
                 if (this == o) return true;
-                if (o == null || getClass() != o.getClass()) return false;
+                if (o == null || GetType() != o.GetType()) return false;
 
                 Entry entry = (Entry)o;
 

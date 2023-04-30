@@ -1,4 +1,4 @@
-﻿using System;
+﻿using SharpMp4Parser.Java;
 using System.Diagnostics;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
@@ -40,7 +40,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
                 writeBits(i >> bitsSecondWrite, left);
                 writeBits(i & (1 << bitsSecondWrite) - 1, bitsSecondWrite);
             }
-            ((Buffer)buffer).position(initialPos + position / 8 + ((position % 8 > 0) ? 1 : 0));
+            ((Java.Buffer)buffer).position(initialPos + position / 8 + ((position % 8 > 0) ? 1 : 0));
         }
     }
 }

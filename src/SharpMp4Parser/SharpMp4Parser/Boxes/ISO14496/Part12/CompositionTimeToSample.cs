@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
@@ -73,9 +76,9 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             return decodingTime;
         }
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
-            return 8 + 8 * entries.size();
+            return 8 + 8 * entries.Count;
         }
 
         public List<Entry> getEntries()
@@ -88,11 +91,11 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             this.entries = entries;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             int numberOfEntries = CastUtils.l2i(IsoTypeReader.readUInt32(content));
-            entries = new ArrayList<Entry>(numberOfEntries);
+            entries = new List<Entry>(numberOfEntries);
             for (int i = 0; i < numberOfEntries; i++)
             {
                 Entry e = new Entry(CastUtils.l2i(IsoTypeReader.readUInt32(content)), content.getInt());
@@ -103,7 +106,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
         protected override void getContent(ByteBuffer byteBuffer)
         {
             writeVersionAndFlags(byteBuffer);
-            IsoTypeWriter.writeUInt32(byteBuffer, entries.size());
+            IsoTypeWriter.writeUInt32(byteBuffer, entries.Count);
 
             foreach (Entry entry in entries)
             {

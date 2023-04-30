@@ -17,6 +17,8 @@
 using SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors;
 using System.IO;
 using System;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Java;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part14
 {
@@ -46,7 +48,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part14
         protected override void getContent(ByteBuffer byteBuffer)
         {
             writeVersionAndFlags(byteBuffer);
-            ((Buffer)data).rewind(); // has been fforwarded by parsing
+            ((Java.Buffer)data).rewind(); // has been fforwarded by parsing
             byteBuffer.put(data);
         }
 
@@ -70,22 +72,22 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part14
             return descriptor.ToString();
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             data = content.slice();
-            ((Buffer)content).position(content.position() + content.remaining());
+            ((Java.Buffer)content).position(content.position() + content.remaining());
             try
             {
-                ((Buffer)data).rewind();
+                ((Java.Buffer)data).rewind();
                 descriptor = ObjectDescriptorFactory.createFrom(-1, data.duplicate());
             }
-            catch (IOException e)
+            catch (IOException)
             {
                 //LOG.warn("Error parsing ObjectDescriptor", e);
                 //that's why we copied it ;)
             }
-            catch (IndexOutOfRangeException e)
+            catch (IndexOutOfRangeException)
             {
                 //LOG.warn("Error parsing ObjectDescriptor", e);
                 //that's why we copied it ;)

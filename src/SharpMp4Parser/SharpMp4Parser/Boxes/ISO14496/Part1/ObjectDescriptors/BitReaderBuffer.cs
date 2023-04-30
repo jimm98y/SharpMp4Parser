@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpMp4Parser.Java;
+using System;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
 {
@@ -38,7 +39,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
                 rc = rc << then;
                 rc += readBits(then);
             }
-            ((Buffer)buffer).position(initialPos + (int)Math.Ceiling((double)position / 8));
+            ((Java.Buffer)buffer).position(initialPos + (int)Math.Ceiling((double)position / 8));
             return rc;
         }
 

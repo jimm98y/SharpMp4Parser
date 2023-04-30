@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
+using System;
 
 namespace SharpMp4Parser.Support
 {
@@ -50,7 +52,7 @@ namespace SharpMp4Parser.Support
         public override bool Equals(object o)
         {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (o == null || GetType() != o.GetType()) return false;
 
             Matrix matrix = (Matrix)o;
 
@@ -71,24 +73,24 @@ namespace SharpMp4Parser.Support
         {
             int result;
             long temp;
-            temp = Double.doubleToLongBits(u);
-            result = (int)(temp ^ (temp >>> 32));
-            temp = Double.doubleToLongBits(v);
-            result = 31 * result + (int)(temp ^ (temp >>> 32));
-            temp = Double.doubleToLongBits(w);
-            result = 31 * result + (int)(temp ^ (temp >>> 32));
-            temp = Double.doubleToLongBits(a);
-            result = 31 * result + (int)(temp ^ (temp >>> 32));
-            temp = Double.doubleToLongBits(b);
-            result = 31 * result + (int)(temp ^ (temp >>> 32));
-            temp = Double.doubleToLongBits(c);
-            result = 31 * result + (int)(temp ^ (temp >>> 32));
-            temp = Double.doubleToLongBits(d);
-            result = 31 * result + (int)(temp ^ (temp >>> 32));
-            temp = Double.doubleToLongBits(tx);
-            result = 31 * result + (int)(temp ^ (temp >>> 32));
-            temp = Double.doubleToLongBits(ty);
-            result = 31 * result + (int)(temp ^ (temp >>> 32));
+            temp = BitConverter.DoubleToInt64Bits(u);
+            result = (int)(temp ^ (long)((ulong)temp >> 32));
+            temp = BitConverter.DoubleToInt64Bits(v);
+            result = 31 * result + (int)(temp ^ (long)((ulong)temp >> 32));
+            temp = BitConverter.DoubleToInt64Bits(w);
+            result = 31 * result + (int)(temp ^ (long)((ulong)temp >> 32));
+            temp = BitConverter.DoubleToInt64Bits(a);
+            result = 31 * result + (int)(temp ^ (long)((ulong)temp >> 32));
+            temp = BitConverter.DoubleToInt64Bits(b);
+            result = 31 * result + (int)(temp ^ (long)((ulong)temp >> 32));
+            temp = BitConverter.DoubleToInt64Bits(c);
+            result = 31 * result + (int)(temp ^ (long)((ulong)temp >> 32));
+            temp = BitConverter.DoubleToInt64Bits(d);
+            result = 31 * result + (int)(temp ^ (long)((ulong)temp >> 32));
+            temp = BitConverter.DoubleToInt64Bits(tx);
+            result = 31 * result + (int)(temp ^ (long)((ulong)temp >> 32));
+            temp = BitConverter.DoubleToInt64Bits(ty);
+            result = 31 * result + (int)(temp ^ (long)((ulong)temp >> 32));
             return result;
         }
 

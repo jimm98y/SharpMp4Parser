@@ -1,4 +1,7 @@
-﻿namespace SharpMp4Parser.Boxes.Apple
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+
+namespace SharpMp4Parser.Boxes.Apple
 {
     /**
      * <h1>4cc = "{@value #TYPE}"</h1>
@@ -57,7 +60,7 @@
             return unknown_1;
         }
 
-        public void setUnknown_1(int unknown_1)
+        public virtual void setUnknown_1(int unknown_1)
         {
             this.unknown_1 = unknown_1;
         }
@@ -67,7 +70,7 @@
             return unknown_2;
         }
 
-        public void setUnknown_2(int unknown_2)
+        public virtual void setUnknown_2(int unknown_2)
         {
             this.unknown_2 = unknown_2;
         }
@@ -77,7 +80,7 @@
             return unknown_3;
         }
 
-        public void setUnknown_3(int unknown_3)
+        public virtual void setUnknown_3(int unknown_3)
         {
             this.unknown_3 = unknown_3;
         }
@@ -87,7 +90,7 @@
             return unknown_4;
         }
 
-        public void setUnknown_4(int unknown_4)
+        public virtual void setUnknown_4(int unknown_4)
         {
             this.unknown_4 = unknown_4;
         }
@@ -97,7 +100,7 @@
             return unknown_5;
         }
 
-        public void setUnknown_5(int unknown_5)
+        public virtual void setUnknown_5(int unknown_5)
         {
             this.unknown_5 = unknown_5;
         }
@@ -107,7 +110,7 @@
             return unknown_6;
         }
 
-        public void setUnknown_6(int unknown_6)
+        public virtual void setUnknown_6(int unknown_6)
         {
             this.unknown_6 = unknown_6;
         }
@@ -117,7 +120,7 @@
             return unknown_7;
         }
 
-        public void setUnknown_7(int unknown_7)
+        public virtual void setUnknown_7(int unknown_7)
         {
             this.unknown_7 = unknown_7;
         }
@@ -127,7 +130,7 @@
             return unknown_8;
         }
 
-        public void setUnknown_8(int unknown_8)
+        public virtual void setUnknown_8(int unknown_8)
         {
             this.unknown_8 = unknown_8;
         }
@@ -137,7 +140,7 @@
             return unknown_9;
         }
 
-        public void setUnknown_9(int unknown_9)
+        public virtual void setUnknown_9(int unknown_9)
         {
             this.unknown_9 = unknown_9;
         }

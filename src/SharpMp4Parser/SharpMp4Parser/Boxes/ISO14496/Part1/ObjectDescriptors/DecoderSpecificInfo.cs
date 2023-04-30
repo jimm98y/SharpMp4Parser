@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-using System;
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
+using System.Linq;
 using System.Text;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
@@ -26,7 +28,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
      * // empty. To be filled by classes extending this class.
      * }
      */
-    [Descriptor(Tags = 0x05)]
+    [Descriptor(Tags = new int[] { 0x05 })]
     public class DecoderSpecificInfo : BaseDescriptor
     {
         byte[] bytes;
@@ -47,18 +49,18 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
             this.bytes = bytes;
         }
 
-        public int getContentSize()
+        public override int getContentSize()
         {
             return bytes.Length;
         }
 
-        public ByteBuffer serialize()
+        public override ByteBuffer serialize()
         {
             ByteBuffer output = ByteBuffer.allocate(getSize());
             IsoTypeWriter.writeUInt8(output, tag);
             writeSize(output, getContentSize());
             output.put(bytes);
-            return (ByteBuffer)((Buffer)output).rewind();
+            return (ByteBuffer)((Java.Buffer)output).rewind();
         }
 
         public override string ToString()
@@ -76,21 +78,21 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
             {
                 return true;
             }
-            if (o == null || getClass() != o.getClass())
+            if (o == null || GetType() != o.GetType())
             {
                 return false;
             }
 
             DecoderSpecificInfo that = (DecoderSpecificInfo)o;
 
-            if (!Arrays.equals(bytes, that.bytes))
+            if (!Enumerable.SequenceEqual(bytes, that.bytes))
             {
                 return false;
             }
             return true;
         }
 
-        public int GetHashCode()
+        public override int GetHashCode()
         {
             return bytes != null ? Arrays.hashCode(bytes) : 0;
         }

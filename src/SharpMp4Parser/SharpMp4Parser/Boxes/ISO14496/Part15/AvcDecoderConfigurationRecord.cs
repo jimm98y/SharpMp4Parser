@@ -1,4 +1,6 @@
 ﻿using SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors;
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
 using System;
 using System.Collections.Generic;
 
@@ -105,17 +107,17 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part15
             bwb.writeBits(lengthSizeMinusOnePaddingBits, 6);
             bwb.writeBits(lengthSizeMinusOne, 2);
             bwb.writeBits(numberOfSequenceParameterSetsPaddingBits, 3);
-            bwb.writeBits(sequenceParameterSets.size(), 5);
+            bwb.writeBits(sequenceParameterSets.Count, 5);
             foreach (ByteBuffer sequenceParameterSetNALUnit in sequenceParameterSets)
             {
                 IsoTypeWriter.writeUInt16(byteBuffer, sequenceParameterSetNALUnit.limit());
-                byteBuffer.put((ByteBuffer)((Buffer)sequenceParameterSetNALUnit).rewind());
+                byteBuffer.put((ByteBuffer)((Java.Buffer)sequenceParameterSetNALUnit).rewind());
             }
-            IsoTypeWriter.writeUInt8(byteBuffer, pictureParameterSets.size());
+            IsoTypeWriter.writeUInt8(byteBuffer, pictureParameterSets.Count);
             foreach (ByteBuffer pictureParameterSetNALUnit in pictureParameterSets)
             {
                 IsoTypeWriter.writeUInt16(byteBuffer, pictureParameterSetNALUnit.limit());
-                byteBuffer.put((ByteBuffer)((Buffer)pictureParameterSetNALUnit).rewind());
+                byteBuffer.put((ByteBuffer)((Java.Buffer)pictureParameterSetNALUnit).rewind());
             }
             if (hasExts && (avcProfileIndication == 100 || avcProfileIndication == 110 || avcProfileIndication == 122 || avcProfileIndication == 144))
             {
@@ -166,7 +168,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part15
 
         public List<string> getSequenceParameterSetsAsStrings()
         {
-            List<string> result = new List<string>(sequenceParameterSets.size());
+            List<string> result = new List<string>(sequenceParameterSets.Count);
             foreach (ByteBuffer parameterSet in sequenceParameterSets)
             {
                 result.Add(Hex.encodeHex(parameterSet));
@@ -176,7 +178,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part15
 
         public List<string> getSequenceParameterSetExtsAsStrings()
         {
-            List<string> result = new List<string>(sequenceParameterSetExts.size());
+            List<string> result = new List<string>(sequenceParameterSetExts.Count);
             foreach (ByteBuffer parameterSet in sequenceParameterSetExts)
             {
                 result.Add(Hex.encodeHex(parameterSet));
@@ -186,7 +188,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part15
 
         public List<string> getPictureParameterSetsAsStrings()
         {
-            List<string> result = new List<string>(pictureParameterSets.size());
+            List<string> result = new List<string>(pictureParameterSets.Count);
             foreach (ByteBuffer parameterSet in pictureParameterSets)
             {
                 result.Add(Hex.encodeHex(parameterSet));

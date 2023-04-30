@@ -1,4 +1,8 @@
-﻿namespace SharpMp4Parser.Boxes.ISO14496.Part15
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+
+namespace SharpMp4Parser.Boxes.ISO14496.Part15
 {
     public class TierInfoBox : AbstractBox
     {

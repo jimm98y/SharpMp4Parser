@@ -14,6 +14,9 @@
  * limitations under the License. 
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
 using System.Collections.Generic;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
@@ -42,12 +45,12 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             this.entries = entries;
         }
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
-            return entries.size() * 12 + 8;
+            return entries.Count * 12 + 8;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
 
@@ -65,7 +68,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
         protected override void getContent(ByteBuffer byteBuffer)
         {
             writeVersionAndFlags(byteBuffer);
-            IsoTypeWriter.writeUInt32(byteBuffer, entries.size());
+            IsoTypeWriter.writeUInt32(byteBuffer, entries.Count);
             foreach (Entry entry in entries)
             {
                 IsoTypeWriter.writeUInt32(byteBuffer, entry.getFirstChunk());
@@ -76,7 +79,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
         public override string ToString()
         {
-            return "SampleToChunkBox[entryCount=" + entries.size() + "]";
+            return "SampleToChunkBox[entryCount=" + entries.Count + "]";
         }
 
         /**
@@ -89,18 +92,19 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
         public long[] blowup(int chunkCount)
         {
             long[] numberOfSamples = new long[chunkCount];
-            int j = 0;
-            List<SampleToChunkBox.Entry> sampleToChunkEntries = new LinkedList<Entry>(entries);
-            Collections.reverse(sampleToChunkEntries);
-            Iterator<Entry> iterator = sampleToChunkEntries.iterator();
-            SampleToChunkBox.Entry currentEntry = iterator.next();
+            //int j = 0;
+            List<SampleToChunkBox.Entry> sampleToChunkEntries = new List<Entry>(entries);
+            sampleToChunkEntries.Reverse();
+            List<Entry>.Enumerator iterator = sampleToChunkEntries.GetEnumerator();
+            SampleToChunkBox.Entry currentEntry = iterator.Current;
 
             for (int i = numberOfSamples.Length; i > 1; i--)
             {
                 numberOfSamples[i - 1] = currentEntry.getSamplesPerChunk();
                 if (i == currentEntry.getFirstChunk())
                 {
-                    currentEntry = iterator.next();
+                    iterator.MoveNext();
+                    currentEntry = iterator.Current;
                 }
             }
             numberOfSamples[0] = currentEntry.getSamplesPerChunk();
@@ -162,7 +166,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             public override bool Equals(object o)
             {
                 if (this == o) return true;
-                if (o == null || getClass() != o.getClass()) return false;
+                if (o == null || GetType() != o.GetType()) return false;
 
                 Entry entry = (Entry)o;
 
@@ -175,9 +179,9 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
             public override int GetHashCode()
             {
-                int result = (int)(firstChunk ^ (firstChunk >>> 32));
-                result = 31 * result + (int)(samplesPerChunk ^ (samplesPerChunk >>> 32));
-                result = 31 * result + (int)(sampleDescriptionIndex ^ (sampleDescriptionIndex >>> 32));
+                int result = (int)(firstChunk ^ (long)((ulong)firstChunk >> 32));
+                result = 31 * result + (int)(samplesPerChunk ^ (long)((ulong)samplesPerChunk >> 32));
+                result = 31 * result + (int)(sampleDescriptionIndex ^ (long)((ulong)sampleDescriptionIndex >> 32));
                 return result;
             }
         }

@@ -1,4 +1,8 @@
-﻿namespace SharpMp4Parser.Boxes.ThreeGPP.TS26244
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+
+namespace SharpMp4Parser.Boxes.ThreeGPP.TS26244
 {
     /**
      * <h1>4cc = "{@value #TYPE}"</h1>
@@ -100,12 +104,12 @@
             this.additionalNotes = additionalNotes;
         }
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
-            return 22 + Utf8.convert(name).length + Utf8.convert(astronomicalBody).length + Utf8.convert(additionalNotes).length;
+            return 22 + Utf8.convert(name).Length + Utf8.convert(astronomicalBody).Length + Utf8.convert(additionalNotes).Length;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             language = IsoTypeReader.readIso639(content);

@@ -14,6 +14,10 @@
  * limitations under the License. 
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+
 namespace SharpMp4Parser.Boxes.Oma
 {
     /**
@@ -33,7 +37,7 @@ namespace SharpMp4Parser.Boxes.Oma
         public OmaDrmAccessUnitFormatBox() : base("odaf")
         { }
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
             return 7;
         }
@@ -69,7 +73,7 @@ namespace SharpMp4Parser.Boxes.Oma
             selectiveEncryption = (allBits & 0x80) == 0x80;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             allBits = (byte)IsoTypeReader.readUInt8(content);

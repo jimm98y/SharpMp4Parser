@@ -14,6 +14,10 @@
  * limitations under the License. 
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
 {
     /**
@@ -41,16 +45,15 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             return location;
         }
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
             return Utf8.utf8StringLengthInBytes(name) + 1 + Utf8.utf8StringLengthInBytes(location) + 1;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             name = IsoTypeReader.readString(content);
             location = IsoTypeReader.readString(content);
-
         }
 
         protected override void getContent(ByteBuffer byteBuffer)

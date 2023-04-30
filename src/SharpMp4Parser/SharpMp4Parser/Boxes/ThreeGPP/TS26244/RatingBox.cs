@@ -14,6 +14,9 @@
  * limitations under the License. 
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
 using System.Text;
 
 namespace SharpMp4Parser.Boxes.ThreeGPP.TS26244
@@ -88,19 +91,18 @@ namespace SharpMp4Parser.Boxes.ThreeGPP.TS26244
             this.ratingInfo = ratingInfo;
         }
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
             return 15 + Utf8.utf8StringLengthInBytes(ratingInfo);
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             ratingEntity = IsoTypeReader.read4cc(content);
             ratingCriteria = IsoTypeReader.read4cc(content);
             language = IsoTypeReader.readIso639(content);
             ratingInfo = IsoTypeReader.readString(content);
-
         }
 
         protected override void getContent(ByteBuffer byteBuffer)
@@ -113,7 +115,7 @@ namespace SharpMp4Parser.Boxes.ThreeGPP.TS26244
             byteBuffer.put((byte)0);
         }
 
-        public override string toString()
+        public override string ToString()
         {
             StringBuilder buffer = new StringBuilder();
             buffer.Append("RatingBox[language=").Append(getLanguage());

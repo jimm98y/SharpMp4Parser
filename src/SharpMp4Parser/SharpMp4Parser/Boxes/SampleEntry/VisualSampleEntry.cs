@@ -14,6 +14,8 @@
  * limitations under the License. 
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -241,7 +243,7 @@ namespace SharpMp4Parser.Boxes.SampleEntry
         public override bool Equals(object o)
         {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (o == null || GetType() != o.GetType()) return false;
 
             VisualSampleEntry that = (VisualSampleEntry)o;
             ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
@@ -250,7 +252,7 @@ namespace SharpMp4Parser.Boxes.SampleEntry
             {
                 this.getBox(Channels.newChannel(baos1));
             }
-            catch (IOException e)
+            catch (IOException)
             {
                 throw;
             }
@@ -258,7 +260,7 @@ namespace SharpMp4Parser.Boxes.SampleEntry
             {
                 that.getBox(Channels.newChannel(baos2));
             }
-            catch (IOException e)
+            catch (IOException)
             {
                 throw;
             }
@@ -273,7 +275,7 @@ namespace SharpMp4Parser.Boxes.SampleEntry
             {
                 this.getBox(Channels.newChannel(baos1));
             }
-            catch (IOException e)
+            catch (IOException)
             {
                 throw;
             }

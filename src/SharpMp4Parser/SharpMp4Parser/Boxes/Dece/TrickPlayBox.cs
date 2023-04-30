@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+using System.Collections.Generic;
 using System.Text;
 
 namespace SharpMp4Parser.Boxes.Dece
@@ -36,10 +39,10 @@ namespace SharpMp4Parser.Boxes.Dece
 
         protected override long getContentSize()
         {
-            return 4 + entries.size();
+            return 4 + entries.Count;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             while (content.remaining() > 0)
@@ -57,7 +60,7 @@ namespace SharpMp4Parser.Boxes.Dece
             }
         }
 
-        public override string toString()
+        public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("TrickPlayBox");
@@ -68,7 +71,7 @@ namespace SharpMp4Parser.Boxes.Dece
 
         public sealed class Entry
         {
-            private int value;
+            public int value;
 
             public Entry()
             {

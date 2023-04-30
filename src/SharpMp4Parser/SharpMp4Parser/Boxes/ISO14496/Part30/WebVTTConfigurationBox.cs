@@ -1,4 +1,8 @@
-﻿namespace SharpMp4Parser.Boxes.ISO14496.Part30
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+
+namespace SharpMp4Parser.Boxes.ISO14496.Part30
 {
     /**
      * Created by sannies on 04.12.2014.

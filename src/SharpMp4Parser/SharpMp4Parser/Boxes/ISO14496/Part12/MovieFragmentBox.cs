@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
 using System.Collections.Generic;
-using System.ComponentModel;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
 {
@@ -53,7 +54,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
         public int getTrackCount()
         {
-            return getBoxes(typeof(TrackFragmentBox), false).size();
+            return getBoxes< TrackFragmentBox>(typeof(TrackFragmentBox), false).Count;
         }
 
         /**
@@ -64,9 +65,9 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
         public long[] getTrackNumbers()
         {
-            List<TrackFragmentBox> trackBoxes = this.getBoxes(typeof(TrackFragmentBox), false);
-            long[] trackNumbers = new long[trackBoxes.size()];
-            for (int trackCounter = 0; trackCounter < trackBoxes.size(); trackCounter++)
+            List<TrackFragmentBox> trackBoxes = this.getBoxes< TrackFragmentBox>(typeof(TrackFragmentBox), false);
+            long[] trackNumbers = new long[trackBoxes.Count];
+            for (int trackCounter = 0; trackCounter < trackBoxes.Count; trackCounter++)
             {
                 TrackFragmentBox trackBoxe = trackBoxes[trackCounter];
                 trackNumbers[trackCounter] = trackBoxe.getTrackFragmentHeaderBox().getTrackId();
@@ -76,12 +77,12 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
         public List<TrackFragmentHeaderBox> getTrackFragmentHeaderBoxes()
         {
-            return Path.getPaths((Container)this, "tfhd");
+            return Path.getPaths<TrackFragmentHeaderBox>((Container)this, "tfhd");
         }
 
         public List<TrackRunBox> getTrackRunBoxes()
         {
-            return getBoxes(typeof(TrackRunBox), true);
+            return getBoxes< TrackRunBox>(typeof(TrackRunBox), true);
         }
     }
 }

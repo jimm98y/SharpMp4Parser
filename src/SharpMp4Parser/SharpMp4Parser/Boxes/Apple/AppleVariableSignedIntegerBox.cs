@@ -1,4 +1,7 @@
-﻿namespace SharpMp4Parser.Boxes.Apple
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
+
+namespace SharpMp4Parser.Boxes.Apple
 {
     /**
      * Created by sannies on 10/22/13.
@@ -24,7 +27,7 @@
         public long getValue()
         {
             //patched by Tobias Bley / UltraMixer (04/25/2014)
-            if (!isParsed())
+            if (!IsParsed())
             {
                 parseDetails();
             }

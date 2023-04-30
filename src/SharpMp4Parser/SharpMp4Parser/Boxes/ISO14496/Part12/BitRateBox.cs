@@ -14,6 +14,10 @@
  * limitations under the License. 
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
 {
     /**
@@ -43,12 +47,12 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
         public BitRateBox() : base(TYPE)
         { }
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
             return 12;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             bufferSizeDb = IsoTypeReader.readUInt32(content);
             maxBitrate = IsoTypeReader.readUInt32(content);

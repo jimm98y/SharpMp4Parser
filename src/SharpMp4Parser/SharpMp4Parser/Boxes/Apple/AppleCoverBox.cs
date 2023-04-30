@@ -1,4 +1,6 @@
-﻿namespace SharpMp4Parser.Boxes.Apple
+﻿using SharpMp4Parser.Java;
+
+namespace SharpMp4Parser.Boxes.Apple
 {
     /**
      * Created by Tobias Bley / UltraMixer on 04/25/2014.
@@ -42,7 +44,7 @@
 
         protected override int getDataLength()
         {
-            return data.length;
+            return data.Length;
         }
 
         private void setImageData(byte[] data, int dataType)

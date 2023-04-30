@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
 {
@@ -28,10 +29,10 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             return data.limit();
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             data = content.slice();
-            ((Buffer)content).position(content.position() + content.remaining());
+            ((Java.Buffer)content).position(content.position() + content.remaining());
         }
 
         protected override void getContent(ByteBuffer byteBuffer)

@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
 using System.Collections.Generic;
 using System.Text;
 
@@ -65,7 +68,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
         {
             if (isSampleCompositionTimeOffsetPresent())
             {
-                long[] result = new long[entries.size()];
+                long[] result = new long[entries.Count];
 
                 for (int i = 0; i < result.Length; i++)
                 {
@@ -76,7 +79,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             return null;
         }
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
             long size = 8;
             int flags = getFlags();
@@ -107,14 +110,14 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             { //sampleCompositionTimeOffsetPresent
                 entrySize += 4;
             }
-            size += entrySize * entries.size();
+            size += entrySize * entries.Count;
             return size;
         }
 
-        protected void getContent(ByteBuffer byteBuffer)
+        protected override void getContent(ByteBuffer byteBuffer)
         {
             writeVersionAndFlags(byteBuffer);
-            IsoTypeWriter.writeUInt32(byteBuffer, entries.size());
+            IsoTypeWriter.writeUInt32(byteBuffer, entries.Count);
             int flags = getFlags();
 
             if ((flags & 0x1) == 1)
@@ -154,7 +157,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             }
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             long sampleCount = IsoTypeReader.readUInt32(content);
@@ -197,7 +200,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
         public long getSampleCount()
         {
-            return entries.size();
+            return entries.Count;
         }
 
         public bool isDataOffsetPresent()
@@ -329,11 +332,11 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             this.firstSampleFlags = firstSampleFlags;
         }
 
-        public override string toString()
+        public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("TrackRunBox");
-            sb.Append("{sampleCount=").Append(entries.size());
+            sb.Append("{sampleCount=").Append(entries.Count);
             sb.Append(", dataOffset=").Append(dataOffset);
             sb.Append(", dataOffsetPresent=").Append(isDataOffsetPresent());
             sb.Append(", sampleSizePresent=").Append(isSampleSizePresent());
@@ -347,10 +350,10 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
         public sealed class Entry
         {
-            private long sampleDuration;
-            private long sampleSize;
-            private SampleFlags sampleFlags;
-            private long sampleCompositionTimeOffset;
+            public long sampleDuration;
+            public long sampleSize;
+            public SampleFlags sampleFlags;
+            public long sampleCompositionTimeOffset;
 
             public Entry()
             {

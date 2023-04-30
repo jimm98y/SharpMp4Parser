@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+using SharpMp4Parser.Java;
 using System.Text;
 
 namespace SharpMp4Parser.Boxes.SampleGrouping
@@ -45,7 +46,6 @@ namespace SharpMp4Parser.Boxes.SampleGrouping
         {
             return TYPE;
         }
-
 
         public bool isNumLeadingSamplesKnown()
         {
@@ -85,7 +85,7 @@ namespace SharpMp4Parser.Boxes.SampleGrouping
         public override bool Equals(object o)
         {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (o == null || GetType() != o.GetType()) return false;
 
             VisualRandomAccessEntry that = (VisualRandomAccessEntry)o;
 

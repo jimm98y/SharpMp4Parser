@@ -14,7 +14,10 @@
  * limitations under the License. 
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
 using System;
+using System.Text;
 
 namespace SharpMp4Parser.Boxes
 {
@@ -31,15 +34,15 @@ namespace SharpMp4Parser.Boxes
         { }
 
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
             return data.Length;
         }
 
-        public override string toString()
+        public override string ToString()
         {
             return "UserBox[type=" + (getType()) +
-                    ";userType=" + new String(getUserType()) +
+                    ";userType=" + Encoding.UTF8.GetString(getUserType()) +
                     ";contentLength=" + data.Length + "]";
         }
 
@@ -53,7 +56,7 @@ namespace SharpMp4Parser.Boxes
             this.data = data;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             data = new byte[content.remaining()];
             content.get(data);

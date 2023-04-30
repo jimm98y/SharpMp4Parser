@@ -1,4 +1,7 @@
-﻿namespace SharpMp4Parser.Boxes.ISO14496.Part12
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+
+namespace SharpMp4Parser.Boxes.ISO14496.Part12
 {
     /**
      * <h1>4cc = "{@value #TYPE}"</h1>
@@ -32,7 +35,7 @@
             return 24;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             compositionOffsetToDisplayOffsetShift = content.getInt();

@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+using SharpMp4Parser.Boxes.ISO14496.Part15;
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
 using System.Collections.Generic;
 
 namespace SharpMp4Parser.Boxes.Dece
@@ -67,7 +70,7 @@ namespace SharpMp4Parser.Boxes.Dece
             return avcDecoderConfigurationRecord.getContentSize();
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             this.avcDecoderConfigurationRecord = new AvcDecoderConfigurationRecord(content);
         }

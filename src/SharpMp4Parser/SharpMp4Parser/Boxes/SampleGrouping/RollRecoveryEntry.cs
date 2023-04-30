@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-using System;
+using SharpMp4Parser.Java;
 
 namespace SharpMp4Parser.Boxes.SampleGrouping
 {
@@ -57,7 +57,7 @@ namespace SharpMp4Parser.Boxes.SampleGrouping
         {
             ByteBuffer content = ByteBuffer.allocate(2);
             content.putShort(rollDistance);
-            ((Buffer)content).rewind();
+            ((Java.Buffer)content).rewind();
             return content;
         }
 
@@ -67,7 +67,7 @@ namespace SharpMp4Parser.Boxes.SampleGrouping
             {
                 return true;
             }
-            if (o == null || getClass() != o.getClass())
+            if (o == null || GetType() != o.GetType())
             {
                 return false;
             }

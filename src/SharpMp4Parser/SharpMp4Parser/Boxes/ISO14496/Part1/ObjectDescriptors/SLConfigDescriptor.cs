@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
 using System.Text;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
@@ -77,12 +79,12 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
             predefined = IsoTypeReader.readUInt8(bb);
         }
 
-        public int getContentSize()
+        public override int getContentSize()
         {
             return 1;
         }
 
-        public ByteBuffer serialize()
+        public override ByteBuffer serialize()
         {
             ByteBuffer output = ByteBuffer.allocate(getSize());
             IsoTypeWriter.writeUInt8(output, 6);
@@ -106,7 +108,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
             {
                 return true;
             }
-            if (o == null || getClass() != o.getClass())
+            if (o == null || GetType() != o.GetType())
             {
                 return false;
             }

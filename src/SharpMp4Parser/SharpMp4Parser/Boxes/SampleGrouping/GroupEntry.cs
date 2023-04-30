@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using SharpMp4Parser.Java;
+
 namespace SharpMp4Parser.Boxes.SampleGrouping
 {
     public abstract class GroupEntry
@@ -24,7 +26,7 @@ namespace SharpMp4Parser.Boxes.SampleGrouping
 
         public abstract ByteBuffer get();
 
-        public int size()
+        public virtual int size()
         {
             return get().limit();
         }

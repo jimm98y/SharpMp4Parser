@@ -17,6 +17,8 @@
 using System.Collections.Generic;
 using System;
 using System.Text;
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
 {
@@ -60,7 +62,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
             objectTypeIndication = IsoTypeReader.readUInt8(bb);
 
             int data = IsoTypeReader.readUInt8(bb);
-            streamType = data >>> 2;
+            streamType = (int)((uint)data >> 2);
             upStream = (data >> 1) & 0x1;
 
             bufferSizeDB = IsoTypeReader.readUInt24(bb);
@@ -102,7 +104,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
 
         }
 
-        public int getContentSize()
+        public override int getContentSize()
         {
             int output = 13 +
                     (audioSpecificInfo == null ? 0 : audioSpecificInfo.getSize()) +
@@ -114,7 +116,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
             return output;
         }
 
-        public ByteBuffer serialize()
+        public override ByteBuffer serialize()
         {
             ByteBuffer output = ByteBuffer.allocate(getSize());
             IsoTypeWriter.writeUInt8(output, tag);
@@ -139,7 +141,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
             {
                 output.put(profileLevelIndicationDescriptor.serialize());
             }
-            return (ByteBuffer)((Buffer)output).rewind();
+            return (ByteBuffer)((Java.Buffer)output).rewind();
         }
 
         public DecoderSpecificInfo getDecoderSpecificInfo()
@@ -240,7 +242,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
             sb.Append(", decoderSpecificInfo=").Append(decoderSpecificInfo);
             sb.Append(", audioSpecificInfo=").Append(audioSpecificInfo);
             sb.Append(", configDescriptorDeadBytes=").Append(Hex.encodeHex(configDescriptorDeadBytes != null ? configDescriptorDeadBytes : new byte[] { }));
-            sb.Append(", profileLevelIndicationDescriptors=").Append(profileLevelIndicationDescriptors == null ? "null" : profileLevelIndicationDescriptors);
+            sb.Append(", profileLevelIndicationDescriptors=").Append(profileLevelIndicationDescriptors == null ? "null" : profileLevelIndicationDescriptors.ToString());
             sb.Append('}');
             return sb.ToString();
         }

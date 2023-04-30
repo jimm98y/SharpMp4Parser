@@ -14,6 +14,9 @@
  * limitations under the License. 
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
 {
     /**
@@ -28,9 +31,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
         public const string TYPE = "udta";
 
         public UserDataBox() : base(TYPE)
-        {
-
-        }
+        {  }
 
         public override void parse(ReadableByteChannel dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
         {

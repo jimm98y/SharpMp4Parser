@@ -14,7 +14,10 @@
  * limitations under the License. 
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part15
 {
@@ -157,19 +160,19 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part15
             this.avcDecoderConfigurationRecord.hasExts = hasExts;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             avcDecoderConfigurationRecord = new AvcDecoderConfigurationRecord(content);
         }
 
 
-        public override long getContentSize()
+        protected override long getContentSize()
         {
             return avcDecoderConfigurationRecord.getContentSize();
         }
 
 
-        public override void getContent(ByteBuffer byteBuffer)
+        protected override void getContent(ByteBuffer byteBuffer)
         {
             avcDecoderConfigurationRecord.getContent(byteBuffer);
         }

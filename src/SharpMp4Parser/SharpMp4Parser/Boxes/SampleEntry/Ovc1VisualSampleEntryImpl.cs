@@ -1,4 +1,7 @@
-﻿namespace SharpMp4Parser.Boxes.SampleEntry
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
+
+namespace SharpMp4Parser.Boxes.SampleEntry
 {
     /**
      * <h1>4cc = "{@value #TYPE}"</h1>
@@ -44,7 +47,7 @@
 
         public override long getSize()
         {
-            long header = (largeBox || (vc1Content.length + 16) >= (1L << 32)) ? 16 : 8;
+            long header = (largeBox || (vc1Content.Length + 16) >= (1 << 32)) ? 16 : 8;
             return header + vc1Content.Length + 8;
         }
     }

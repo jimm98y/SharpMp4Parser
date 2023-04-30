@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+using SharpMp4Parser.Java;
 using System;
 
 namespace SharpMp4Parser.Tools
@@ -31,7 +32,7 @@ namespace SharpMp4Parser.Tools
          */
         static public DateTime convert(long secondsSince)
         {
-            return new DateTime((secondsSince - 2082844800L) * 1000L);
+            return new DateTime((secondsSince - 2082844800) * 1000);
         }
 
         /**
@@ -42,7 +43,7 @@ namespace SharpMp4Parser.Tools
          */
         static public long convert(DateTime date)
         {
-            return (date.getTime() / 1000L) + 2082844800L;
+            return (date.getTime() / 1000) + 2082844800;
         }
     }
 }

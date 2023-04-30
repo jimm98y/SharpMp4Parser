@@ -1,4 +1,8 @@
-﻿namespace SharpMp4Parser.Boxes.Apple
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
+using System.Text;
+
+namespace SharpMp4Parser.Boxes.Apple
 {
     /**
      *
@@ -13,7 +17,7 @@
         public string getValue()
         {
             //patched by Toias Bley / UltraMixer
-            if (!isParsed())
+            if (!IsParsed())
             {
                 parseDetails();
             }
@@ -25,14 +29,14 @@
             this.value = value;
         }
 
-        public byte[] writeData()
+        protected override byte[] writeData()
         {
             return Utf8.convert(value);
         }
 
         protected override int getDataLength()
         {
-            return value.getBytes(Charset.forName("UTF-8")).length;
+            return Encoding.UTF8.GetBytes(value).Length;
         }
 
         protected override void parseData(ByteBuffer data)

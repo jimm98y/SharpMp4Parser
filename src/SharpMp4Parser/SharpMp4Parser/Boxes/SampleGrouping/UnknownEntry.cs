@@ -1,4 +1,7 @@
-﻿namespace SharpMp4Parser.Boxes.SampleGrouping
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
+
+namespace SharpMp4Parser.Boxes.SampleGrouping
 {
     /**
       *
@@ -55,7 +58,7 @@
             {
                 return true;
             }
-            if (o == null || getClass() != o.getClass())
+            if (o == null || GetType() != o.GetType())
             {
                 return false;
             }
@@ -72,7 +75,7 @@
 
         public override int GetHashCode()
         {
-            return content != null ? content.hashCode() : 0;
+            return content != null ? content.GetHashCode() : 0;
         }
     }
 }

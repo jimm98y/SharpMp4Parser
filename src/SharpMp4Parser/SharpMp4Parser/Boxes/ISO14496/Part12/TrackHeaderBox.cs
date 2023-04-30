@@ -16,6 +16,9 @@
 
 using System.Text;
 using System;
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
+using SharpMp4Parser.Support;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
 {
@@ -160,7 +163,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             this.height = height;
         }
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
             long contentSize = 4;
             if (getVersion() == 1)
@@ -175,7 +178,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             return contentSize;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             if (getVersion() == 1)
@@ -211,7 +214,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             height = IsoTypeReader.readFixedPoint1616(content);
         }
 
-        public void getContent(ByteBuffer byteBuffer)
+        protected override void getContent(ByteBuffer byteBuffer)
         {
             writeVersionAndFlags(byteBuffer);
             if (getVersion() == 1)
@@ -236,7 +239,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             IsoTypeWriter.writeUInt16(byteBuffer, alternateGroup);
             IsoTypeWriter.writeFixedPoint88(byteBuffer, volume);
             IsoTypeWriter.writeUInt16(byteBuffer, 0);
-            int i = 0;
+            //int i = 0;
             matrix.getContent(byteBuffer);
 
             IsoTypeWriter.writeFixedPoint1616(byteBuffer, width);

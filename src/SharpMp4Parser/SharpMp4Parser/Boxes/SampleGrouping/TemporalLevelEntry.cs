@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-using System;
+using SharpMp4Parser.Java;
 using System.Text;
 
 namespace SharpMp4Parser.Boxes.SampleGrouping
@@ -56,14 +56,14 @@ namespace SharpMp4Parser.Boxes.SampleGrouping
         {
             ByteBuffer content = ByteBuffer.allocate(1);
             content.put((byte)(levelIndependentlyDecodable ? 0x80 : 0x00));
-            ((Buffer)content).rewind();
+            ((Java.Buffer)content).rewind();
             return content;
         }
 
         public override bool Equals(object o)
         {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (o == null || GetType() != o.GetType()) return false;
 
             TemporalLevelEntry that = (TemporalLevelEntry)o;
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpMp4Parser.Java;
+using System;
 
 namespace SharpMp4Parser
 {
@@ -46,17 +47,18 @@ namespace SharpMp4Parser
         {
             this.size = contentSize + 8;
 
-            if (dataSource is FileChannel)
-            {
-                FileChannel seekable = (FileChannel)dataSource;
+            //if (dataSource is FileChannel)
+            //{
+                //FileChannel seekable = (FileChannel)dataSource;
+                ReadableByteChannel seekable = dataSource;
                 sourcePosition = seekable.position();
                 long newPosition = sourcePosition + contentSize;
                 seekable.position(newPosition);
-            }
-            else
-            {
-                throw new Exception("Cannot skip box " + type + " if data source is not seekable");
-            }
+            //}
+            //else
+            //{
+            //    throw new Exception("Cannot skip box " + type + " if data source is not seekable");
+            //}
         }
     }
 }

@@ -14,6 +14,9 @@
  * limitations under the License. 
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
+
 namespace SharpMp4Parser.Support
 {
     /**
@@ -45,7 +48,7 @@ namespace SharpMp4Parser.Support
             this.version = version;
         }
 
-        public int getFlags()
+        public virtual int getFlags()
         {
             // it's faster than the join point
             if (!isParsed)

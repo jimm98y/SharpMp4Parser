@@ -14,6 +14,9 @@
  * limitations under the License. 
  */
 
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
 {
     /**
@@ -29,7 +32,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
         public SampleTableBox getSampleTableBox()
         {
-            return Path.getPath(this, "stbl[0]");
+            return Path.getPath< SampleTableBox>(this, "stbl[0]");
         }
 
         public AbstractMediaHeaderBox getMediaHeaderBox()

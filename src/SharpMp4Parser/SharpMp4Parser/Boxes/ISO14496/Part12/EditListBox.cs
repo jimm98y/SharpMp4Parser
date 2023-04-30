@@ -14,6 +14,9 @@
  * limitations under the License. 
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
 using System.Collections.Generic;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
@@ -63,26 +66,26 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             this.entries = entries;
         }
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
             long contentSize = 8;
             if (getVersion() == 1)
             {
-                contentSize += entries.size() * 20;
+                contentSize += entries.Count * 20;
             }
             else
             {
-                contentSize += entries.size() * 12;
+                contentSize += entries.Count * 12;
             }
 
             return contentSize;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             int entryCount = CastUtils.l2i(IsoTypeReader.readUInt32(content));
-            entries = new LinkedList<Entry>();
+            entries = new List<Entry>();
             for (int i = 0; i < entryCount; i++)
             {
                 entries.Add(new Entry(this, content));
@@ -93,14 +96,14 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
         protected override void getContent(ByteBuffer byteBuffer)
         {
             writeVersionAndFlags(byteBuffer);
-            IsoTypeWriter.writeUInt32(byteBuffer, entries.size());
+            IsoTypeWriter.writeUInt32(byteBuffer, entries.Count);
             foreach (Entry entry in entries)
             {
                 entry.getContent(byteBuffer);
             }
         }
 
-        public override string toString()
+        public override string ToString()
         {
             return "EditListBox{" +
                     "entries=" + entries +
@@ -223,7 +226,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
                 {
                     return true;
                 }
-                if (o == null || getClass() != o.getClass())
+                if (o == null || GetType() != o.GetType())
                 {
                     return false;
                 }
@@ -244,8 +247,8 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
             public override int GetHashCode()
             {
-                int result = (int)(segmentDuration ^ (segmentDuration >>> 32));
-                result = 31 * result + (int)(mediaTime ^ (mediaTime >>> 32));
+                int result = (int)(segmentDuration ^ (long)((ulong)segmentDuration >> 32));
+                result = 31 * result + (int)(mediaTime ^ (long)((ulong)mediaTime >> 32));
                 return result;
             }
 

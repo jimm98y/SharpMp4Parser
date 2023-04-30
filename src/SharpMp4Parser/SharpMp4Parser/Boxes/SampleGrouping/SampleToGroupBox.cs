@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace SharpMp4Parser.Boxes.SampleGrouping
 {
@@ -37,32 +42,28 @@ namespace SharpMp4Parser.Boxes.SampleGrouping
         private string groupingType;
         private string groupingTypeParameter;
 
-        public SampleToGroupBox()
-        {
-            super(TYPE);
-
-        }
+        public SampleToGroupBox() : base(TYPE)
+        {  }
 
         protected override long getContentSize()
         {
-            return this.getVersion() == 1 ? entries.size() * 8 + 16 : entries.size() * 8 + 12;
+            return this.getVersion() == 1 ? entries.Count * 8 + 16 : entries.Count * 8 + 12;
         }
 
         protected override void getContent(ByteBuffer byteBuffer)
         {
             writeVersionAndFlags(byteBuffer);
-            byteBuffer.put(groupingType.getBytes());
+            byteBuffer.put(Encoding.UTF8.GetBytes(groupingType));
             if (this.getVersion() == 1)
             {
-                byteBuffer.put(groupingTypeParameter.getBytes());
+                byteBuffer.put(Encoding.UTF8.GetBytes(groupingTypeParameter));
             }
-            IsoTypeWriter.writeUInt32(byteBuffer, entries.size());
+            IsoTypeWriter.writeUInt32(byteBuffer, entries.Count);
             foreach (Entry entry in entries)
             {
                 IsoTypeWriter.writeUInt32(byteBuffer, entry.getSampleCount());
                 IsoTypeWriter.writeUInt32(byteBuffer, entry.getGroupDescriptionIndex());
             }
-
         }
 
         protected override void _parseDetails(ByteBuffer content)
@@ -141,7 +142,7 @@ namespace SharpMp4Parser.Boxes.SampleGrouping
                 this.groupDescriptionIndex = groupDescriptionIndex;
             }
 
-            public override string toString()
+            public override string ToString()
             {
                 return "Entry{" +
                         "sampleCount=" + sampleCount +
@@ -155,7 +156,7 @@ namespace SharpMp4Parser.Boxes.SampleGrouping
                 {
                     return true;
                 }
-                if (o == null || getClass() != o.getClass())
+                if (o == null || GetType() != o.GetType())
                 {
                     return false;
                 }
@@ -176,7 +177,7 @@ namespace SharpMp4Parser.Boxes.SampleGrouping
 
             public override int GetHashCode()
             {
-                int result = (int)(sampleCount ^ (sampleCount >>> 32));
+                int result = (int)(sampleCount ^ (long)((ulong)sampleCount >> 32));
                 result = 31 * result + groupDescriptionIndex;
                 return result;
             }

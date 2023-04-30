@@ -15,7 +15,8 @@
  */
 
 using SharpMp4Parser.Boxes;
-using System;
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
 using System.Diagnostics;
 
 namespace SharpMp4Parser.Support
@@ -35,8 +36,8 @@ namespace SharpMp4Parser.Support
         //private static Logger LOG = LoggerFactory.getLogger(AbstractBox.class);
 
         protected string type;
-        protected ByteBuffer content;
-        bool isParsed;
+        private ByteBuffer content;
+        protected bool isParsed;
         private byte[] userType;
         private ByteBuffer deadBytes = null;
 
@@ -83,7 +84,7 @@ namespace SharpMp4Parser.Support
          */
         public void parse(ReadableByteChannel dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
         {
-            content = ByteBuffer.allocate(l2i(contentSize));
+            content = ByteBuffer.allocate(CastUtils.l2i(contentSize));
 
             while ((content.position() < contentSize))
             {
@@ -94,33 +95,33 @@ namespace SharpMp4Parser.Support
                 }
             }
 
-            ((Buffer)content).position(0);
+            ((Java.Buffer)content).position(0);
             isParsed = false;
         }
 
-        public void getBox(WritableByteChannel os)
+        public virtual void getBox(WritableByteChannel os)
         {
             if (isParsed)
             {
-                ByteBuffer bb = ByteBuffer.allocate(l2i(getSize()));
+                ByteBuffer bb = ByteBuffer.allocate(CastUtils.l2i(getSize()));
                 getHeader(bb);
                 getContent(bb);
                 if (deadBytes != null)
                 {
-                    ((Buffer)deadBytes).rewind();
+                    ((Java.Buffer)deadBytes).rewind();
                     while (deadBytes.remaining() > 0)
                     {
                         bb.put(deadBytes);
                     }
                 }
-                os.write((ByteBuffer)((Buffer)bb).rewind());
+                os.write((ByteBuffer)((Java.Buffer)bb).rewind());
             }
             else
             {
                 ByteBuffer header = ByteBuffer.allocate((isSmallBox() ? 8 : 16) + (UserBox.TYPE.Equals(getType()) ? 16 : 0));
                 getHeader(header);
-                os.write((ByteBuffer)((Buffer)header).rewind());
-                os.write((ByteBuffer)((Buffer)content).position(0));
+                os.write((ByteBuffer)((Java.Buffer)header).rewind());
+                os.write((ByteBuffer)((Java.Buffer)content).position(0));
             }
         }
 
@@ -139,7 +140,7 @@ namespace SharpMp4Parser.Support
                 {
                     ByteBuffer content = this.content;
                     isParsed = true;
-                    ((Buffer)content).rewind();
+                    ((Java.Buffer)content).rewind();
                     _parseDetails(content);
                     if (content.remaining() > 0)
                     {
@@ -172,7 +173,7 @@ namespace SharpMp4Parser.Support
             return type;
         }
 
-        public byte[] getUserType()
+        public virtual byte[] getUserType()
         {
             return userType;
         }
@@ -187,7 +188,6 @@ namespace SharpMp4Parser.Support
             return isParsed;
         }
 
-
         /**
          * Verifies that a box can be reconstructed byte-exact after parsing.
          *
@@ -196,18 +196,18 @@ namespace SharpMp4Parser.Support
          */
         private bool verify(ByteBuffer content)
         {
-            ByteBuffer bb = ByteBuffer.allocate(l2i(getContentSize() + (deadBytes != null ? deadBytes.limit() : 0)));
+            ByteBuffer bb = ByteBuffer.allocate(CastUtils.l2i(getContentSize() + (deadBytes != null ? deadBytes.limit() : 0)));
             getContent(bb);
             if (deadBytes != null)
             {
-                ((Buffer)deadBytes).rewind();
+                ((Java.Buffer)deadBytes).rewind();
                 while (deadBytes.remaining() > 0)
                 {
                     bb.put(deadBytes);
                 }
             }
-            ((Buffer)content).rewind();
-            ((Buffer)bb).rewind();
+            ((Java.Buffer)content).rewind();
+            ((Java.Buffer)bb).rewind();
 
 
             if (content.remaining() != bb.remaining())
@@ -249,7 +249,7 @@ namespace SharpMp4Parser.Support
             }
             else
             {
-                return content.limit() + baseSize < (1L << 32);
+                return content.limit() + baseSize < (1 << 32);
             }
 
         }

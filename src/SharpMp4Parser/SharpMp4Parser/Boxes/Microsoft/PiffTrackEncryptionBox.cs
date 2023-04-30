@@ -1,4 +1,6 @@
-﻿namespace SharpMp4Parser.Boxes.Microsoft
+﻿using SharpMp4Parser.Boxes.ISO23001.Part7;
+
+namespace SharpMp4Parser.Boxes.Microsoft
 {
     /**
      * aligned(8) class TrackEncryptionBox extends FullBox(‘uuid’,

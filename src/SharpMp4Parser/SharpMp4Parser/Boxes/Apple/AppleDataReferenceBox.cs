@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+
 namespace SharpMp4Parser.Boxes.Apple
 {
     /**
@@ -30,12 +34,12 @@ namespace SharpMp4Parser.Boxes.Apple
         { }
 
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
             return 12 + dataReferenceSize;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             dataReferenceType = IsoTypeReader.read4cc(content);

@@ -16,6 +16,9 @@
 
 using System.Text;
 using System;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+using SharpMp4Parser.Java;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
 {
@@ -146,7 +149,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             this.nextTrackId = nextTrackId;
         }
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
             long contentSize = 4;
             if (getVersion() == 1)
@@ -161,7 +164,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             return contentSize;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             if (getVersion() == 1)
@@ -204,7 +207,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
         }
 
-        public String toString()
+        public override string ToString()
         {
             StringBuilder result = new StringBuilder();
             result.Append("MovieHeaderBox[");

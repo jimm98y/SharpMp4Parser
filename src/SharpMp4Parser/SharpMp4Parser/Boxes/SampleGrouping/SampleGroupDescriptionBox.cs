@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+using SharpMp4Parser.Boxes.ISO14496.Part15;
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
 using System;
 using System.Collections.Generic;
 
@@ -80,7 +84,7 @@ namespace SharpMp4Parser.Boxes.SampleGrouping
             {
                 IsoTypeWriter.writeUInt32(byteBuffer, defaultLength);
             }
-            IsoTypeWriter.writeUInt32(byteBuffer, this.groupEntries.size());
+            IsoTypeWriter.writeUInt32(byteBuffer, this.groupEntries.Count);
             foreach (GroupEntry entry in groupEntries)
             {
                 ByteBuffer data = entry.get();
@@ -133,10 +137,10 @@ namespace SharpMp4Parser.Boxes.SampleGrouping
                     length = content.limit() - content.position();
                 }
                 ByteBuffer parseMe = content.slice();
-                ((Buffer)parseMe).limit(length);
+                ((Java.Buffer)parseMe).limit(length);
                 groupEntries.Add(parseGroupEntry(parseMe, groupingType));
                 int parsedBytes = this.getVersion() == 1 ? length : parseMe.position();
-                ((Buffer)content).position(content.position() + parsedBytes);
+                ((Java.Buffer)content).position(content.position() + parsedBytes);
             }
 
         }
@@ -152,27 +156,27 @@ namespace SharpMp4Parser.Boxes.SampleGrouping
             {
                 groupEntry = new RateShareEntry();
             }
-            else if (VisualRandomAccessEntry.TYPE.equals(groupingType))
+            else if (VisualRandomAccessEntry.TYPE.Equals(groupingType))
             {
                 groupEntry = new VisualRandomAccessEntry();
             }
-            else if (TemporalLevelEntry.TYPE.equals(groupingType))
+            else if (TemporalLevelEntry.TYPE.Equals(groupingType))
             {
                 groupEntry = new TemporalLevelEntry();
             }
-            else if (SyncSampleEntry.TYPE.equals(groupingType))
+            else if (SyncSampleEntry.TYPE.Equals(groupingType))
             {
                 groupEntry = new SyncSampleEntry();
             }
-            else if (TemporalLayerSampleGroup.TYPE.equals(groupingType))
+            else if (TemporalLayerSampleGroup.TYPE.Equals(groupingType))
             {
                 groupEntry = new TemporalLayerSampleGroup();
             }
-            else if (TemporalSubLayerSampleGroup.TYPE.equals(groupingType))
+            else if (TemporalSubLayerSampleGroup.TYPE.Equals(groupingType))
             {
                 groupEntry = new TemporalSubLayerSampleGroup();
             }
-            else if (StepwiseTemporalLayerEntry.TYPE.equals(groupingType))
+            else if (StepwiseTemporalLayerEntry.TYPE.Equals(groupingType))
             {
                 groupEntry = new StepwiseTemporalLayerEntry();
             }
@@ -214,7 +218,7 @@ namespace SharpMp4Parser.Boxes.SampleGrouping
             {
                 return true;
             }
-            if (o == null || getClass() != o.getClass())
+            if (o == null || GetType() != o.GetType())
             {
                 return false;
             }
@@ -244,7 +248,7 @@ namespace SharpMp4Parser.Boxes.SampleGrouping
         public override string ToString()
         {
             return "SampleGroupDescriptionBox{" +
-                    "groupingType='" + (groupEntries.size() > 0 ? groupEntries.get(0).getType() : "????") + '\'' +
+                    "groupingType='" + (groupEntries.Count > 0 ? groupEntries[0].getType() : "????") + '\'' +
                     ", defaultLength=" + defaultLength +
                     ", groupEntries=" + groupEntries +
                     '}';

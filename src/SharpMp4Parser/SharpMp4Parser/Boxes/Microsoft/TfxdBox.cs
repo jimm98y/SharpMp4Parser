@@ -1,4 +1,8 @@
-﻿namespace SharpMp4Parser.Boxes.Microsoft
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+
+namespace SharpMp4Parser.Boxes.Microsoft
 {
     /**
      * <h1>4cc = "uuid", 6d1d9b05-42d5-44e6-80e2-141daff757b2</h1>
@@ -45,7 +49,7 @@
             return getVersion() == 0x01 ? 20 : 12;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
 

@@ -14,8 +14,9 @@
  * limitations under the License. 
  */
 
-using System.ComponentModel;
-using System;
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
+using System.Text;
 
 namespace SharpMp4Parser.Support
 {
@@ -24,7 +25,6 @@ namespace SharpMp4Parser.Support
      */
     public class AbstractContainerBox : BasicContainer, ParsableBox
     {
-
         protected string type;
         protected bool largeBox;
         Container parent;
@@ -40,7 +40,7 @@ namespace SharpMp4Parser.Support
             this.parent = parent;
         }
 
-        public long getSize()
+        public virtual long getSize()
         {
             long s = getContainerSize();
             return s + ((largeBox || (s + 8) >= (1L << 32)) ? 16 : 8);
@@ -51,32 +51,32 @@ namespace SharpMp4Parser.Support
             return type;
         }
 
-        protected ByteBuffer getHeader()
+        protected virtual ByteBuffer getHeader()
         {
             ByteBuffer header;
             if (largeBox || getSize() >= (1L << 32))
             {
-                header = ByteBuffer.wrap(new byte[] { 0, 0, 0, 1, type.getBytes()[0], type.getBytes()[1], type.getBytes()[2], type.getBytes()[3], 0, 0, 0, 0, 0, 0, 0, 0 });
-                ((Buffer)header).position(8);
+                header = ByteBuffer.wrap(new byte[] { 0, 0, 0, 1, Encoding.UTF8.GetBytes(type)[0], Encoding.UTF8.GetBytes(type)[1], Encoding.UTF8.GetBytes(type)[2], Encoding.UTF8.GetBytes(type)[3], 0, 0, 0, 0, 0, 0, 0, 0 });
+                ((Java.Buffer)header).position(8);
                 IsoTypeWriter.writeUInt64(header, getSize());
             }
             else
             {
-                header = ByteBuffer.wrap(new byte[] { 0, 0, 0, 0, type.getBytes()[0], type.getBytes()[1], type.getBytes()[2], type.getBytes()[3] });
+                header = ByteBuffer.wrap(new byte[] { 0, 0, 0, 0, Encoding.UTF8.GetBytes(type)[0], Encoding.UTF8.GetBytes(type)[1], Encoding.UTF8.GetBytes(type)[2], Encoding.UTF8.GetBytes(type)[3] });
                 IsoTypeWriter.writeUInt32(header, getSize());
             }
-            ((Buffer)header).rewind();
+            ((Java.Buffer)header).rewind();
             return header;
         }
 
-        public void parse(ReadableByteChannel dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
+        public virtual void parse(ReadableByteChannel dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
         {
             this.largeBox = header.remaining() == 16; // sometime people use large boxes without requiring them
             initContainer(dataSource, contentSize, boxParser);
         }
 
 
-        public void getBox(WritableByteChannel writableByteChannel)
+        public virtual void getBox(WritableByteChannel writableByteChannel)
         {
             writableByteChannel.write(getHeader());
             writeContainer(writableByteChannel);

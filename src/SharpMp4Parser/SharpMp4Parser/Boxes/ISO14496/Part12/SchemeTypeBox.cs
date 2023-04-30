@@ -16,6 +16,9 @@
 
 using System.Text;
 using System.Diagnostics;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+using SharpMp4Parser.Java;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
 {
@@ -43,7 +46,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
         public void setSchemeType(string schemeType)
         {
-            Debug.Assert(schemeType != null && schemeType.length() == 4, "SchemeType may not be null or not 4 bytes long");
+            Debug.Assert(schemeType != null && schemeType.Length == 4, "SchemeType may not be null or not 4 bytes long");
             this.schemeType = schemeType;
         }
 
@@ -67,12 +70,12 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             this.schemeUri = schemeUri;
         }
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
             return 12 + (((getFlags() & 1) == 1) ? Utf8.utf8StringLengthInBytes(schemeUri) + 1 : 0);
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             schemeType = IsoTypeReader.read4cc(content);
@@ -94,7 +97,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             }
         }
 
-        public string toString()
+        public override string ToString()
         {
             StringBuilder buffer = new StringBuilder();
             buffer.Append("Schema Type Box[");

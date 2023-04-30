@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
 using System.Text;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
@@ -40,7 +41,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
         public override void parseDetail(ByteBuffer bb)
         {
             data = bb.slice();
-            ((Buffer)bb).position(bb.position() + data.remaining());
+            ((Java.Buffer)bb).position(bb.position() + data.remaining());
         }
 
         public override string ToString()
@@ -62,7 +63,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
             return output;
         }
 
-        public int getContentSize()
+        public override int getContentSize()
         {
             return data.remaining();
         }

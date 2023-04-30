@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -40,26 +43,25 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
         public TrackFragmentRandomAccessBox() : base(TYPE)
         { }
 
-
-        protected long getContentSize()
+        protected override long getContentSize()
         {
             long contentSize = 4;
             contentSize += 4 + 4 /*26 + 2 + 2 + 2 */ + 4;
             if (getVersion() == 1)
             {
-                contentSize += (8 + 8) * entries.size();
+                contentSize += (8 + 8) * entries.Count;
             }
             else
             {
-                contentSize += (4 + 4) * entries.size();
+                contentSize += (4 + 4) * entries.Count;
             }
-            contentSize += lengthSizeOfTrafNum * entries.size();
-            contentSize += lengthSizeOfTrunNum * entries.size();
-            contentSize += lengthSizeOfSampleNum * entries.size();
+            contentSize += lengthSizeOfTrafNum * entries.Count;
+            contentSize += lengthSizeOfTrunNum * entries.Count;
+            contentSize += lengthSizeOfSampleNum * entries.Count;
             return contentSize;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             trackId = IsoTypeReader.readUInt32(content);
@@ -100,11 +102,11 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             IsoTypeWriter.writeUInt32(byteBuffer, trackId);
             long temp;
             temp = reserved << 6;
-            temp = temp | (((lengthSizeOfTrafNum - 1) & 0x3) << 4);
-            temp = temp | (((lengthSizeOfTrunNum - 1) & 0x3) << 2);
-            temp = temp | ((lengthSizeOfSampleNum - 1) & 0x3);
+            temp = temp | (long)(((lengthSizeOfTrafNum - 1) & 0x3) << 4);
+            temp = temp | (long)(((lengthSizeOfTrunNum - 1) & 0x3) << 2);
+            temp = temp | (long)((lengthSizeOfSampleNum - 1) & 0x3);
             IsoTypeWriter.writeUInt32(byteBuffer, temp);
-            IsoTypeWriter.writeUInt32(byteBuffer, entries.size());
+            IsoTypeWriter.writeUInt32(byteBuffer, entries.Count);
 
             foreach (Entry entry in entries)
             {
@@ -172,7 +174,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
         public long getNumberOfEntries()
         {
-            return entries.size();
+            return entries.Count;
         }
 
         public List<Entry> getEntries()
@@ -195,11 +197,11 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
         public sealed class Entry
         {
-            private long time;
-            private long moofOffset;
-            private long trafNumber;
-            private long trunNumber;
-            private long sampleNumber;
+            public long time;
+            public long moofOffset;
+            public long trafNumber;
+            public long trunNumber;
+            public long sampleNumber;
 
             public Entry()
             {
@@ -278,7 +280,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             public override bool Equals(object o)
             {
                 if (this == o) return true;
-                if (o == null || getClass() != o.getClass()) return false;
+                if (o == null || GetType() != o.GetType()) return false;
 
                 Entry entry = (Entry)o;
 
@@ -293,11 +295,11 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
             public override int GetHashCode()
             {
-                int result = (int)(time ^ (time >>> 32));
-                result = 31 * result + (int)(moofOffset ^ (moofOffset >>> 32));
-                result = 31 * result + (int)(trafNumber ^ (trafNumber >>> 32));
-                result = 31 * result + (int)(trunNumber ^ (trunNumber >>> 32));
-                result = 31 * result + (int)(sampleNumber ^ (sampleNumber >>> 32));
+                int result = (int)(time ^ (long)((ulong)time >> 32));
+                result = 31 * result + (int)(moofOffset ^ (long)((ulong)moofOffset >> 32));
+                result = 31 * result + (int)(trafNumber ^ (long)((ulong)trafNumber >> 32));
+                result = 31 * result + (int)(trunNumber ^ (long)((ulong)trunNumber >> 32));
+                result = 31 * result + (int)(sampleNumber ^ (long)((ulong)sampleNumber >> 32));
                 return result;
             }
         }

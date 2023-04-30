@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors;
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using System.Collections.Generic;
 
 namespace SharpMp4Parser.Boxes.Dolby
 {
@@ -15,7 +18,7 @@ namespace SharpMp4Parser.Boxes.Dolby
         public EC3SpecificBox() : base(TYPE)
         { }
 
-        public override long getContentSize()
+        protected override long getContentSize()
         {
             long size = 2;
             foreach (Entry entry in entries)
@@ -32,7 +35,7 @@ namespace SharpMp4Parser.Boxes.Dolby
             return size;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             BitReaderBuffer brb = new BitReaderBuffer(content);
             dataRate = brb.readBits(13);
@@ -63,11 +66,11 @@ namespace SharpMp4Parser.Boxes.Dolby
             }
         }
 
-        public override void getContent(ByteBuffer byteBuffer)
+        protected override void getContent(ByteBuffer byteBuffer)
         {
             BitWriterBuffer bwb = new BitWriterBuffer(byteBuffer);
             bwb.writeBits(dataRate, 13);
-            bwb.writeBits(entries.size() - 1, 3);
+            bwb.writeBits(entries.Count - 1, 3);
             foreach (Entry e in entries)
             {
                 bwb.writeBits(e.fscod, 2);
@@ -87,7 +90,6 @@ namespace SharpMp4Parser.Boxes.Dolby
                 }
             }
         }
-
 
         public List<Entry> getEntries()
         {

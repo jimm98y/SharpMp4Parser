@@ -14,7 +14,7 @@
  * limitations under the License. 
  */
 
-using System;
+using SharpMp4Parser.Java;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
 {
@@ -30,33 +30,35 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
      * so Media Data Box headers and free space may easily be skipped, and files without any box structure may
      * also be referenced and used.
      */
-    public sealed class MediaDataBox : ParsableBox, Closeable
+#warning TODO
+    public sealed class MediaDataBox : ParsableBox /*, Closeable */
     {
         public const string TYPE = "mdat";
-        ByteBuffer header;
-        File dataFile;
+        //ByteBuffer header;
+        //File dataFile;
 
         public string getType()
         {
             return TYPE;
         }
 
-
         public void getBox(WritableByteChannel writableByteChannel)
         {
-            writableByteChannel.write((ByteBuffer)((Buffer)header).rewind());
-            using (FileInputStream fis = new FileInputStream(dataFile))
-            {
-                using (FileChannel fc = fis.getChannel())
-                {
-                    fc.transferTo(0, dataFile.lastModified(), writableByteChannel);
-                }
-            }
+            throw new System.NotImplementedException();
+            //writableByteChannel.write((ByteBuffer)((Java.Buffer)header).rewind());
+            //using (FileInputStream fis = new FileInputStream(dataFile))
+            //{
+            //    using (FileChannel fc = fis.getChannel())
+            //    {
+            //        fc.transferTo(0, dataFile.lastModified(), writableByteChannel);
+            //    }
+            //}
         }
 
         public long getSize()
         {
-            return header.limit() + dataFile.length();
+            throw new System.NotImplementedException();
+            return 0; /* header.limit() + dataFile.length(); */
         }
 
         /**
@@ -64,19 +66,21 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
          */
         public void parse(ReadableByteChannel dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
         {
-            dataFile = File.createTempFile("MediaDataBox", base.ToString());
+            throw new System.NotImplementedException();
+            //dataFile = File.createTempFile("MediaDataBox", base.ToString());
 
-            // make sure to clean up temp file
-            dataFile.deleteOnExit();
+            //// make sure to clean up temp file
+            //dataFile.deleteOnExit();
 
-            this.header = ByteBuffer.allocate(header.limit());
-            this.header.put(header);
-            using (RandomAccessFile raf = new RandomAccessFile(dataFile, "rw"))
-            {
-                raf.getChannel().transferFrom(dataSource, 0, contentSize);
-            }
+            //this.header = ByteBuffer.allocate(header.limit());
+            //this.header.put(header);
+            //using (RandomAccessFile raf = new RandomAccessFile(dataFile, "rw"))
+            //{
+            //    raf.getChannel().transferFrom(dataSource, 0, contentSize);
+            //}
         }
 
+        /*
         public override void close()
         {
             if (dataFile != null)
@@ -84,5 +88,6 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
                 dataFile.delete();
             }
         }
+        */
     }
 }

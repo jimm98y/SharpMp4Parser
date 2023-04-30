@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using SharpMp4Parser.Java;
+
 namespace SharpMp4Parser
 {
     /**

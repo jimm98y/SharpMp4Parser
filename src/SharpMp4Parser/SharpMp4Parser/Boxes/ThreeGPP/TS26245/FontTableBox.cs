@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+using System.Collections.Generic;
 
 namespace SharpMp4Parser.Boxes.ThreeGPP.TS26245
 {
@@ -25,7 +28,7 @@ namespace SharpMp4Parser.Boxes.ThreeGPP.TS26245
         }
 
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             int numberOfRecords = IsoTypeReader.readUInt16(content);
             for (int i = 0; i < numberOfRecords; i++)
@@ -38,7 +41,7 @@ namespace SharpMp4Parser.Boxes.ThreeGPP.TS26245
 
         protected override void getContent(ByteBuffer byteBuffer)
         {
-            IsoTypeWriter.writeUInt16(byteBuffer, entries.size());
+            IsoTypeWriter.writeUInt16(byteBuffer, entries.Count);
             foreach (FontRecord record in entries)
             {
                 record.getContent(byteBuffer);
@@ -80,7 +83,7 @@ namespace SharpMp4Parser.Boxes.ThreeGPP.TS26245
             public void getContent(ByteBuffer bb)
             {
                 IsoTypeWriter.writeUInt16(bb, fontId);
-                IsoTypeWriter.writeUInt8(bb, fontname.length());
+                IsoTypeWriter.writeUInt8(bb, fontname.Length);
                 bb.put(Utf8.convert(fontname));
             }
 
@@ -89,7 +92,7 @@ namespace SharpMp4Parser.Boxes.ThreeGPP.TS26245
                 return Utf8.utf8StringLengthInBytes(fontname) + 3;
             }
 
-            public override string toString()
+            public override string ToString()
             {
                 return "FontRecord{" +
                         "fontId=" + fontId +

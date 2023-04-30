@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+using System.Collections.Generic;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
 {
@@ -16,7 +19,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
         protected override long getContentSize()
         {
-            return 4 + entries.size() * 8;
+            return 4 + entries.Count * 8;
         }
 
         protected override void getContent(ByteBuffer byteBuffer)
@@ -39,10 +42,10 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             this.entries = entries;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
-            entries = new LinkedList<Entry>();
+            entries = new List<Entry>();
             while (content.remaining() >= 8)
             {
                 Entry entry = new Entry(IsoTypeReader.readUInt32(content), IsoTypeReader.readUInt32(content));
@@ -99,7 +102,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             public override bool Equals(object o)
             {
                 if (this == o) return true;
-                if (o == null || getClass() != o.getClass()) return false;
+                if (o == null || GetType() != o.GetType()) return false;
 
                 Entry entry = (Entry)o;
 
@@ -111,8 +114,8 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
             public override int GetHashCode()
             {
-                int result = (int)(rate ^ (rate >>> 32));
-                result = 31 * result + (int)(initialDelay ^ (initialDelay >>> 32));
+                int result = (int)(rate ^ (long)((ulong)rate >> 32));
+                result = 31 * result + (int)(initialDelay ^ (long)((ulong)initialDelay >> 32));
                 return result;
             }
         }

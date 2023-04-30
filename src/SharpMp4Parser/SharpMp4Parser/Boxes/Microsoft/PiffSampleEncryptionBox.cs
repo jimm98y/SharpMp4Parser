@@ -1,4 +1,6 @@
-﻿namespace SharpMp4Parser.Boxes.Microsoft
+﻿using SharpMp4Parser.Boxes.ISO23001.Part7;
+
+namespace SharpMp4Parser.Boxes.Microsoft
 {
     /**
      * <pre>
@@ -69,7 +71,7 @@
             this.kid = kid;
         }
 
-        public bool isOverrideTrackEncryptionBoxParameters()
+        protected override bool isOverrideTrackEncryptionBoxParameters()
         {
             return (getFlags() & 0x1) > 0;
         }

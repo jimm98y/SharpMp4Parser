@@ -1,4 +1,6 @@
-﻿namespace SharpMp4Parser.Boxes.Apple
+﻿using SharpMp4Parser.Support;
+
+namespace SharpMp4Parser.Boxes.Apple
 {
     /**
      * <h1>4cc = "{@value #TYPE}"</h1>

@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+using System.Collections.Generic;
 using System.Text;
 
 namespace SharpMp4Parser.Boxes.Microsoft
@@ -45,13 +48,13 @@ namespace SharpMp4Parser.Boxes.Microsoft
 
         protected override long getContentSize()
         {
-            return 5 + entries.size() * (getVersion() == 0x01 ? 16 : 8);
+            return 5 + entries.Count * (getVersion() == 0x01 ? 16 : 8);
         }
 
         protected override void getContent(ByteBuffer byteBuffer)
         {
             writeVersionAndFlags(byteBuffer);
-            IsoTypeWriter.writeUInt8(byteBuffer, entries.size());
+            IsoTypeWriter.writeUInt8(byteBuffer, entries.Count);
 
             foreach (Entry entry in entries)
             {
@@ -68,7 +71,7 @@ namespace SharpMp4Parser.Boxes.Microsoft
             }
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             int fragmentCount = IsoTypeReader.readUInt8(content);
@@ -93,7 +96,7 @@ namespace SharpMp4Parser.Boxes.Microsoft
 
         public long getFragmentCount()
         {
-            return entries.size();
+            return entries.Count;
         }
 
         public List<Entry> getEntries()
@@ -101,7 +104,7 @@ namespace SharpMp4Parser.Boxes.Microsoft
             return entries;
         }
 
-        public override string toString()
+        public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("TfrfBox");
@@ -112,8 +115,8 @@ namespace SharpMp4Parser.Boxes.Microsoft
 
         public class Entry
         {
-            long fragmentAbsoluteTime;
-            long fragmentAbsoluteDuration;
+            public long fragmentAbsoluteTime;
+            public long fragmentAbsoluteDuration;
 
             public long getFragmentAbsoluteTime()
             {

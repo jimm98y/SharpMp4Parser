@@ -14,6 +14,9 @@
  * limitations under the License. 
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
 using System.Text;
 
 namespace SharpMp4Parser.Boxes.ThreeGPP.TS26244
@@ -52,7 +55,7 @@ namespace SharpMp4Parser.Boxes.ThreeGPP.TS26244
             this.keywords = keywords;
         }
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
             long contentSize = 7;
             foreach (string keyword in keywords)
@@ -62,7 +65,7 @@ namespace SharpMp4Parser.Boxes.ThreeGPP.TS26244
             return contentSize;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             language = IsoTypeReader.readIso639(content);
@@ -87,10 +90,10 @@ namespace SharpMp4Parser.Boxes.ThreeGPP.TS26244
             }
         }
 
-        public string toString()
+        public override string ToString()
         {
             StringBuilder buffer = new StringBuilder();
-            buffer.Append("KeywordsBox[language=").append(getLanguage());
+            buffer.Append("KeywordsBox[language=").Append(getLanguage());
             for (int i = 0; i < keywords.Length; i++)
             {
                 buffer.Append(";keyword").Append(i).Append("=").Append(keywords[i]);

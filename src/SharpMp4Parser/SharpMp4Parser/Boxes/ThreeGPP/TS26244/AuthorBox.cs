@@ -14,6 +14,10 @@
  * limitations under the License. 
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+
 namespace SharpMp4Parser.Boxes.ThreeGPP.TS26244
 {
     /**
@@ -65,12 +69,12 @@ namespace SharpMp4Parser.Boxes.ThreeGPP.TS26244
             this.author = author;
         }
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
             return 7 + Utf8.utf8StringLengthInBytes(author);
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             language = IsoTypeReader.readIso639(content);

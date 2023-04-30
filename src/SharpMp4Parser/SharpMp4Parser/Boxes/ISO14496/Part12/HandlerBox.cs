@@ -14,6 +14,9 @@
  * limitations under the License. 
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -97,7 +100,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             return readableTypes[handlerType] != null ? readableTypes[handlerType] : "Unknown Handler Type";
         }
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
             if (zeroTerm)
             {
@@ -110,7 +113,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             shouldBeZeroButAppleWritesHereSomeValue = IsoTypeReader.readUInt32(content);
@@ -123,7 +126,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
                 name = IsoTypeReader.readString(content, content.remaining());
                 if (name.EndsWith("\0"))
                 {
-                    name = name.Substring(0, name.length() - 1);
+                    name = name.Substring(0, name.Length - 1);
                     zeroTerm = true;
                 }
                 else

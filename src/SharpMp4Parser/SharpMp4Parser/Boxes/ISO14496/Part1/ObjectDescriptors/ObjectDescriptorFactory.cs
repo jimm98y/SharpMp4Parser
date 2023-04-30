@@ -17,6 +17,8 @@
 using System.Collections.Generic;
 using System;
 using System.Reflection;
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
 {
@@ -171,7 +173,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
             //    }
 
             BaseDescriptor baseDescriptor;
-            if (aClass == null || aClass.isInterface() || Modifier.isAbstract(aClass.getModifiers()))
+            if (aClass == null || aClass.IsInterface || aClass.IsAbstract)
             {
                 //if (LOG.isWarnEnabled())
                 //{
@@ -186,7 +188,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
                 {
                     baseDescriptor = (BaseDescriptor)Activator.CreateInstance(aClass);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     //LOG.error("Couldn't instantiate BaseDescriptor class " + aClass + " for objectTypeIndication " + objectTypeIndication + " and tag " + tag, e);
                     throw;

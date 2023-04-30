@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,17 +29,17 @@ namespace SharpMp4Parser.Boxes.Microsoft.ContentProtection
      */
     public class PlayReadyHeader : ProtectionSpecificHeader
     {
-        public static UUID PROTECTION_SYSTEM_ID = UUID.fromString("9A04F079-9840-4286-AB92-E65BE0885F95");
+        public static readonly Uuid PROTECTION_SYSTEM_ID = Uuid.Parse("9A04F079-9840-4286-AB92-E65BE0885F95");
 
         static PlayReadyHeader()
         {
-            uuidRegistry.put(PROTECTION_SYSTEM_ID, typeof(PlayReadyHeader));
+            uuidRegistry.Add(PROTECTION_SYSTEM_ID, typeof(PlayReadyHeader));
         }
 
         private long length;
         private List<PlayReadyRecord> records;
 
-        public override UUID getSystemId()
+        public override Uuid getSystemId()
         {
             return PROTECTION_SYSTEM_ID;
         }
@@ -65,18 +67,18 @@ namespace SharpMp4Parser.Boxes.Microsoft.ContentProtection
             foreach (PlayReadyRecord record in records)
             {
                 size += 2 + 2;
-                size += ((Buffer)record.getValue()).rewind().limit();
+                size += ((Java.Buffer)record.getValue()).rewind().limit();
             }
             ByteBuffer byteBuffer = ByteBuffer.allocate(size);
 
             IsoTypeWriter.writeUInt32BE(byteBuffer, size);
-            IsoTypeWriter.writeUInt16BE(byteBuffer, records.size());
+            IsoTypeWriter.writeUInt16BE(byteBuffer, records.Count);
             foreach (PlayReadyRecord record in records)
             {
                 IsoTypeWriter.writeUInt16BE(byteBuffer, record.type);
                 IsoTypeWriter.writeUInt16BE(byteBuffer, record.getValue().limit());
                 ByteBuffer tmp4debug = record.getValue();
-                byteBuffer.Add(tmp4debug);
+                byteBuffer.put(tmp4debug);
             }
 
             return byteBuffer;
@@ -97,7 +99,7 @@ namespace SharpMp4Parser.Boxes.Microsoft.ContentProtection
             StringBuilder sb = new StringBuilder();
             sb.Append("PlayReadyHeader");
             sb.Append("{length=").Append(length);
-            sb.Append(", recordCount=").Append(records.size());
+            sb.Append(", recordCount=").Append(records.Count);
             sb.Append(", records=").Append(records);
             sb.Append('}');
             return sb.ToString();
@@ -105,7 +107,7 @@ namespace SharpMp4Parser.Boxes.Microsoft.ContentProtection
 
         public abstract class PlayReadyRecord
         {
-            int type;
+            public int type;
 
 
             public PlayReadyRecord(int type)
@@ -135,9 +137,10 @@ namespace SharpMp4Parser.Boxes.Microsoft.ContentProtection
                             break;
                         default:
                             record = new DefaulPlayReadyRecord(type);
+                            break;
                     }
                     record.parse((ByteBuffer)byteBuffer.slice().limit(length));
-                    ((Buffer)byteBuffer).position(byteBuffer.position() + length);
+                    ((Java.Buffer)byteBuffer).position(byteBuffer.position() + length);
                     records.Add(record);
                 }
 
@@ -172,9 +175,9 @@ namespace SharpMp4Parser.Boxes.Microsoft.ContentProtection
                     {
                         byte[] str = new byte[bytes.slice().limit()];
                         bytes.get(str);
-                        header = new string(str, "UTF-16LE");
+                        header = Encoding.GetEncoding("UTF-16LE").GetString(str);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         throw;
                     }
@@ -185,9 +188,9 @@ namespace SharpMp4Parser.Boxes.Microsoft.ContentProtection
                     byte[] headerBytes;
                     try
                     {
-                        headerBytes = header.getBytes("UTF-16LE");
+                        headerBytes = Encoding.GetEncoding("UTF-16LE").GetBytes(header);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         throw;
                     }

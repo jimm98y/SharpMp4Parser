@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors;
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+using System.Collections.Generic;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
 {
@@ -55,7 +59,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             size += 2; // reserved
             size += 2; // reference count
 
-            size += entries.size() * 12;
+            size += entries.Count * 12;
 
             return size;
         }
@@ -78,7 +82,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             }
             
             IsoTypeWriter.writeUInt16(byteBuffer, reserved);
-            IsoTypeWriter.writeUInt16(byteBuffer, entries.size());
+            IsoTypeWriter.writeUInt16(byteBuffer, entries.Count);
 
             foreach (Entry entry in entries)
             {
@@ -308,7 +312,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             public override bool Equals(object o)
             {
                 if (this == o) return true;
-                if (o == null || getClass() != o.getClass()) return false;
+                if (o == null || GetType() != o.GetType()) return false;
 
                 Entry entry = (Entry)o;
 
@@ -326,7 +330,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             {
                 int result = (int)referenceType;
                 result = 31 * result + referencedSize;
-                result = 31 * result + (int)(subsegmentDuration ^ (subsegmentDuration >>> 32));
+                result = 31 * result + (int)(subsegmentDuration ^ (long)((ulong)subsegmentDuration >> 32));
                 result = 31 * result + (int)startsWithSap;
                 result = 31 * result + (int)sapType;
                 result = 31 * result + sapDeltaTime;

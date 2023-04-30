@@ -1,49 +1,51 @@
-﻿using System.Collections.Generic;
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part15
 {
     public class HevcDecoderConfigurationRecord
     {
-        int configurationVersion;
+        public int configurationVersion;
 
-        int general_profile_space;
-        bool general_tier_flag;
-        int general_profile_idc;
+        public int general_profile_space;
+        public bool general_tier_flag;
+        public int general_profile_idc;
 
-        long general_profile_compatibility_flags;
-        long general_constraint_indicator_flags;
+        public long general_profile_compatibility_flags;
+        public long general_constraint_indicator_flags;
 
-        int general_level_idc;
+        public int general_level_idc;
 
-        int reserved1 = 0xF;
-        int min_spatial_segmentation_idc;
+        public int reserved1 = 0xF;
+        public int min_spatial_segmentation_idc;
 
-        int reserved2 = 0x3F;
-        int parallelismType;
+        public int reserved2 = 0x3F;
+        public int parallelismType;
 
-        int reserved3 = 0x3F;
-        int chromaFormat;
+        public int reserved3 = 0x3F;
+        public int chromaFormat;
 
-        int reserved4 = 0x1F;
-        int bitDepthLumaMinus8;
+        public int reserved4 = 0x1F;
+        public int bitDepthLumaMinus8;
 
-        int reserved5 = 0x1F;
-        int bitDepthChromaMinus8;
+        public int reserved5 = 0x1F;
+        public int bitDepthChromaMinus8;
 
-        int avgFrameRate;
+        public int avgFrameRate;
 
-        int constantFrameRate;
-        int numTemporalLayers;
-        bool temporalIdNested;
-        int lengthSizeMinusOne;
+        public int constantFrameRate;
+        public int numTemporalLayers;
+        public bool temporalIdNested;
+        public int lengthSizeMinusOne;
 
-        List<Array> arrays = new List<Array>();
+        public List<Array> arrays = new List<Array>();
 
-        bool frame_only_constraint_flag;
-        bool non_packed_constraint_flag;
-        bool interlaced_source_flag;
-        bool progressive_source_flag;
+        public bool frame_only_constraint_flag;
+        public bool non_packed_constraint_flag;
+        public bool interlaced_source_flag;
+        public bool progressive_source_flag;
 
 
         public HevcDecoderConfigurationRecord()
@@ -184,13 +186,13 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part15
 
             IsoTypeWriter.writeUInt8(byteBuffer, (constantFrameRate << 6) + (numTemporalLayers << 3) + (temporalIdNested ? 0x4 : 0) + lengthSizeMinusOne);
 
-            IsoTypeWriter.writeUInt8(byteBuffer, arrays.size());
+            IsoTypeWriter.writeUInt8(byteBuffer, arrays.Count);
 
             foreach (Array array in arrays)
             {
                 IsoTypeWriter.writeUInt8(byteBuffer, (array.array_completeness ? 0x80 : 0) + (array.reserved ? 0x40 : 0) + array.nal_unit_type);
 
-                IsoTypeWriter.writeUInt16(byteBuffer, array.nalUnits.size());
+                IsoTypeWriter.writeUInt16(byteBuffer, array.nalUnits.Count);
                 foreach (byte[] nalUnit in array.nalUnits)
                 {
                     IsoTypeWriter.writeUInt16(byteBuffer, nalUnit.Length);
@@ -217,7 +219,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part15
         public override bool Equals(object o)
         {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (o == null || GetType() != o.GetType()) return false;
 
             HevcDecoderConfigurationRecord that = (HevcDecoderConfigurationRecord)o;
 
@@ -254,8 +256,8 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part15
             result = 31 * result + general_profile_space;
             result = 31 * result + (general_tier_flag ? 1 : 0);
             result = 31 * result + general_profile_idc;
-            result = 31 * result + (int)(general_profile_compatibility_flags ^ (general_profile_compatibility_flags >>> 32));
-            result = 31 * result + (int)(general_constraint_indicator_flags ^ (general_constraint_indicator_flags >>> 32));
+            result = 31 * result + (int)(general_profile_compatibility_flags ^ (long)((ulong)general_profile_compatibility_flags >> 32));
+            result = 31 * result + (int)(general_constraint_indicator_flags ^ (long)((ulong)general_constraint_indicator_flags >> 32));
             result = 31 * result + general_level_idc;
             result = 31 * result + reserved1;
             result = 31 * result + min_spatial_segmentation_idc;
@@ -538,24 +540,29 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part15
             public override bool Equals(object o)
             {
                 if (this == o) return true;
-                if (o == null || getClass() != o.getClass()) return false;
+                if (o == null || GetType() != o.GetType()) return false;
 
                 Array array = (Array)o;
 
                 if (array_completeness != array.array_completeness) return false;
                 if (nal_unit_type != array.nal_unit_type) return false;
                 if (reserved != array.reserved) return false;
-                ListIterator<byte[]> e1 = nalUnits.listIterator();
-                ListIterator<byte[]> e2 = (array.nalUnits).listIterator();
-                while (e1.hasNext() && e2.hasNext())
+                List<byte[]>.Enumerator e1 = nalUnits.GetEnumerator();
+                List<byte[]>.Enumerator e2 = (array.nalUnits).GetEnumerator();
+                
+                bool m1;
+                bool m2 = false;
+                do
                 {
-                    byte[] o1 = e1.next();
-                    byte[] o2 = e2.next();
+                    byte[] o1 = e1.Current;
+                    byte[] o2 = e2.Current;
 
                     if (!(o1 == null ? o2 == null : Enumerable.SequenceEqual(o1, o2)))
                         return false;
                 }
-                return !(e1.hasNext() || e2.hasNext());
+                while ((m1 = e1.MoveNext()) && (m2 = e2.MoveNext()));
+
+                return !((m1) || (m2));
             }
 
             public override int GetHashCode()
@@ -573,7 +580,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part15
                         "nal_unit_type=" + nal_unit_type +
                         ", reserved=" + reserved +
                         ", array_completeness=" + array_completeness +
-                        ", num_nals=" + nalUnits.size() +
+                        ", num_nals=" + nalUnits.Count +
                         '}';
             }
         }

@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+using System.Collections.Generic;
 
 namespace SharpMp4Parser.Boxes.Dece
 {
@@ -54,14 +57,14 @@ namespace SharpMp4Parser.Boxes.Dece
             size += 1;
             foreach (var brandEntry in brandEntries)
             {
-                size += Utf8.utf8StringLengthInBytes(brandEntry.getKey()) + 1;
-                size += Utf8.utf8StringLengthInBytes(brandEntry.getValue()) + 1;
+                size += Utf8.utf8StringLengthInBytes(brandEntry.Key) + 1;
+                size += Utf8.utf8StringLengthInBytes(brandEntry.Value) + 1;
             }
             size += 1;
             foreach (var idEntry in idEntries)
             {
-                size += Utf8.utf8StringLengthInBytes(idEntry.getKey()) + 1;
-                size += Utf8.utf8StringLengthInBytes(idEntry.getValue()) + 1;
+                size += Utf8.utf8StringLengthInBytes(idEntry.Key) + 1;
+                size += Utf8.utf8StringLengthInBytes(idEntry.Value) + 1;
 
             }
             return size;
@@ -75,17 +78,17 @@ namespace SharpMp4Parser.Boxes.Dece
             IsoTypeWriter.writeZeroTermUtf8String(byteBuffer, codecs);
             IsoTypeWriter.writeZeroTermUtf8String(byteBuffer, protection);
             IsoTypeWriter.writeZeroTermUtf8String(byteBuffer, languages);
-            IsoTypeWriter.writeUInt8(byteBuffer, brandEntries.size());
+            IsoTypeWriter.writeUInt8(byteBuffer, brandEntries.Count);
             foreach (var brandEntry in brandEntries)
             {
-                IsoTypeWriter.writeZeroTermUtf8String(byteBuffer, brandEntry.getKey());
-                IsoTypeWriter.writeZeroTermUtf8String(byteBuffer, brandEntry.getValue());
+                IsoTypeWriter.writeZeroTermUtf8String(byteBuffer, brandEntry.Key);
+                IsoTypeWriter.writeZeroTermUtf8String(byteBuffer, brandEntry.Value);
             }
-            IsoTypeWriter.writeUInt8(byteBuffer, idEntries.size());
+            IsoTypeWriter.writeUInt8(byteBuffer, idEntries.Count);
             foreach (var idEntry in idEntries)
             {
-                IsoTypeWriter.writeZeroTermUtf8String(byteBuffer, idEntry.getKey());
-                IsoTypeWriter.writeZeroTermUtf8String(byteBuffer, idEntry.getValue());
+                IsoTypeWriter.writeZeroTermUtf8String(byteBuffer, idEntry.Key);
+                IsoTypeWriter.writeZeroTermUtf8String(byteBuffer, idEntry.Value);
             }
         }
 
@@ -193,7 +196,7 @@ namespace SharpMp4Parser.Boxes.Dece
             public override bool Equals(object o)
             {
                 if (this == o) return true;
-                if (o == null || getClass() != o.getClass()) return false;
+                if (o == null || this.GetType() != o.GetType()) return false;
 
                 BrandEntry that = (BrandEntry)o;
 

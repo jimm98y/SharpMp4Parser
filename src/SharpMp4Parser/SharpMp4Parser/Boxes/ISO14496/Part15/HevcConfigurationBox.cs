@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using System.Collections.Generic;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part15
 {
@@ -45,11 +47,11 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part15
         public override bool Equals(object o)
         {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (o == null || GetType() != o.GetType()) return false;
 
             HevcConfigurationBox that = (HevcConfigurationBox)o;
 
-            if (hevcDecoderConfigurationRecord != null ? !hevcDecoderConfigurationRecord.equals(that.hevcDecoderConfigurationRecord) : that.hevcDecoderConfigurationRecord != null)
+            if (hevcDecoderConfigurationRecord != null ? !hevcDecoderConfigurationRecord.Equals(that.hevcDecoderConfigurationRecord) : that.hevcDecoderConfigurationRecord != null)
                 return false;
 
             return true;
@@ -57,7 +59,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part15
 
         public override int GetHashCode()
         {
-            return hevcDecoderConfigurationRecord != null ? hevcDecoderConfigurationRecord.hashCode() : 0;
+            return hevcDecoderConfigurationRecord != null ? hevcDecoderConfigurationRecord.GetHashCode() : 0;
         }
 
 

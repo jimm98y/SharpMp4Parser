@@ -14,6 +14,9 @@
  * limitations under the License. 
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
 {
     /**
@@ -31,7 +34,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
         public FreeSpaceBox() : base(TYPE)
         { }
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
             return data.Length;
         }
@@ -46,7 +49,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             this.data = data;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             data = new byte[content.remaining()];
             content.get(data);
@@ -57,7 +60,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             byteBuffer.put(data);
         }
 
-        public string toString()
+        public override string ToString()
         {
             return "FreeSpaceBox[size=" + data.Length + ";type=" + getType() + "]";
         }

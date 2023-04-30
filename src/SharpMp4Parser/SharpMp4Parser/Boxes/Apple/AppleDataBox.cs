@@ -1,13 +1,21 @@
-﻿using System;
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Text;
 
 namespace SharpMp4Parser.Boxes.Apple
 {
     /**
- * Created by sannies on 10/12/13.
- */
+     * Created by sannies on 10/12/13.
+     */
     public abstract class AppleDataBox : AbstractBox
     {
+        protected int dataType;
+        protected int dataCountry;
+        protected int dataLanguage;
+
         private static Dictionary<string, string> language = new Dictionary<string, string>();
 
         static AppleDataBox()
@@ -121,24 +129,20 @@ namespace SharpMp4Parser.Boxes.Apple
             language.Add("32767", "Unspecified");
         }
 
-        int dataType;
-        int dataCountry;
-        int dataLanguage;
-
-        protected AppleDataBox(String type, int dataType) : base(type)
+        protected AppleDataBox(string type, int dataType) : base(type)
         {
             this.dataType = dataType;
         }
 
-        public String getLanguageString()
+        public string getLanguageString()
         {
-            String lang = language["" + dataLanguage];
+            string lang = language["" + dataLanguage];
             if (lang == null)
             {
                 ByteBuffer b = ByteBuffer.wrap(new byte[2]);
                 IsoTypeWriter.writeUInt16(b, dataLanguage);
                 b.reset();
-                return new Locale(IsoTypeReader.readIso639(b)).getDisplayLanguage();
+                return new CultureInfo(IsoTypeReader.readIso639(b)).DisplayName;
             }
             else
             {
@@ -192,8 +196,8 @@ namespace SharpMp4Parser.Boxes.Apple
             {
                 dataLanguage += (1 << 16);
             }
-            ByteBuffer data = (ByteBuffer)content.duplicate().slice().limit(dataLength - 16);
-            ((Buffer)content).position(dataLength - 16 + content.position());
+            ByteBuffer data = content.duplicate().slice().limit(dataLength - 16) as ByteBuffer;
+            ((Java.Buffer)content).position(dataLength - 16 + content.position());
             return data;
         }
 
@@ -203,7 +207,7 @@ namespace SharpMp4Parser.Boxes.Apple
             parseData(data);
         }
 
-        protected void getContent(ByteBuffer byteBuffer)
+        protected override void getContent(ByteBuffer byteBuffer)
         {
             writeDataLength4ccTypeCountryLanguage(byteBuffer);
             byteBuffer.put(writeData());
@@ -218,7 +222,7 @@ namespace SharpMp4Parser.Boxes.Apple
         protected void writeDataLength4ccTypeCountryLanguage(ByteBuffer content)
         {
             content.putInt(getDataLength() + 16);
-            content.put("data".getBytes());
+            content.put(Encoding.UTF8.GetBytes("data"));
             content.putInt(dataType);
             IsoTypeWriter.writeUInt16(content, dataCountry);
             IsoTypeWriter.writeUInt16(content, dataLanguage);

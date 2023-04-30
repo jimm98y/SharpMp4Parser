@@ -1,4 +1,6 @@
-﻿namespace SharpMp4Parser
+﻿using SharpMp4Parser.Java;
+
+namespace SharpMp4Parser
 {
     /**
      * The most basic imaginable box. It does not have any parsing functionality it can be used to create boxes
@@ -23,5 +25,4 @@
          */
         void getBox(WritableByteChannel writableByteChannel);
     }
-
 }

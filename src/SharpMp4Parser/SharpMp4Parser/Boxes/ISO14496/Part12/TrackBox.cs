@@ -14,6 +14,8 @@
  * limitations under the License. 
  */
 
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
 using System.Collections.Generic;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
@@ -36,7 +38,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
         public TrackHeaderBox getTrackHeaderBox()
         {
-            return Path.getPath(this, "tkhd[0]");
+            return Path.getPath<TrackHeaderBox>(this, "tkhd[0]");
         }
 
         /**
@@ -66,7 +68,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
         public MediaBox getMediaBox()
         {
-            return Path.getPath(this, "mdia[0]");
+            return Path.getPath<MediaBox>(this, "mdia[0]");
         }
 
         public override void setBoxes(List<Box> boxes)

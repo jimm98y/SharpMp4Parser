@@ -1,4 +1,7 @@
-﻿using System;
+﻿using SharpMp4Parser.Boxes.SampleEntry;
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
+using System;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part30
 {
@@ -16,15 +19,15 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part30
         public override long getSize()
         {
             long s = getContainerSize();
-            long t = 8 + ns.length() + schemaLocation.length() + auxiliaryMimeTypes.length() + 3;
+            long t = 8 + ns.Length + schemaLocation.Length + auxiliaryMimeTypes.Length + 3;
             return s + t + ((largeBox || (s + t + 8) >= (1L << 32)) ? 16 : 8);
         }
 
         public override void parse(ReadableByteChannel dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
         {
             ByteBuffer byteBuffer = ByteBuffer.allocate(8);
-            dataSource.read((ByteBuffer)((Buffer)byteBuffer).rewind());
-            ((Buffer)byteBuffer).position(6);
+            dataSource.read((ByteBuffer)((Java.Buffer)byteBuffer).rewind());
+            ((Java.Buffer)byteBuffer).position(6);
             dataReferenceIndex = IsoTypeReader.readUInt16(byteBuffer);
 
 
@@ -55,19 +58,19 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part30
             }
             auxiliaryMimeTypes = Utf8.convert(auxiliaryMimeTypesBytes);
 
-            initContainer(dataSource, contentSize - (header.remaining() + ns.length() + schemaLocation.length() + auxiliaryMimeTypes.length() + 3), boxParser);
+            initContainer(dataSource, contentSize - (header.remaining() + ns.Length + schemaLocation.Length + auxiliaryMimeTypes.Length + 3), boxParser);
         }
 
         public override void getBox(WritableByteChannel writableByteChannel)
         {
             writableByteChannel.write(getHeader());
-            ByteBuffer byteBuffer = ByteBuffer.allocate(8 + ns.length() + schemaLocation.length() + auxiliaryMimeTypes.length() + 3);
-            ((Buffer)byteBuffer).position(6);
+            ByteBuffer byteBuffer = ByteBuffer.allocate(8 + ns.Length + schemaLocation.Length + auxiliaryMimeTypes.Length + 3);
+            ((Java.Buffer)byteBuffer).position(6);
             IsoTypeWriter.writeUInt16(byteBuffer, dataReferenceIndex);
             IsoTypeWriter.writeZeroTermUtf8String(byteBuffer, ns);
             IsoTypeWriter.writeZeroTermUtf8String(byteBuffer, schemaLocation);
             IsoTypeWriter.writeZeroTermUtf8String(byteBuffer, auxiliaryMimeTypes);
-            writableByteChannel.write((ByteBuffer)((Buffer)byteBuffer).rewind());
+            writableByteChannel.write((ByteBuffer)((Java.Buffer)byteBuffer).rewind());
             writeContainer(writableByteChannel);
         }
 

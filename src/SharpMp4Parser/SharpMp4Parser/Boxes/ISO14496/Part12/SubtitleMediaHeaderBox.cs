@@ -1,4 +1,6 @@
-﻿namespace SharpMp4Parser.Boxes.ISO14496.Part12
+﻿using SharpMp4Parser.Java;
+
+namespace SharpMp4Parser.Boxes.ISO14496.Part12
 {
     /**
      * <h1>4cc = "{@value #TYPE}"</h1>
@@ -11,12 +13,12 @@
         public SubtitleMediaHeaderBox() : base(TYPE)
         { }
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
             return 4;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
         }
@@ -26,7 +28,7 @@
             writeVersionAndFlags(byteBuffer);
         }
 
-        public string toString()
+        public override string ToString()
         {
             return "SubtitleMediaHeaderBox";
         }

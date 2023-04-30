@@ -1,4 +1,8 @@
-﻿namespace SharpMp4Parser.Boxes.ISO14496.Part12
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+
+namespace SharpMp4Parser.Boxes.ISO14496.Part12
 {
     /**
       * <h1>4cc = "{@value #TYPE}"</h1>
@@ -26,7 +30,7 @@
             return 4 + Utf8.utf8StringLengthInBytes(xml);
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             xml = IsoTypeReader.readString(content, content.remaining());
@@ -38,7 +42,7 @@
             byteBuffer.put(Utf8.convert(xml));
         }
 
-        public override string toString()
+        public override string ToString()
         {
             return "XmlBox{" +
                     "xml='" + xml + '\'' +

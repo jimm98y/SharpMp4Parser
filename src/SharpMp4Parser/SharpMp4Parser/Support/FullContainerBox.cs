@@ -16,6 +16,9 @@
 
 using System.Collections.Generic;
 using System;
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
+using System.Text;
 
 namespace SharpMp4Parser.Support
 {
@@ -51,16 +54,16 @@ namespace SharpMp4Parser.Support
             this.flags = flags;
         }
 
-        public List<T> getBoxes<T>(Type clazz)
+        public override List<T> getBoxes<T>(Type clazz)
         {
-            return getBoxes(clazz, false);
+            return getBoxes<T>(clazz, false);
         }
 
         public override void parse(ReadableByteChannel dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
         {
             ByteBuffer versionAndFlags = ByteBuffer.allocate(4);
             dataSource.read(versionAndFlags);
-            parseVersionAndFlags((ByteBuffer)((Buffer)versionAndFlags).rewind());
+            parseVersionAndFlags((ByteBuffer)((Java.Buffer)versionAndFlags).rewind());
             base.parse(dataSource, header, contentSize, boxParser);
         }
 
@@ -69,9 +72,9 @@ namespace SharpMp4Parser.Support
             base.getBox(writableByteChannel);
         }
 
-        public string toString()
+        public override string ToString()
         {
-            return this.getClass().getSimpleName() + "[childBoxes]";
+            return this.GetType().Name + "[childBoxes]";
         }
 
         /**
@@ -98,19 +101,19 @@ namespace SharpMp4Parser.Support
             ByteBuffer header;
             if (largeBox || getSize() >= (1L << 32))
             {
-                header = ByteBuffer.wrap(new byte[] { 0, 0, 0, 1, type.getBytes()[0], type.getBytes()[1], type.getBytes()[2], type.getBytes()[3], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
-                ((Buffer)header).position(8);
+                header = ByteBuffer.wrap(new byte[] { 0, 0, 0, 1, Encoding.UTF8.GetBytes(type)[0], Encoding.UTF8.GetBytes(type)[1], Encoding.UTF8.GetBytes(type)[2], Encoding.UTF8.GetBytes(type)[3], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+                ((Java.Buffer)header).position(8);
                 IsoTypeWriter.writeUInt64(header, getSize());
                 writeVersionAndFlags(header);
             }
             else
             {
-                header = ByteBuffer.wrap(new byte[] { 0, 0, 0, 0, type.getBytes()[0], type.getBytes()[1], type.getBytes()[2], type.getBytes()[3], 0, 0, 0, 0 });
+                header = ByteBuffer.wrap(new byte[] { 0, 0, 0, 0, Encoding.UTF8.GetBytes(type)[0], Encoding.UTF8.GetBytes(type)[1], Encoding.UTF8.GetBytes(type)[2], Encoding.UTF8.GetBytes(type)[3], 0, 0, 0, 0 });
                 IsoTypeWriter.writeUInt32(header, getSize());
-                ((Buffer)header).position(8);
+                ((Java.Buffer)header).position(8);
                 writeVersionAndFlags(header);
             }
-            ((Buffer)header).rewind();
+            ((Java.Buffer)header).rewind();
             return header;
         }
     }

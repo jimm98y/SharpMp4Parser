@@ -15,7 +15,7 @@
  */
 
 using SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors;
-using System;
+using SharpMp4Parser.Java;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part14
 {
@@ -44,7 +44,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part14
         public override bool Equals(object o)
         {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (o == null || this.GetType() != o.GetType()) return false;
 
             ESDescriptorBox that = (ESDescriptorBox)o;
 
@@ -57,7 +57,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part14
             return data != null ? data.hashCode() : 0;
         }
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
             ESDescriptor esd = getEsDescriptor();
             if (esd != null)
@@ -76,7 +76,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part14
             ESDescriptor esd = getEsDescriptor();
             if (esd != null)
             {
-                byteBuffer.put((ByteBuffer)((Buffer)esd.serialize()).rewind());
+                byteBuffer.put((ByteBuffer)((Java.Buffer)esd.serialize()).rewind());
             }
             else
             {

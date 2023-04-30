@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using SharpMp4Parser.Support;
+
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
 {
     /**

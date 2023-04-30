@@ -17,6 +17,8 @@
 using System.Collections.Generic;
 using System;
 using System.Text;
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
 {
@@ -81,23 +83,27 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
             esId = IsoTypeReader.readUInt16(bb);
 
             int data = IsoTypeReader.readUInt8(bb);
-            streamDependenceFlag = data >>> 7;
-            URLFlag = (data >>> 6) & 0x1;
-            oCRstreamFlag = (data >>> 5) & 0x1;
+            streamDependenceFlag = (int)((uint)data >> 7);
+            URLFlag = (int)((uint)data >> 6) & 0x1;
+            oCRstreamFlag = (int)((uint)data >> 5) & 0x1;
             streamPriority = data & 0x1f;
 
-            if (streamDependenceFlag == 1) {
+            if (streamDependenceFlag == 1) 
+            {
                 dependsOnEsId = IsoTypeReader.readUInt16(bb);
             }
-            if (URLFlag == 1) {
+            if (URLFlag == 1) 
+            {
                 URLLength = IsoTypeReader.readUInt8(bb);
                 URLString = IsoTypeReader.readString(bb, URLLength);
             }
-            if (oCRstreamFlag == 1) {
+            if (oCRstreamFlag == 1) 
+            {
                 oCREsId = IsoTypeReader.readUInt16(bb);
             }
 
-            while (bb.remaining() > 1) {
+            while (bb.remaining() > 1) 
+            {
                 BaseDescriptor descriptor = ObjectDescriptorFactory.createFrom(-1, bb);
                 if (descriptor is DecoderConfigDescriptor)
                 {
@@ -114,7 +120,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
             }
         }
 
-        public int getContentSize()
+        public override int getContentSize()
         {
             int output = 3;
             if (streamDependenceFlag > 0)
@@ -133,7 +139,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
             output += decoderConfigDescriptor.getSize();
             output += slConfigDescriptor.getSize();
 
-            if (otherDescriptors.size() > 0)
+            if (otherDescriptors.Count > 0)
             {
                 throw new NotImplementedException(" Doesn't handle other descriptors yet");
             }
@@ -141,7 +147,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
             return output;
         }
 
-        public ByteBuffer serialize()
+        public override ByteBuffer serialize()
         {
             byte[] aaa = new byte[getSize()];
             ByteBuffer output = ByteBuffer.wrap(aaa); // Usually is around 30 bytes, so 200 should be enough...
@@ -323,7 +329,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
         public override bool Equals(object o)
         {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (o == null || GetType() != o.GetType()) return false;
 
             ESDescriptor that = (ESDescriptor)o;
 

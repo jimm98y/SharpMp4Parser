@@ -1,4 +1,7 @@
-﻿namespace SharpMp4Parser.Boxes.ISO14496.Part15
+﻿using SharpMp4Parser.Boxes.SampleGrouping;
+using SharpMp4Parser.Java;
+
+namespace SharpMp4Parser.Boxes.ISO14496.Part15
 {
     /**
      * This sample group is used to mark temporal layer access (TSA) samples.
@@ -6,7 +9,7 @@
     public class TemporalSubLayerSampleGroup : GroupEntry
     {
         public const string TYPE = "tsas";
-        int i;
+        //int i;
 
         public override void parse(ByteBuffer byteBuffer)
         {
@@ -25,7 +28,7 @@
         public override bool Equals(object o)
         {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (o == null || GetType() != o.GetType()) return false;
 
 
             return true;

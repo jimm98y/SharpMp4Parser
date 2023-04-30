@@ -14,6 +14,9 @@
  * limitations under the License. 
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
 using System;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
@@ -83,9 +86,9 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
                 // If the second and the fifth 32-bit integers encode 'hdlr' and 'mdta' respectively then the MetaBox is
                 // formatted according to QuickTime File Format.
                 // See https://developer.apple.com/library/content/documentation/QuickTime/QTFF/Metadata/Metadata.html
-                ((Buffer)bb).position(4);
+                ((Java.Buffer)bb).position(4);
                 string second4cc = IsoTypeReader.read4cc(bb);
-                ((Buffer)bb).position(16);
+                ((Java.Buffer)bb).position(16);
                 string fifth4cc = IsoTypeReader.read4cc(bb);
                 if ("hdlr".Equals(second4cc) && "mdta".Equals(fifth4cc))
                 {
@@ -98,7 +101,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             {
                 bb = ByteBuffer.allocate(4);
                 rewindableDataSource.read(bb);
-                parseVersionAndFlags((ByteBuffer)((Buffer)bb).rewind());
+                parseVersionAndFlags((ByteBuffer)((Java.Buffer)bb).rewind());
             }
 
             int bytesUsed = quickTimeFormat ? 0 : 4;
@@ -112,7 +115,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             {
                 ByteBuffer bb = ByteBuffer.allocate(4);
                 writeVersionAndFlags(bb);
-                writableByteChannel.write((ByteBuffer)((Buffer)bb).rewind());
+                writableByteChannel.write((ByteBuffer)((Java.Buffer)bb).rewind());
             }
             writeContainer(writableByteChannel);
         }

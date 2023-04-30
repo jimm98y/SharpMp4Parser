@@ -1,4 +1,8 @@
-﻿namespace SharpMp4Parser.Boxes.ISO14496.Part15
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+
+namespace SharpMp4Parser.Boxes.ISO14496.Part15
 {
     /**
      * Created by sannies on 08.09.2014.
@@ -30,7 +34,6 @@
             IsoTypeWriter.writeUInt32(byteBuffer, tierBaseBitRate);
             IsoTypeWriter.writeUInt32(byteBuffer, tierMaxBitRate);
             IsoTypeWriter.writeUInt32(byteBuffer, tierAvgBitRate);
-
         }
 
         protected override void _parseDetails(ByteBuffer content)

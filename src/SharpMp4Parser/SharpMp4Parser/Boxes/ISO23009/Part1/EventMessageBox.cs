@@ -1,4 +1,8 @@
-﻿namespace SharpMp4Parser.Boxes.ISO23009.Part1
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+
+namespace SharpMp4Parser.Boxes.ISO23009.Part1
 {
     /**
      * The Event Message box ('emsg') provides signalling for generic events related to the media

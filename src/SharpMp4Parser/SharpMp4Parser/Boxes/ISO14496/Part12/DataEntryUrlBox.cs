@@ -15,6 +15,9 @@
  */
 
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
 {
     /**
@@ -30,7 +33,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
         public DataEntryUrlBox() : base(TYPE)
         { }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
         }
@@ -41,7 +44,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             writeVersionAndFlags(byteBuffer);
         }
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
             return 4;
         }

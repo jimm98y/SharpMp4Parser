@@ -1,4 +1,8 @@
-﻿using System.Linq;
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+using System;
+using System.Linq;
 
 namespace SharpMp4Parser.Boxes.ISO23001.Part7
 {
@@ -35,22 +39,22 @@ namespace SharpMp4Parser.Boxes.ISO23001.Part7
             this.defaultIvSize = defaultIvSize;
         }
 
-        public UUID getDefault_KID()
+        public Uuid getDefault_KID()
         {
             ByteBuffer b = ByteBuffer.wrap(default_KID);
             b.order(ByteOrder.BIG_ENDIAN);
-            return new UUID(b.getLong(), b.getLong());
+            return new Uuid(b.getLong(), b.getLong());
         }
 
-        public void setDefault_KID(UUID uuid)
+        public void setDefault_KID(Uuid uuid)
         {
             ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
-            bb.putLong(uuid.getMostSignificantBits());
-            bb.putLong(uuid.getLeastSignificantBits());
+            bb.putLong(uuid.MostSignificantBits);
+            bb.putLong(uuid.LeastSignificantBits);
             this.default_KID = bb.array();
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             defaultAlgorithmId = IsoTypeReader.readUInt24(content);
@@ -75,7 +79,7 @@ namespace SharpMp4Parser.Boxes.ISO23001.Part7
         public override bool Equals(object o)
         {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (o == null || GetType() != o.GetType()) return false;
 
             AbstractTrackEncryptionBox that = (AbstractTrackEncryptionBox)o;
 

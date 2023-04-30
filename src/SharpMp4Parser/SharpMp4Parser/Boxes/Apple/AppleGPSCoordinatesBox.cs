@@ -1,4 +1,8 @@
-﻿namespace SharpMp4Parser.Boxes.Apple
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+
+namespace SharpMp4Parser.Boxes.Apple
 {
     /**
      * Created by marwatk on 02/27/15
@@ -32,7 +36,7 @@
 
         protected override void getContent(ByteBuffer byteBuffer)
         {
-            byteBuffer.putShort((short)coords.length());
+            byteBuffer.putShort((short)coords.Length);
             byteBuffer.putShort((short)lang);
             byteBuffer.put(Utf8.convert(coords));
         }
@@ -46,7 +50,7 @@
             coords = Utf8.convert(bytes);
         }
 
-        public string toString()
+        public override string ToString()
         {
             return "AppleGPSCoordinatesBox[" + coords + "]";
         }

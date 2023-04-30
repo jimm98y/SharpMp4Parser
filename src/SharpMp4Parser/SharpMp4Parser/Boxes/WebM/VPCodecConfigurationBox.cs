@@ -1,4 +1,8 @@
-﻿namespace SharpMp4Parser.Boxes.WebM
+﻿using SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors;
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+
+namespace SharpMp4Parser.Boxes.WebM
 {
     public class VPCodecConfigurationBox : AbstractFullBox
     {

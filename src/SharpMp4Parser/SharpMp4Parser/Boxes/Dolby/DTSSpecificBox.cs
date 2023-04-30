@@ -1,4 +1,9 @@
-﻿namespace SharpMp4Parser.Boxes.Dolby
+﻿using SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors;
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+
+namespace SharpMp4Parser.Boxes.Dolby
 {
     /**
      * <h1>4cc = "{@value #TYPE}"</h1>
@@ -33,7 +38,7 @@
             return 20;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             DTSSamplingFrequency = IsoTypeReader.readUInt32(content);
             maxBitRate = IsoTypeReader.readUInt32(content);

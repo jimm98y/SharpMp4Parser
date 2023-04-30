@@ -1,4 +1,8 @@
-﻿namespace SharpMp4Parser.Boxes.ISO14496.Part15
+﻿using SharpMp4Parser.Boxes.SampleGrouping;
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
+
+namespace SharpMp4Parser.Boxes.ISO14496.Part15
 {
     /**
      * Created by sannies on 08.09.2014.
@@ -176,7 +180,7 @@
         {
 
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (o == null || GetType() != o.GetType()) return false;
 
             TemporalLayerSampleGroup that = (TemporalLayerSampleGroup)o;
 
@@ -201,8 +205,8 @@
             result = 31 * result + tlprofile_space;
             result = 31 * result + (tltier_flag ? 1 : 0);
             result = 31 * result + tlprofile_idc;
-            result = 31 * result + (int)(tlprofile_compatibility_flags ^ (tlprofile_compatibility_flags >>> 32));
-            result = 31 * result + (int)(tlconstraint_indicator_flags ^ (tlconstraint_indicator_flags >>> 32));
+            result = 31 * result + (int)(tlprofile_compatibility_flags ^ (long)((ulong)tlprofile_compatibility_flags >> 32));
+            result = 31 * result + (int)(tlconstraint_indicator_flags ^ (long)((ulong)tlconstraint_indicator_flags >> 32));
             result = 31 * result + tllevel_idc;
             result = 31 * result + tlMaxBitRate;
             result = 31 * result + tlAvgBitRate;

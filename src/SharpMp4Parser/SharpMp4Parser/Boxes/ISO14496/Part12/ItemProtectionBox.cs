@@ -14,7 +14,9 @@
  * limitations under the License. 
  */
 
-using System;
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
 {
@@ -55,9 +57,9 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
         public SchemeInformationBox getItemProtectionScheme()
         {
-            if (!getBoxes(typeof(SchemeInformationBox)).isEmpty())
+            if (getBoxes<SchemeInformationBox>(typeof(SchemeInformationBox)).Count != 0)
             {
-                return getBoxes(typeof(SchemeInformationBox)).get(0);
+                return getBoxes<SchemeInformationBox>(typeof(SchemeInformationBox))[0];
             }
             else
             {
@@ -70,7 +72,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
             ByteBuffer versionFlagNumOfChildBoxes = ByteBuffer.allocate(6);
             dataSource.read(versionFlagNumOfChildBoxes);
-            ((Buffer)versionFlagNumOfChildBoxes).rewind();
+            ((Java.Buffer)versionFlagNumOfChildBoxes).rewind();
             version = IsoTypeReader.readUInt8(versionFlagNumOfChildBoxes);
             flags = IsoTypeReader.readUInt24(versionFlagNumOfChildBoxes);
             // number of child boxes is not required
@@ -83,8 +85,8 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             ByteBuffer versionFlagNumOfChildBoxes = ByteBuffer.allocate(6);
             IsoTypeWriter.writeUInt8(versionFlagNumOfChildBoxes, version);
             IsoTypeWriter.writeUInt24(versionFlagNumOfChildBoxes, flags);
-            IsoTypeWriter.writeUInt16(versionFlagNumOfChildBoxes, getBoxes().size());
-            writableByteChannel.write((ByteBuffer)((Buffer)versionFlagNumOfChildBoxes).rewind());
+            IsoTypeWriter.writeUInt16(versionFlagNumOfChildBoxes, getBoxes().Count);
+            writableByteChannel.write((ByteBuffer)((Java.Buffer)versionFlagNumOfChildBoxes).rewind());
             writeContainer(writableByteChannel);
         }
 

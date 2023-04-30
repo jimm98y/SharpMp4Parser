@@ -1,4 +1,8 @@
-﻿using System.Text;
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+using System;
+using System.Text;
 
 namespace SharpMp4Parser.Boxes.Microsoft
 {
@@ -18,7 +22,7 @@ namespace SharpMp4Parser.Boxes.Microsoft
         public static byte[] USER_TYPE = new byte[]{(byte) 0xd0, (byte) 0x8a, 0x4f, 0x18, 0x10, (byte) 0xf3, 0x4a, (byte) 0x82,
             (byte) 0xb6, (byte) 0xc8, 0x32, (byte) 0xd8, (byte) 0xab, (byte) 0xa1, (byte) 0x83, (byte) 0xd3};
 
-        UUID systemId;
+        Uuid systemId;
 
         ProtectionSpecificHeader protectionSpecificHeader;
 
@@ -38,10 +42,10 @@ namespace SharpMp4Parser.Boxes.Microsoft
         protected override void getContent(ByteBuffer byteBuffer)
         {
             writeVersionAndFlags(byteBuffer);
-            IsoTypeWriter.writeUInt64(byteBuffer, systemId.getMostSignificantBits());
-            IsoTypeWriter.writeUInt64(byteBuffer, systemId.getLeastSignificantBits());
+            IsoTypeWriter.writeUInt64(byteBuffer, systemId.MostSignificantBits);
+            IsoTypeWriter.writeUInt64(byteBuffer, systemId.LeastSignificantBits);
             ByteBuffer data = protectionSpecificHeader.getData();
-            ((Buffer)data).rewind();
+            ((Java.Buffer)data).rewind();
             IsoTypeWriter.writeUInt32(byteBuffer, data.limit());
             byteBuffer.put(data);
         }
@@ -56,19 +60,19 @@ namespace SharpMp4Parser.Boxes.Microsoft
             protectionSpecificHeader = ProtectionSpecificHeader.createFor(systemId, content);
         }
 
-        public UUID getSystemId()
+        public Uuid getSystemId()
         {
             return systemId;
         }
 
-        public void setSystemId(UUID systemId)
+        public void setSystemId(Uuid systemId)
         {
             this.systemId = systemId;
         }
 
         public string getSystemIdString()
         {
-            return systemId.toString();
+            return systemId.ToString();
         }
 
         public ProtectionSpecificHeader getProtectionSpecificHeader()
@@ -90,7 +94,7 @@ namespace SharpMp4Parser.Boxes.Microsoft
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("UuidBasedProtectionSystemSpecificHeaderBox");
-            sb.Append("{systemId=").Append(systemId.toString());
+            sb.Append("{systemId=").Append(systemId.ToString());
             sb.Append(", dataSize=").Append(protectionSpecificHeader.getData().limit());
             sb.Append('}');
             return sb.ToString();

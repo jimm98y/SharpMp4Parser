@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpMp4Parser.Java;
+using System;
 using System.Collections.Generic;
 
 namespace SharpMp4Parser
@@ -20,7 +21,7 @@ namespace SharpMp4Parser
          *
          * @param boxes the new list of children
          */
-        void setBoxes(Type boxes);
+        void setBoxes(List<Box> boxes);
 
         /**
          * Gets all child boxes of the given type. May not return <code>null</code>.
@@ -29,7 +30,7 @@ namespace SharpMp4Parser
          * @param <T>   type of boxes to get
          * @return an array of boxes, empty array in case of no children.
          */
-        List<T> getBoxes<T>(Type clazz);
+        List<T> getBoxes<T>(Type clazz) where T: Box;
 
         /**
          * Gets all child boxes of the given type. May not return <code>null</code>.
@@ -39,7 +40,7 @@ namespace SharpMp4Parser
          * @param <T>       type of boxes to get
          * @return an array of boxes, empty array in case of no children.
          */
-        List<T> getBoxes<T>(Type clazz, bool recursive);
+        List<T> getBoxes<T>(Type clazz, bool recursive) where T: Box;
 
         void writeContainer(WritableByteChannel bb);
     }

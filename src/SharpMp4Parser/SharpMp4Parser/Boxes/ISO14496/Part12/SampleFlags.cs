@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
+
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
 {
     /**
@@ -58,14 +61,14 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
         public void getContent(ByteBuffer os)
         {
             long a = 0;
-            a |= reserved << 28;
-            a |= isLeading << 26;
-            a |= sampleDependsOn << 24;
-            a |= sampleIsDependedOn << 22;
-            a |= sampleHasRedundancy << 20;
-            a |= samplePaddingValue << 17;
-            a |= (sampleIsDifferenceSample ? 1 : 0) << 16;
-            a |= sampleDegradationPriority;
+            a |= (long)(reserved << 28);
+            a |= (long)(isLeading << 26);
+            a |= (long)(sampleDependsOn << 24);
+            a |= (long)(sampleIsDependedOn << 22);
+            a |= (long)(sampleHasRedundancy << 20);
+            a |= (long)(samplePaddingValue << 17);
+            a |= (long)((sampleIsDifferenceSample ? 1 : 0) << 16);
+            a |= (long)(sampleDegradationPriority);
             IsoTypeWriter.writeUInt32(os, a);
         }
 
@@ -233,7 +236,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
         public override bool Equals(object o)
         {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (o == null || GetType() != o.GetType()) return false;
 
             SampleFlags that = (SampleFlags)o;
 

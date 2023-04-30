@@ -14,7 +14,8 @@
  * limitations under the License. 
  */
 
-using System;
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
 using System.IO;
 using System.Linq;
 
@@ -207,7 +208,7 @@ namespace SharpMp4Parser.Boxes.SampleEntry
         {
             ByteBuffer content = ByteBuffer.allocate(28);
             dataSource.read(content);
-            ((Buffer)content).position(6);
+            ((Java.Buffer)content).position(6);
             dataReferenceIndex = IsoTypeReader.readUInt16(content);
 
             // 8 bytes already parsed
@@ -226,9 +227,9 @@ namespace SharpMp4Parser.Boxes.SampleEntry
             packetSize = IsoTypeReader.readUInt16(content);
             //sampleRate = in.readFixedPoint1616();
             sampleRate = IsoTypeReader.readUInt32(content);
-            if (!type.equals("mlpa"))
+            if (!type.Equals("mlpa"))
             {
-                sampleRate = sampleRate >>> 16;
+                sampleRate = (long)((ulong)sampleRate) >> 16;
             }
 
             //more qt stuff - see http://mp4v2.googlecode.com/svn-history/r388/trunk/src/atom_sound.cpp
@@ -237,7 +238,7 @@ namespace SharpMp4Parser.Boxes.SampleEntry
             {
                 ByteBuffer appleStuff = ByteBuffer.allocate(16);
                 dataSource.read(appleStuff);
-                ((Buffer)appleStuff).rewind();
+                ((Java.Buffer)appleStuff).rewind();
                 samplesPerPacket = IsoTypeReader.readUInt32(appleStuff);
                 bytesPerPacket = IsoTypeReader.readUInt32(appleStuff);
                 bytesPerFrame = IsoTypeReader.readUInt32(appleStuff);
@@ -247,7 +248,7 @@ namespace SharpMp4Parser.Boxes.SampleEntry
             {
                 ByteBuffer appleStuff = ByteBuffer.allocate(36);
                 dataSource.read(appleStuff);
-                ((Buffer)appleStuff).rewind();
+                ((Java.Buffer)appleStuff).rewind();
                 samplesPerPacket = IsoTypeReader.readUInt32(appleStuff);
                 bytesPerPacket = IsoTypeReader.readUInt32(appleStuff);
                 bytesPerFrame = IsoTypeReader.readUInt32(appleStuff);
@@ -265,26 +266,27 @@ namespace SharpMp4Parser.Boxes.SampleEntry
                 ByteBuffer owmaSpecifics = ByteBuffer.allocate(CastUtils.l2i(remaining));
                 dataSource.read(owmaSpecifics);
 
-                addBox(new Box()
-                {
+#warning TODO
+                //addBox(new Box()
+                //{
 
-                    //public long getSize()
-                    //{
-                    //    return remaining;
-                    //}
+                //public long getSize()
+                //{
+                //    return remaining;
+                //}
 
-                    //public string getType()
-                    //{
-                    //    return "----";
-                    //}
+                //public string getType()
+                //{
+                //    return "----";
+                //}
 
-                    //public void getBox(WritableByteChannel writableByteChannel)
-                    //{
-                    //    ((Buffer)owmaSpecifics).rewind();
-                    //    writableByteChannel.write(owmaSpecifics);
-                    //}
+                //public void getBox(WritableByteChannel writableByteChannel)
+                //{
+                //    ((Buffer)owmaSpecifics).rewind();
+                //    writableByteChannel.write(owmaSpecifics);
+                //}
 
-                });
+                //});
             }
             else
             {
@@ -301,7 +303,7 @@ namespace SharpMp4Parser.Boxes.SampleEntry
             ByteBuffer byteBuffer = ByteBuffer.allocate(28
                         + (soundVersion == 1 ? 16 : 0)
                         + (soundVersion == 2 ? 36 : 0));
-            ((Buffer)byteBuffer).position(6);
+            ((Java.Buffer)byteBuffer).position(6);
             IsoTypeWriter.writeUInt16(byteBuffer, dataReferenceIndex);
             IsoTypeWriter.writeUInt16(byteBuffer, soundVersion);
             IsoTypeWriter.writeUInt16(byteBuffer, reserved1);
@@ -311,7 +313,7 @@ namespace SharpMp4Parser.Boxes.SampleEntry
             IsoTypeWriter.writeUInt16(byteBuffer, compressionId);
             IsoTypeWriter.writeUInt16(byteBuffer, packetSize);
             //isos.writeFixedPoint1616(getSampleRate());
-            if (type.equals("mlpa"))
+            if (type.Equals("mlpa"))
             {
                 IsoTypeWriter.writeUInt32(byteBuffer, getSampleRate());
             }
@@ -336,7 +338,7 @@ namespace SharpMp4Parser.Boxes.SampleEntry
                 IsoTypeWriter.writeUInt32(byteBuffer, bytesPerSample);
                 byteBuffer.put(soundVersion2Data);
             }
-            writableByteChannel.write((ByteBuffer)((Buffer)byteBuffer).rewind());
+            writableByteChannel.write((ByteBuffer)((Java.Buffer)byteBuffer).rewind());
             writeContainer(writableByteChannel);
         }
 
@@ -370,7 +372,7 @@ namespace SharpMp4Parser.Boxes.SampleEntry
         public override bool Equals(object o)
         {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (o == null || this.GetType() != o.GetType()) return false;
 
             AudioSampleEntry that = (AudioSampleEntry)o;
             ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
@@ -379,7 +381,7 @@ namespace SharpMp4Parser.Boxes.SampleEntry
             {
                 this.getBox(Channels.newChannel(baos1));
             }
-            catch (IOException e)
+            catch (IOException)
             {
                 throw;
             }
@@ -387,7 +389,7 @@ namespace SharpMp4Parser.Boxes.SampleEntry
             {
                 that.getBox(Channels.newChannel(baos2));
             }
-            catch (IOException e)
+            catch (IOException)
             {
                 throw;
             }
@@ -402,7 +404,7 @@ namespace SharpMp4Parser.Boxes.SampleEntry
             {
                 this.getBox(Channels.newChannel(baos1));
             }
-            catch (IOException e)
+            catch (IOException)
             {
                 throw;
             }

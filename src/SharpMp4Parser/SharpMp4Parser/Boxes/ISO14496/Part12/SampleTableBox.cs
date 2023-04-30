@@ -14,24 +14,27 @@
  * limitations under the License. 
  */
 
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
 {
     /**
- * <h1>4cc = "{@value #TYPE}"</h1>
- * The sample table contains all the time and data indexing of the media samples in a track. Using the tables
- * here, it is possible to locate samples in time, determine their type (e.g. I-frame or not), and determine their
- * size, container, and offset into that container.  <br>
- * If the track that contains the Sample Table Box references no data, then the Sample Table Box does not need
- * to contain any sub-boxes (this is not a very useful media track).                                          <br>
- * If the track that the Sample Table Box is contained in does reference data, then the following sub-boxes are
- * required: Sample Description, Sample Size, Sample To Chunk, and Chunk Offset. Further, the Sample
- * Description Box shall contain at least one entry. A Sample Description Box is required because it contains the
- * data reference index field which indicates which Data Reference Box to use to retrieve the media samples.
- * Without the Sample Description, it is not possible to determine where the media samples are stored. The Sync
- * Sample Box is optional. If the Sync Sample Box is not present, all samples are sync samples.<br>
- * Annex A provides a narrative description of random access using the structures defined in the Sample Table
- * Box.
- */
+     * <h1>4cc = "{@value #TYPE}"</h1>
+     * The sample table contains all the time and data indexing of the media samples in a track. Using the tables
+     * here, it is possible to locate samples in time, determine their type (e.g. I-frame or not), and determine their
+     * size, container, and offset into that container.  <br>
+     * If the track that contains the Sample Table Box references no data, then the Sample Table Box does not need
+     * to contain any sub-boxes (this is not a very useful media track).                                          <br>
+     * If the track that the Sample Table Box is contained in does reference data, then the following sub-boxes are
+     * required: Sample Description, Sample Size, Sample To Chunk, and Chunk Offset. Further, the Sample
+     * Description Box shall contain at least one entry. A Sample Description Box is required because it contains the
+     * data reference index field which indicates which Data Reference Box to use to retrieve the media samples.
+     * Without the Sample Description, it is not possible to determine where the media samples are stored. The Sync
+     * Sample Box is optional. If the Sync Sample Box is not present, all samples are sync samples.<br>
+     * Annex A provides a narrative description of random access using the structures defined in the Sample Table
+     * Box.
+     */
     public class SampleTableBox : AbstractContainerBox
     {
         public const string TYPE = "stbl";
@@ -42,17 +45,17 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
         public SampleDescriptionBox getSampleDescriptionBox()
         {
-            return Path.getPath(this, "stsd");
+            return Path.getPath<SampleDescriptionBox>(this, "stsd");
         }
 
         public SampleSizeBox getSampleSizeBox()
         {
-            return Path.getPath(this, "stsz");
+            return Path.getPath<SampleSizeBox>(this, "stsz");
         }
 
         public SampleToChunkBox getSampleToChunkBox()
         {
-            return Path.getPath(this, "stsc");
+            return Path.getPath<SampleToChunkBox>(this, "stsc");
         }
 
         public ChunkOffsetBox getChunkOffsetBox()
@@ -69,22 +72,22 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
         public TimeToSampleBox getTimeToSampleBox()
         {
-            return Path.getPath(this, "stts");
+            return Path.getPath<TimeToSampleBox>(this, "stts");
         }
 
         public SyncSampleBox getSyncSampleBox()
         {
-            return Path.getPath(this, "stss");
+            return Path.getPath<SyncSampleBox>(this, "stss");
         }
 
         public CompositionTimeToSample getCompositionTimeToSample()
         {
-            return Path.getPath(this, "ctts");
+            return Path.getPath<CompositionTimeToSample>(this, "ctts");
         }
 
         public SampleDependencyTypeBox getSampleDependencyTypeBox()
         {
-            return Path.getPath(this, "sdtp");
+            return Path.getPath<SampleDependencyTypeBox>(this, "sdtp");
         }
     }
 }

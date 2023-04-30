@@ -1,4 +1,8 @@
-﻿using System.Linq;
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
+using System;
+using System.Linq;
+using System.Numerics;
 
 namespace SharpMp4Parser.Boxes.ISO23001.Part7
 {
@@ -97,7 +101,7 @@ namespace SharpMp4Parser.Boxes.ISO23001.Part7
             {
                 return true;
             }
-            if (o == null || getClass() != o.getClass())
+            if (o == null || GetType() != o.GetType())
             {
                 return false;
             }
@@ -131,280 +135,18 @@ namespace SharpMp4Parser.Boxes.ISO23001.Part7
                     '}';
         }
 
-        public interface Pair
+        public class Pair
         {
-            int clear();
+            protected UInt16 clear;
+            protected UInt32 encrypted;
 
-            long encrypted();
-        }
+            public UInt16 Clear { get { return clear; } set { clear = value; } }
+            public UInt32 Encrypted { get { return encrypted; } set { encrypted = value; } }
 
-        private class ByteBytePair : AbstractPair
-        {
-            private byte clear;
-            private byte encrypted;
-
-            public ByteBytePair(int clear, long encrypted)
+            public override int GetHashCode()
             {
-                this.clear = (byte)clear;
-                this.encrypted = (byte)encrypted;
+                return base.GetHashCode();
             }
-
-            public int clear()
-            {
-                return clear;
-            }
-
-            public long encrypted()
-            {
-                return encrypted;
-            }
-
-        }
-
-        private class ByteShortPair : AbstractPair
-        {
-            private byte clear;
-            private short encrypted;
-
-            public ByteShortPair(int clear, long encrypted)
-            {
-                this.clear = (byte)clear;
-                this.encrypted = (short)encrypted;
-            }
-
-            public int clear()
-            {
-                return clear;
-            }
-
-            public long encrypted()
-            {
-                return encrypted;
-            }
-        }
-
-        private class ByteIntPair : AbstractPair
-        {
-            private byte clear;
-            private int encrypted;
-
-            public ByteIntPair(int clear, long encrypted)
-            {
-                this.clear = (byte)clear;
-                this.encrypted = (int)encrypted;
-            }
-
-            public int clear()
-            {
-                return clear;
-            }
-
-            public long encrypted()
-            {
-                return encrypted;
-            }
-        }
-
-        private class ByteLongPair : AbstractPair
-        {
-            private byte clear;
-            private long encrypted;
-
-            public ByteLongPair(int clear, long encrypted)
-            {
-                this.clear = (byte)clear;
-                this.encrypted = encrypted;
-            }
-
-            public int clear()
-            {
-                return clear;
-            }
-
-            public long encrypted()
-            {
-                return encrypted;
-            }
-        }
-
-        private class ShortBytePair : AbstractPair
-        {
-            private short clear;
-            private byte encrypted;
-
-            public ShortBytePair(int clear, long encrypted)
-            {
-                this.clear = (short)clear;
-                this.encrypted = (byte)encrypted;
-            }
-
-            public int clear()
-            {
-                return clear;
-            }
-
-            public long encrypted()
-            {
-                return encrypted;
-            }
-        }
-
-        private class ShortShortPair : AbstractPair
-        {
-            private short clear;
-            private short encrypted;
-
-            public ShortShortPair(int clear, long encrypted)
-            {
-                this.clear = (short)clear;
-                this.encrypted = (short)encrypted;
-            }
-
-            public int clear()
-            {
-                return clear;
-            }
-
-            public long encrypted()
-            {
-                return encrypted;
-            }
-        }
-
-        private class ShortIntPair : AbstractPair
-        {
-            private short clear;
-            private int encrypted;
-
-            public ShortIntPair(int clear, long encrypted)
-            {
-                this.clear = (short)clear;
-                this.encrypted = (int)encrypted;
-            }
-
-            public int clear()
-            {
-                return clear;
-            }
-
-            public long encrypted()
-            {
-                return encrypted;
-            }
-        }
-
-        private class ShortLongPair : AbstractPair
-        {
-            private short clear;
-            private long encrypted;
-
-            public ShortLongPair(int clear, long encrypted)
-            {
-                this.clear = (short)clear;
-                this.encrypted = encrypted;
-            }
-
-            public int clear()
-            {
-                return clear;
-            }
-
-            public long encrypted()
-            {
-                return encrypted;
-            }
-        }
-
-        private class IntBytePair : AbstractPair
-        {
-            private int clear;
-            private byte encrypted;
-
-            public IntBytePair(int clear, long encrypted)
-            {
-                this.clear = clear;
-                this.encrypted = (byte)encrypted;
-            }
-
-            public int clear()
-            {
-                return clear;
-            }
-
-            public long encrypted()
-            {
-                return encrypted;
-            }
-        }
-
-        private class IntShortPair : AbstractPair
-        {
-            private int clear;
-            private short encrypted;
-
-            public IntShortPair(int clear, long encrypted)
-            {
-                this.clear = clear;
-                this.encrypted = (short)encrypted;
-            }
-
-            public int clear()
-            {
-                return clear;
-            }
-
-            public long encrypted()
-            {
-                return encrypted;
-            }
-        }
-
-        private class IntIntPair : AbstractPair
-        {
-            private int clear;
-            private int encrypted;
-
-            public IntIntPair(int clear, long encrypted)
-            {
-                this.clear = clear;
-                this.encrypted = (int)encrypted;
-            }
-
-            public int clear()
-            {
-                return clear;
-            }
-
-            public long encrypted()
-            {
-                return encrypted;
-            }
-        }
-
-        private class IntLongPair : AbstractPair
-        {
-            private int clear;
-            private long encrypted;
-
-            public IntLongPair(int clear, long encrypted)
-            {
-                this.clear = clear;
-                this.encrypted = encrypted;
-            }
-
-            public int clear()
-            {
-                return clear;
-            }
-
-            public long encrypted()
-            {
-                return encrypted;
-            }
-        }
-
-        private abstract class AbstractPair : Pair
-        {
 
             public override bool Equals(object o)
             {
@@ -412,18 +154,18 @@ namespace SharpMp4Parser.Boxes.ISO23001.Part7
                 {
                     return true;
                 }
-                if (o == null || getClass() != o.getClass())
+                if (o == null || GetType() != o.GetType())
                 {
                     return false;
                 }
 
                 Pair pair = (Pair)o;
 
-                if (clear() != pair.clear())
+                if (Clear != pair.Clear)
                 {
                     return false;
                 }
-                if (encrypted() != pair.encrypted())
+                if (Encrypted != pair.Encrypted)
                 {
                     return false;
                 }
@@ -433,8 +175,156 @@ namespace SharpMp4Parser.Boxes.ISO23001.Part7
 
             public override string ToString()
             {
-                return "P(" + clear() + "|" + encrypted() + ")";
+                return "P(" + Clear + "|" + Encrypted + ")";
             }
         }
+
+        private class ByteBytePair : AbstractPair
+        {
+            public new byte Clear { get { return (byte)clear; } set { clear = (UInt16)value; } }
+            public new byte Encrypted { get { return (byte)encrypted; } set { encrypted = (UInt32)value; } }
+
+            public ByteBytePair(int clear, long encrypted)
+            {
+                this.clear = (byte)clear;
+                this.encrypted = (byte)encrypted;
+            }
+        }
+
+        private class ByteShortPair : AbstractPair
+        {
+            public new byte Clear { get { return (byte)clear; } set { clear = (UInt16)value; } }
+            public new short Encrypted { get { return (short)encrypted; } set { encrypted = (UInt32)value; } }
+
+            public ByteShortPair(int clear, long encrypted)
+            {
+                this.clear = (UInt16)clear;
+                this.encrypted = (UInt32)encrypted;
+            }
+        }
+
+        private class ByteIntPair : AbstractPair
+        {
+            public new byte Clear { get { return (byte)clear; } set { clear = (UInt16)value; } }
+            public new int Encrypted { get { return (int)encrypted; } set { encrypted = (UInt32)value; } }
+
+            public ByteIntPair(int clear, long encrypted)
+            {
+                this.clear = (UInt16)clear;
+                this.encrypted = (UInt32)encrypted;
+            }
+        }
+
+        private class ByteLongPair : AbstractPair
+        {
+            public new byte Clear { get { return (byte)clear; } set { clear = (UInt16)value; } }
+            public new long Encrypted { get { return (long)encrypted; } set { encrypted = (UInt32)value; } }
+
+            public ByteLongPair(int clear, long encrypted)
+            {
+                this.clear = (UInt16)clear;
+                this.encrypted = (UInt32)encrypted;
+            }
+        }
+
+        private class ShortBytePair : AbstractPair
+        {
+            public new short Clear { get { return (short)clear; } set { clear = (UInt16)value; } }
+            public new byte Encrypted { get { return (byte)encrypted; } set { encrypted = (UInt32)value; } }
+
+            public ShortBytePair(int clear, long encrypted)
+            {
+                this.clear = (UInt16)clear;
+                this.encrypted = (UInt32)encrypted;
+            }
+        }
+
+        private class ShortShortPair : AbstractPair
+        {
+            public new short Clear { get { return (short)clear; } set { clear = (UInt16)value; } }
+            public new short Encrypted { get { return (short)encrypted; } set { encrypted = (UInt32)value; } }
+
+            public ShortShortPair(int clear, long encrypted)
+            {
+                this.clear = (UInt16)clear;
+                this.encrypted = (UInt32)encrypted;
+            }
+        }
+
+        private class ShortIntPair : AbstractPair
+        {
+            public new short Clear { get { return (short)clear; } set { clear = (UInt16)value; } }
+            public new int Encrypted { get { return (int)encrypted; } set { encrypted = (UInt32)value; } }
+
+            public ShortIntPair(int clear, long encrypted)
+            {
+                this.clear = (UInt16)clear;
+                this.encrypted = (UInt32)encrypted;
+            }
+        }
+
+        private class ShortLongPair : AbstractPair
+        {
+            public new short Clear { get { return (short)clear; } set { clear = (UInt16)value; } }
+            public new long Encrypted { get { return (long)encrypted; } set { encrypted = (UInt32)value; } }
+
+            public ShortLongPair(int clear, long encrypted)
+            {
+                this.clear = (UInt16)clear;
+                this.encrypted = (UInt32)encrypted;
+            }
+        }
+
+        private class IntBytePair : AbstractPair
+        {
+            public new int Clear { get { return (int)clear; } set { clear = (UInt16)value; } }
+            public new byte Encrypted { get { return (byte)encrypted; } set { encrypted = (UInt32)value; } }
+
+            public IntBytePair(int clear, long encrypted)
+            {
+                this.clear = (UInt16)clear;
+                this.encrypted = (UInt32)encrypted;
+            }
+        }
+
+        private class IntShortPair : AbstractPair
+        {
+            public new int Clear { get { return (int)clear; } set { clear = (UInt16)value; } }
+            public new short Encrypted { get { return (short)encrypted; } set { encrypted = (UInt32)value; } }
+
+            public IntShortPair(int clear, long encrypted)
+            {
+                this.clear = (UInt16)clear;
+                this.encrypted = (UInt32)encrypted;
+            }
+        }
+
+        private class IntIntPair : AbstractPair
+        {
+            public new int Clear { get { return (int)clear; } set { clear = (UInt16)value; } }
+            public new int Encrypted { get { return (int)encrypted; } set { encrypted = (UInt32)value; } }
+
+            public IntIntPair(int clear, long encrypted)
+            {
+                this.clear = (UInt16)clear;
+                this.encrypted = (UInt32)encrypted;
+            }
+        }
+
+        private class IntLongPair : AbstractPair
+        {
+            public new int Clear { get { return (int)clear; } set { clear = (UInt16)value; } }
+            public new long Encrypted { get { return (long)encrypted; } set { encrypted = (UInt32)value; } }
+
+
+            public IntLongPair(int clear, long encrypted)
+            {
+                this.clear = (UInt16)clear;
+                this.encrypted = (UInt32)encrypted;
+            }
+        }
+
+        private abstract class AbstractPair : Pair
+        { }
     }
 }

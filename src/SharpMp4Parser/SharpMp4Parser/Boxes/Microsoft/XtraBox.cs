@@ -14,7 +14,10 @@
  * limitations under the License. 
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
 using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace SharpMp4Parser.Boxes.Microsoft
@@ -46,9 +49,9 @@ namespace SharpMp4Parser.Boxes.Microsoft
         public const int MP4_XTRA_BT_FILETIME = 21;
         public const int MP4_XTRA_BT_GUID = 72;
         //http://stackoverflow.com/questions/5398557/java-library-for-dealing-with-win32-filetime
-        private const long FILETIME_EPOCH_DIFF = 11644473600000L;
+        private const long FILETIME_EPOCH_DIFF = 11644473600000;
         private const long FILETIME_ONE_MILLISECOND = 10 * 1000;
-        Vector<XtraTag> tags = new Vector<XtraTag>();
+        List<XtraTag> tags = new List<XtraTag>();
         ByteBuffer data;
         private bool successfulParse = false;
 
@@ -72,9 +75,9 @@ namespace SharpMp4Parser.Boxes.Microsoft
         {
             try
             {
-                dest.Add(s.getBytes("US-ASCII"));
+                dest.put(Encoding.ASCII.GetBytes(s));
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw;
             }
@@ -86,9 +89,9 @@ namespace SharpMp4Parser.Boxes.Microsoft
             content.get(s);
             try
             {
-                return new string(s, "US-ASCII");
+                return Encoding.ASCII.GetString(s);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw;
             }
@@ -107,9 +110,10 @@ namespace SharpMp4Parser.Boxes.Microsoft
 
         private static void writeUtf16String(ByteBuffer dest, string s)
         {
-            char[] ar = s.toCharArray();
+            char[] ar = s.ToCharArray();
             for (int i = 0; i < ar.Length; i++)
-            { //Probably not the best way to do this but it preserves the byte order
+            {
+                //Probably not the best way to do this but it preserves the byte order
                 dest.putChar(ar[i]);
             }
             dest.putChar((char)0); //Terminating null
@@ -130,9 +134,9 @@ namespace SharpMp4Parser.Boxes.Microsoft
         private int detailSize()
         {
             int size = 0;
-            for (int i = 0; i < tags.size(); i++)
+            for (int i = 0; i < tags.Count; i++)
             {
-                size += tags.elementAt(i).getContentSize();
+                size += tags[i].getContentSize();
             }
             return size;
 
@@ -140,7 +144,7 @@ namespace SharpMp4Parser.Boxes.Microsoft
 
         public override string ToString()
         {
-            if (!this.isParsed())
+            if (!this.IsParsed())
             {
                 this.parseDetails();
             }
@@ -152,7 +156,7 @@ namespace SharpMp4Parser.Boxes.Microsoft
                 {
                     b.Append(tag.tagName);
                     b.Append("=");
-                    b.Append(value.toString());
+                    b.Append(value.ToString());
                     b.Append(";");
                 }
             }
@@ -160,19 +164,19 @@ namespace SharpMp4Parser.Boxes.Microsoft
             return b.ToString();
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             int boxSize = content.remaining();
             data = content.slice(); //Keep this in case we fail to parse
             successfulParse = false;
             try
             {
-                tags.clear();
+                tags.Clear();
                 while (content.remaining() > 0)
                 {
                     XtraTag tag = new XtraTag();
                     tag.parse(content);
-                    tags.addElement(tag);
+                    tags.Add(tag);
                 }
                 int calcSize = detailSize();
                 if (boxSize != calcSize)
@@ -181,11 +185,11 @@ namespace SharpMp4Parser.Boxes.Microsoft
                 }
                 successfulParse = true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 successfulParse = false;
                 //LOG.error("Malformed Xtra Tag detected: {}", e.ToString());
-                ((Buffer)content).position(content.position() + content.remaining());
+                ((Java.Buffer)content).position(content.position() + content.remaining());
             }
             finally
             {
@@ -197,14 +201,14 @@ namespace SharpMp4Parser.Boxes.Microsoft
         {
             if (successfulParse)
             {
-                for (int i = 0; i < tags.size(); i++)
+                for (int i = 0; i < tags.Count; i++)
                 {
-                    tags.elementAt(i).getContent(byteBuffer);
+                    tags[i].getContent(byteBuffer);
                 }
             }
             else
             {
-                ((Buffer)data).rewind();
+                ((Java.Buffer)data).rewind();
                 byteBuffer.put(data);
             }
         }
@@ -216,10 +220,10 @@ namespace SharpMp4Parser.Boxes.Microsoft
          */
         public string[] getAllTagNames()
         {
-            string[] names = new string[tags.size()];
-            for (int i = 0; i < tags.size(); i++)
+            string[] names = new string[tags.Count];
+            for (int i = 0; i < tags.Count; i++)
             {
-                XtraTag tag = tags.elementAt(i);
+                XtraTag tag = tags[i];
                 names[i] = tag.tagName;
             }
             return names;
@@ -293,10 +297,10 @@ namespace SharpMp4Parser.Boxes.Microsoft
             object[] values;
             if (tag != null)
             {
-                values = new object[tag.values.size()];
-                for (int i = 0; i < tag.values.size(); i++)
+                values = new object[tag.values.Count];
+                for (int i = 0; i < tag.values.Count; i++)
                 {
-                    values[i] = tag.values.elementAt(i).getValueAsObject();
+                    values[i] = tag.values[i].getValueAsObject();
                 }
             }
             else
@@ -316,7 +320,7 @@ namespace SharpMp4Parser.Boxes.Microsoft
             XtraTag tag = getTagByName(name);
             if (tag != null)
             {
-                tags.remove(tag);
+                tags.Remove(tag);
             }
         }
 
@@ -330,11 +334,11 @@ namespace SharpMp4Parser.Boxes.Microsoft
         {
             removeTag(name);
             XtraTag tag = new XtraTag(name);
-            for (int i = 0; i < values.length; i++)
+            for (int i = 0; i < values.Length; i++)
             {
-                tag.values.addElement(new XtraValue(values[i]));
+                tag.values.Add(new XtraValue(values[i]));
             }
-            tags.addElement(tag);
+            tags.Add(tag);
         }
 
         /**
@@ -358,8 +362,8 @@ namespace SharpMp4Parser.Boxes.Microsoft
         {
             removeTag(name);
             XtraTag tag = new XtraTag(name);
-            tag.values.addElement(new XtraValue(date));
-            tags.addElement(tag);
+            tag.values.Add(new XtraValue(date));
+            tags.Add(tag);
         }
 
         /**
@@ -372,14 +376,15 @@ namespace SharpMp4Parser.Boxes.Microsoft
         {
             removeTag(name);
             XtraTag tag = new XtraTag(name);
-            tag.values.addElement(new XtraValue(value));
-            tags.addElement(tag);
+            tag.values.Add(new XtraValue(value));
+            tags.Add(tag);
         }
 
         private XtraTag getTagByName(string name)
         {
-            foreach (XtraTag tag in tags) {
-                if (tag.tagName.equals(name))
+            foreach (XtraTag tag in tags)
+            {
+                if (tag.tagName.Equals(name))
                 {
                     return tag;
                 }
@@ -391,20 +396,20 @@ namespace SharpMp4Parser.Boxes.Microsoft
         {
             private int inputSize; //For debugging only
 
-            private string tagName;
-            private Vector<XtraValue> values;
+            public string tagName;
+            public List<XtraValue> values;
 
-            private XtraTag()
+            public XtraTag()
             {
-                values = new Vector<XtraValue>();
+                values = new List<XtraValue>();
             }
 
-            private XtraTag(string name) : this()
+            public XtraTag(string name) : this()
             {
                 tagName = name;
             }
 
-            private void parse(ByteBuffer content)
+            public void parse(ByteBuffer content)
             {
                 inputSize = content.getInt();
                 int tagLength = content.getInt();
@@ -415,7 +420,7 @@ namespace SharpMp4Parser.Boxes.Microsoft
                 {
                     XtraValue val = new XtraValue();
                     val.parse(content);
-                    values.addElement(val);
+                    values.Add(val);
                 }
                 if (inputSize != getContentSize())
                 {
@@ -423,29 +428,29 @@ namespace SharpMp4Parser.Boxes.Microsoft
                 }
             }
 
-            private void getContent(ByteBuffer b)
+            public void getContent(ByteBuffer b)
             {
                 b.putInt(getContentSize());
-                b.putInt(tagName.length());
+                b.putInt(tagName.Length);
                 writeAsciiString(b, tagName);
-                b.putInt(values.size());
-                for (int i = 0; i < values.size(); i++)
+                b.putInt(values.Count);
+                for (int i = 0; i < values.Count; i++)
                 {
-                    values.elementAt(i).getContent(b);
+                    values[i].getContent(b);
                 }
             }
 
-            private int getContentSize()
+            public int getContentSize()
             {
                 //Size: 4
                 //TagLength: 4
                 //Tag: tagLength;
                 //Count: 4
                 //Values: count * values.getContentSize();
-                int size = 12 + tagName.length();
-                for (int i = 0; i < values.size(); i++)
+                int size = 12 + tagName.Length;
+                for (int i = 0; i < values.Count; i++)
                 {
-                    size += values.elementAt(i).getContentSize();
+                    size += values[i].getContentSize();
                 }
                 return size;
             }
@@ -457,12 +462,12 @@ namespace SharpMp4Parser.Boxes.Microsoft
                 b.Append(" [");
                 b.Append(inputSize);
                 b.Append("/");
-                b.Append(values.size());
+                b.Append(values.Count);
                 b.Append("]:\n");
-                for (int i = 0; i < values.size(); i++)
+                for (int i = 0; i < values.Count; i++)
                 {
                     b.Append("  ");
-                    b.Append(values.elementAt(i).toString());
+                    b.Append(values[i].ToString());
                     b.Append("\n");
                 }
                 return b.ToString();
@@ -479,28 +484,28 @@ namespace SharpMp4Parser.Boxes.Microsoft
             public byte[] nonParsedValue;
             public DateTime fileTimeValue;
 
-            private XtraValue()
+            public XtraValue()
             { }
 
-            private XtraValue(string val)
+            public XtraValue(string val)
             {
                 type = MP4_XTRA_BT_UNICODE;
                 stringValue = val;
             }
 
-            private XtraValue(long longVal)
+            public XtraValue(long longVal)
             {
                 type = MP4_XTRA_BT_INT64;
                 longValue = longVal;
             }
 
-            private XtraValue(DateTime time)
+            public XtraValue(DateTime time)
             {
                 type = MP4_XTRA_BT_FILETIME;
                 fileTimeValue = time;
             }
 
-            private object getValueAsObject()
+            public object getValueAsObject()
             {
                 switch (type)
                 {
@@ -516,7 +521,7 @@ namespace SharpMp4Parser.Boxes.Microsoft
                 }
             }
 
-            private void parse(ByteBuffer content)
+            public void parse(ByteBuffer content)
             {
                 int length = content.getInt() - 6; //length + type are included in length
                 type = content.getShort();
@@ -543,7 +548,7 @@ namespace SharpMp4Parser.Boxes.Microsoft
 
             }
 
-            private void getContent(ByteBuffer b)
+            public void getContent(ByteBuffer b)
             {
                 try
                 {
@@ -574,7 +579,7 @@ namespace SharpMp4Parser.Boxes.Microsoft
                 }
             }
 
-            private int getContentSize()
+            public int getContentSize()
             {
                 //Length: 4 bytes
                 //Type: 2 bytes
@@ -584,7 +589,7 @@ namespace SharpMp4Parser.Boxes.Microsoft
                 switch (type)
                 {
                     case MP4_XTRA_BT_UNICODE:
-                        size += (stringValue.length() * 2) + 2; //Plus 2 for trailing null
+                        size += (stringValue.Length * 2) + 2; //Plus 2 for trailing null
                         break;
                     case MP4_XTRA_BT_INT64:
                     case MP4_XTRA_BT_FILETIME:

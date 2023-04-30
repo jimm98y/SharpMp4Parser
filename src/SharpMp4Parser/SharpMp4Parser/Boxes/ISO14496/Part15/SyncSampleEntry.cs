@@ -1,4 +1,8 @@
-﻿namespace SharpMp4Parser.Boxes.ISO14496.Part15
+﻿using SharpMp4Parser.Boxes.SampleGrouping;
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
+
+namespace SharpMp4Parser.Boxes.ISO14496.Part15
 {
     /**
      * A sync sample sample group entry identifies samples containing a sync sample of a specific type.
@@ -27,7 +31,7 @@
         public override bool Equals(object o)
         {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (o == null || GetType() != o.GetType()) return false;
 
             SyncSampleEntry that = (SyncSampleEntry)o;
 

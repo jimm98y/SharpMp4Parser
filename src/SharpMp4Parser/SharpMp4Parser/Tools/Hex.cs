@@ -17,6 +17,7 @@
 
 using System.Text;
 using System;
+using SharpMp4Parser.Java;
 
 namespace SharpMp4Parser.Tools
 {
@@ -25,7 +26,7 @@ namespace SharpMp4Parser.Tools
      */
     public class Hex
     {
-        private readonly char[] DIGITS = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+        private static readonly char[] DIGITS = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
         public static string encodeHex(byte[] data)
         {
@@ -39,7 +40,7 @@ namespace SharpMp4Parser.Tools
             while (byteBuffer.remaining() > 0)
             {
                 byte b = byteBuffer.get();
-                sb.Append(DIGITS[(0xF0 & b) >>> 4]);
+                sb.Append(DIGITS[(byte)(0xF0 & b) >> 4]);
                 sb.Append(DIGITS[0x0F & b]);
             }
             return sb.ToString();
@@ -57,7 +58,7 @@ namespace SharpMp4Parser.Tools
                     output[j++] = '-';
                 }
 
-                output[j++] = DIGITS[(0xF0 & data[i]) >>> 4];
+                output[j++] = DIGITS[(byte)(0xF0 & data[i]) >> 4];
                 output[j++] = DIGITS[0x0F & data[i]];
             }
             return new string(output);

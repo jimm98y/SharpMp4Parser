@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -285,13 +287,13 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
         {
             parsed = true;
             ByteBuffer configBytes = bb.slice();
-            ((Buffer)configBytes).limit(sizeOfInstance);
-            ((Buffer)bb).position(bb.position() + sizeOfInstance);
+            ((Java.Buffer)configBytes).limit(sizeOfInstance);
+            ((Java.Buffer)bb).position(bb.position() + sizeOfInstance);
 
             //copy original bytes to internal array for constructing codec config strings (todo until writing of the config is supported)
             this.configBytes = new byte[sizeOfInstance];
             configBytes.get(this.configBytes);
-            ((Buffer)configBytes).rewind();
+            ((Java.Buffer)configBytes).rewind();
 
             BitReaderBuffer bitReaderBuffer = new BitReaderBuffer(configBytes);
             originalAudioObjectType = audioObjectType = getAudioObjectType(bitReaderBuffer);
@@ -532,7 +534,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
             return n;
         }
 
-        protected int getContentSize()
+        public override int getContentSize()
         {
             int sizeInBits = 5;
             if (originalAudioObjectType > 30)
@@ -614,13 +616,13 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
             return (int)Math.Ceiling(((double)sizeInBits) / 8);
         }
 
-        public ByteBuffer serialize()
+        public override ByteBuffer serialize()
         {
             ByteBuffer output = ByteBuffer.allocate(getSize());
             IsoTypeWriter.writeUInt8(output, tag);
             writeSize(output, getContentSize());
             output.put(serializeConfigBytes());
-            return (ByteBuffer)((Buffer)output).rewind();
+            return (ByteBuffer)((Java.Buffer)output).rewind();
         }
 
         protected ByteBuffer serializeConfigBytes()
@@ -819,7 +821,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
                 }
             }
 
-            return (ByteBuffer)((Buffer)output).rewind();
+            return (ByteBuffer)((Java.Buffer)output).rewind();
         }
 
         private static void writeAudioObjectType(int audioObjectType, BitWriterBuffer bitWriterBuffer)
@@ -1086,16 +1088,16 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
             StringBuilder sb = new StringBuilder();
             sb.Append("AudioSpecificConfig");
             sb.Append("{configBytes=").Append(Hex.encodeHex(configBytes));
-            sb.Append(", audioObjectType=").Append(audioObjectType).Append(" (").Append(audioObjectTypeMap.get(audioObjectType)).Append(")");
-            sb.Append(", samplingFrequencyIndex=").Append(samplingFrequencyIndex).Append(" (").Append(samplingFrequencyIndexMap.get(samplingFrequencyIndex)).Append(")");
+            sb.Append(", audioObjectType=").Append(audioObjectType).Append(" (").Append(audioObjectTypeMap[audioObjectType]).Append(")");
+            sb.Append(", samplingFrequencyIndex=").Append(samplingFrequencyIndex).Append(" (").Append(samplingFrequencyIndexMap[samplingFrequencyIndex]).Append(")");
             sb.Append(", samplingFrequency=").Append(samplingFrequency);
             sb.Append(", channelConfiguration=").Append(channelConfiguration);
             if (extensionAudioObjectType > 0)
             {
-                sb.Append(", extensionAudioObjectType=").Append(extensionAudioObjectType).Append(" (").Append(audioObjectTypeMap.get(extensionAudioObjectType)).Append(")");
+                sb.Append(", extensionAudioObjectType=").Append(extensionAudioObjectType).Append(" (").Append(audioObjectTypeMap[extensionAudioObjectType]).Append(")");
                 sb.Append(", sbrPresentFlag=").Append(sbrPresentFlag);
                 sb.Append(", psPresentFlag=").Append(psPresentFlag);
-                sb.Append(", extensionSamplingFrequencyIndex=").Append(extensionSamplingFrequencyIndex).Append(" (").Append(samplingFrequencyIndexMap.get(extensionSamplingFrequencyIndex)).Append(")");
+                sb.Append(", extensionSamplingFrequencyIndex=").Append(extensionSamplingFrequencyIndex).Append(" (").Append(samplingFrequencyIndexMap[extensionSamplingFrequencyIndex]).Append(")");
                 sb.Append(", extensionSamplingFrequency=").Append(extensionSamplingFrequency);
                 sb.Append(", extensionChannelConfiguration=").Append(extensionChannelConfiguration);
             }
@@ -1141,7 +1143,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
 
         public int getSamplingFrequency()
         {
-            return samplingFrequencyIndex == 0xf ? samplingFrequency : samplingFrequencyIndexMap.get(samplingFrequencyIndex);
+            return samplingFrequencyIndex == 0xf ? samplingFrequency : samplingFrequencyIndexMap[samplingFrequencyIndex];
         }
 
         public void setSamplingFrequency(int samplingFrequency)
@@ -1151,7 +1153,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
 
         public int getExtensionSamplingFrequency()
         {
-            return extensionSamplingFrequencyIndex == 0xf ? extensionSamplingFrequency : samplingFrequencyIndexMap.get(extensionSamplingFrequencyIndex);
+            return extensionSamplingFrequencyIndex == 0xf ? extensionSamplingFrequency : samplingFrequencyIndexMap[extensionSamplingFrequencyIndex];
         }
 
         public int getChannelConfiguration()
@@ -1170,7 +1172,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
             {
                 return true;
             }
-            if (o == null || getClass() != o.getClass())
+            if (o == null || GetType() != o.GetType())
             {
                 return false;
             }

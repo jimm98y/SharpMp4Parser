@@ -1,4 +1,7 @@
-﻿namespace SharpMp4Parser.Boxes.Microsoft.ContentProtection
+﻿using SharpMp4Parser.Java;
+using System;
+
+namespace SharpMp4Parser.Boxes.Microsoft.ContentProtection
 {
     /**
      * Specifications &gt; Microsoft PlayReady Format Specification &gt; 2. PlayReady Media Format &gt; 2.7. ASF GUIDs
@@ -22,16 +25,16 @@
      */
     public class GenericHeader : ProtectionSpecificHeader
     {
-        public static UUID PROTECTION_SYSTEM_ID = UUID.fromString("00000000-0000-0000-0000-000000000000");
+        public readonly static Uuid PROTECTION_SYSTEM_ID = Uuid.Parse("00000000-0000-0000-0000-000000000000");
 
         static GenericHeader()
         {
-            uuidRegistry.put(PROTECTION_SYSTEM_ID, typeof(GenericHeader));
+            uuidRegistry.Add(PROTECTION_SYSTEM_ID, typeof(GenericHeader));
         }
 
         ByteBuffer data;
 
-        public override UUID getSystemId()
+        public override Uuid getSystemId()
         {
             return PROTECTION_SYSTEM_ID;
         }

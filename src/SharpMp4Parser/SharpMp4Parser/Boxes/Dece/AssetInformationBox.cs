@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+using System;
 using System.Diagnostics;
 
 namespace SharpMp4Parser.Boxes.Dece
@@ -64,11 +68,11 @@ namespace SharpMp4Parser.Boxes.Dece
             }
             else
             {
-                throw new RuntimeException("Unknown ainf version " + getVersion());
+                throw new Exception("Unknown ainf version " + getVersion());
             }
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             profileVersion = IsoTypeReader.readString(content, 4);
@@ -92,7 +96,7 @@ namespace SharpMp4Parser.Boxes.Dece
 
         public void setProfileVersion(string profileVersion)
         {
-            Debug.Assert(profileVersion != null && profileVersion.length() == 4);
+            Debug.Assert(profileVersion != null && profileVersion.Length == 4);
             this.profileVersion = profileVersion;
         }
 
@@ -142,7 +146,7 @@ namespace SharpMp4Parser.Boxes.Dece
             public override bool Equals(object o)
             {
                 if (this == o) return true;
-                if (o == null || getClass() != o.getClass()) return false;
+                if (o == null || GetType() != o.GetType()) return false;
 
                 Entry entry = (Entry)o;
 

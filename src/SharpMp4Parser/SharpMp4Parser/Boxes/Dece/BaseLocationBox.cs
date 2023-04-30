@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+
 namespace SharpMp4Parser.Boxes.Dece
 {
     /**
@@ -60,7 +64,7 @@ namespace SharpMp4Parser.Boxes.Dece
             return 1028;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             baseLocation = IsoTypeReader.readString(content);
@@ -83,12 +87,12 @@ namespace SharpMp4Parser.Boxes.Dece
         public override bool Equals(object o)
         {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (o == null || this.GetType() != o.GetType()) return false;
 
             BaseLocationBox that = (BaseLocationBox)o;
 
-            if (baseLocation != null ? !baseLocation.equals(that.baseLocation) : that.baseLocation != null) return false;
-            if (purchaseLocation != null ? !purchaseLocation.equals(that.purchaseLocation) : that.purchaseLocation != null)
+            if (baseLocation != null ? !baseLocation.Equals(that.baseLocation) : that.baseLocation != null) return false;
+            if (purchaseLocation != null ? !purchaseLocation.Equals(that.purchaseLocation) : that.purchaseLocation != null)
                 return false;
 
             return true;

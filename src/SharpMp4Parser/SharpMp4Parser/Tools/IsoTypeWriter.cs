@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+using SharpMp4Parser.Java;
 using System;
 using System.Diagnostics;
+using System.Text;
 
 namespace SharpMp4Parser.Tools
 {
@@ -105,14 +107,14 @@ namespace SharpMp4Parser.Tools
 
         public static void writeIso639(ByteBuffer bb, string language)
         {
-            if (language.getBytes().length != 3)
+            if (Encoding.UTF8.GetBytes(language).Length != 3)
             {
                 throw new ArgumentException("\"" + language + "\" language string isn't exactly 3 characters long!");
             }
             int bits = 0;
             for (int i = 0; i < 3; i++)
             {
-                bits += (language.getBytes()[i] - 0x60) << (2 - i) * 5;
+                bits += (Encoding.UTF8.GetBytes(language)[i] - 0x60) << (2 - i) * 5;
             }
             writeUInt16(bb, bits);
         }

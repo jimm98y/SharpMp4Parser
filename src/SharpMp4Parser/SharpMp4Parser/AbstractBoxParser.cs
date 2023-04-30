@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using System.IO;
+using SharpMp4Parser.Java;
 
 namespace SharpMp4Parser
 {
@@ -28,17 +29,10 @@ namespace SharpMp4Parser
      */
     public abstract class AbstractBoxParser : BoxParser
     {
-
         private List<string> skippedTypes;
 
         //private static Logger LOG = LoggerFactory.getLogger(AbstractBoxParser.class.getName());
-        ThreadLocal<ByteBuffer> header = new ThreadLocal<ByteBuffer>()
-        {
-            //protected override ByteBuffer initialValue()
-            //{
-            //    return ByteBuffer.allocate(32);
-            //}
-        };
+        ByteBuffer header = ByteBuffer.allocate(32);
 
         public abstract ParsableBox createBox(string type, byte[] userType, string parent);
 
@@ -52,11 +46,11 @@ namespace SharpMp4Parser
          */
         public ParsableBox parseBox(ReadableByteChannel byteChannel, string parentType)
         {
-            ((Buffer)header.get()).rewind().limit(8);
+            ((Java.Buffer)header).rewind().limit(8);
 
             int bytesRead = 0;
             int b;
-            while ((b = byteChannel.read(header.get())) + bytesRead < 8)
+            while ((b = byteChannel.read(header)) + bytesRead < 8)
             {
                 if (b < 0)
                 {
@@ -67,9 +61,10 @@ namespace SharpMp4Parser
                     bytesRead += b;
                 }
             }
-                ((Buffer)header.get()).rewind();
+                
+            ((Java.Buffer)header).rewind();
 
-            long size = IsoTypeReader.readUInt32(header.get());
+            long size = IsoTypeReader.readUInt32(header);
             // do plausibility check
             if (size < 8 && size > 1)
             {
@@ -77,17 +72,17 @@ namespace SharpMp4Parser
                 return null;
             }
 
-            string type = IsoTypeReader.read4cc(header.get());
+            string type = IsoTypeReader.read4cc(header);
             //System.err.println(type);
             byte[] usertype = null;
             long contentSize;
 
             if (size == 1)
             {
-                header.get().limit(16);
-                byteChannel.read(header.get());
-                header.get().position(8);
-                size = IsoTypeReader.readUInt64(header.get());
+                header.limit(16);
+                byteChannel.read(header);
+                header.position(8);
+                size = IsoTypeReader.readUInt64(header);
                 contentSize = size - 16;
             }
             else if (size == 0)
@@ -100,12 +95,12 @@ namespace SharpMp4Parser
             }
             if (UserBox.TYPE.Equals(type))
             {
-                header.get().limit(header.get().limit() + 16);
-                byteChannel.read(header.get());
+                header.limit(header.limit() + 16);
+                byteChannel.read(header);
                 usertype = new byte[16];
-                for (int i = header.get().position() - 16; i < header.get().position(); i++)
+                for (int i = header.position() - 16; i < header.position(); i++)
                 {
-                    usertype[i - (header.get().position() - 16)] = header.get().get(i);
+                    usertype[i - (header.position() - 16)] = header.get(i);
                 }
                 contentSize -= 16;
             }
@@ -123,9 +118,9 @@ namespace SharpMp4Parser
 
             //LOG.finest("Parsing " + box.getType());
             // System.out.println("parsing " + Mp4Arrays.toString(box.getType()) + " " + box.getClass().getName() + " size=" + size);
-            ((Buffer)header.get()).rewind();
+            ((Java.Buffer)header).rewind();
 
-            parsableBox.parse(byteChannel, header.get(), contentSize, this);
+            parsableBox.parse(byteChannel, header, contentSize, this);
             return parsableBox;
         }
 

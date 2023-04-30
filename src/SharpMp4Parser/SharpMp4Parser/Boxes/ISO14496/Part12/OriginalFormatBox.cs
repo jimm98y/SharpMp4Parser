@@ -14,6 +14,9 @@
  * limitations under the License. 
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
 using System;
 using System.Diagnostics;
 
@@ -44,16 +47,16 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
         public void setDataFormat(String dataFormat)
         {
-            Debug.Assert(dataFormat.length() == 4);
+            Debug.Assert(dataFormat.Length == 4);
             this.dataFormat = dataFormat;
         }
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
             return 4;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             dataFormat = IsoTypeReader.read4cc(content);
         }

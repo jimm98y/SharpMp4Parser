@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-using System;
+using SharpMp4Parser.Java;
 
 namespace SharpMp4Parser.Tools
 {
     /**
      * Creates a <code>ReadableByteChannel</code> that is backed by a <code>ByteBuffer</code>.
      */
-    public class ByteBufferByteChannel : ByteChannel
+    public class ByteBufferByteChannel /* : ByteChannel */
     {
         ByteBuffer byteBuffer;
 
-        public ByteBufferByteChannel(byte[] byteArray)
-        {
-            this(ByteBuffer.wrap(byteArray));
-        }
+        public ByteBufferByteChannel(byte[] byteArray) : this(ByteBuffer.wrap(byteArray))
+        { }
 
         public ByteBufferByteChannel(ByteBuffer byteBuffer)
         {
@@ -42,8 +40,8 @@ namespace SharpMp4Parser.Tools
             {
                 return -1;
             }
-            dst.put((ByteBuffer)((Buffer)byteBuffer.duplicate()).limit(byteBuffer.position() + dst.remaining()));
-            ((Buffer)byteBuffer).position(byteBuffer.position() + rem);
+            dst.put((ByteBuffer)((Java.Buffer)byteBuffer.duplicate()).limit(byteBuffer.position() + dst.remaining()));
+            ((Java.Buffer)byteBuffer).position(byteBuffer.position() + rem);
             return rem;
         }
 

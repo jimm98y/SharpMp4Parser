@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-using System;
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
 using System.Diagnostics;
 using System.Text;
 
@@ -66,11 +67,11 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
                 {
                     bb.put(pos + getSizeSize() - i, (byte)(0x80));
                 }
-                size >>>= 7;
+                size = (int)((uint)size >> 7);
 
             }
 
-            ((Buffer)bb).position(pos + getSizeSize());
+            ((Java.Buffer)bb).position(pos + getSizeSize());
 
         }
 
@@ -80,7 +81,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
             int i = 0;
             while (size > 0 || i < sizeBytes)
             {
-                size >>>= 7;
+                size = (int)((uint)size >> 7);
                 i++;
             }
             return i;
@@ -100,7 +101,9 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
             int tmp = IsoTypeReader.readUInt8(bb);
             i++;
             sizeOfInstance = tmp & 0x7f;
-            while (tmp >>> 7 == 1) { //nextbyte indicator bit
+            while ((int)((uint)tmp >> 7) == 1) 
+            {
+                //nextbyte indicator bit
                 tmp = IsoTypeReader.readUInt8(bb);
                 i++;
                 //sizeOfInstance = sizeOfInstance<<7 | sizeByte;
@@ -108,10 +111,10 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
             }
             sizeBytes = i;
             ByteBuffer detailSource = bb.slice();
-            ((Buffer)detailSource).limit(sizeOfInstance);
+            ((Java.Buffer)detailSource).limit(sizeOfInstance);
             parseDetail(detailSource);
-            Debug.Assert(detailSource.remaining() == 0, this.getClass().getSimpleName() + " has not been fully parsed");
-            ((Buffer)bb).position(bb.position() + sizeOfInstance);
+            Debug.Assert(detailSource.remaining() == 0, this.GetType().Name + " has not been fully parsed");
+            ((Java.Buffer)bb).position(bb.position() + sizeOfInstance);
         }
 
         public abstract void parseDetail(ByteBuffer bb);

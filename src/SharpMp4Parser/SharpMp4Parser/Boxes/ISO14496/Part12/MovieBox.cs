@@ -14,6 +14,8 @@
  * limitations under the License. 
  */
 
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
 using System.Collections.Generic;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
@@ -33,7 +35,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
         public int getTrackCount()
         {
-            return getBoxes(typeof(TrackBox)).size();
+            return getBoxes< TrackBox>(typeof(TrackBox)).Count;
         }
 
         /**
@@ -43,18 +45,18 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
          */
         public long[] getTrackNumbers()
         {
-            List<TrackBox> trackBoxes = this.getBoxes(typeof(TrackBox));
-            long[] trackNumbers = new long[trackBoxes.size()];
-            for (int trackCounter = 0; trackCounter < trackBoxes.size(); trackCounter++)
+            List<TrackBox> trackBoxes = this.getBoxes< TrackBox>(typeof(TrackBox));
+            long[] trackNumbers = new long[trackBoxes.Count];
+            for (int trackCounter = 0; trackCounter < trackBoxes.Count; trackCounter++)
             {
-                trackNumbers[trackCounter] = trackBoxes.get(trackCounter).getTrackHeaderBox().getTrackId();
+                trackNumbers[trackCounter] = trackBoxes[trackCounter].getTrackHeaderBox().getTrackId();
             }
             return trackNumbers;
         }
 
         public MovieHeaderBox getMovieHeaderBox()
         {
-            return Path.getPath(this, "mvhd");
+            return Path.getPath< MovieHeaderBox>(this, "mvhd");
         }
     }
 }

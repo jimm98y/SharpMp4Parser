@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+
 namespace SharpMp4Parser.Boxes.Apple
 {
     /**
@@ -27,12 +31,12 @@ namespace SharpMp4Parser.Boxes.Apple
         public AppleDataRateBox() : base(TYPE)
         { }
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
             return 8;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             dataRate = IsoTypeReader.readUInt32(content);
@@ -43,7 +47,6 @@ namespace SharpMp4Parser.Boxes.Apple
             writeVersionAndFlags(byteBuffer);
             IsoTypeWriter.writeUInt32(byteBuffer, dataRate);
         }
-
 
         public long getDataRate()
         {

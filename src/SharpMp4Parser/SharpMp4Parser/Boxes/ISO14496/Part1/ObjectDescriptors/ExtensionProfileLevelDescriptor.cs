@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
 using System;
 using System.Text;
 
@@ -55,7 +57,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
             throw new NotImplementedException("Not Implemented");
         }
 
-        public override string toString()
+        public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("ExtensionDescriptor");

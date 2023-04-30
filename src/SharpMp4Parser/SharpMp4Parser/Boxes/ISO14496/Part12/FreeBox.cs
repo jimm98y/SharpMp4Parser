@@ -15,8 +15,9 @@
  */
 
 using System.Collections.Generic;
-using System.ComponentModel;
-using System;
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
+using System.Text;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
 {
@@ -29,8 +30,8 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
         public const string TYPE = "free";
         ByteBuffer data;
         List<ParsableBox> replacers = new List<ParsableBox>();
-        private Container parent;
-        private long offset;
+        //private Container parent;
+        //private long offset;
 
         public FreeBox()
         {
@@ -46,7 +47,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
         {
             if (data != null)
             {
-                return (ByteBuffer)((Buffer)data.duplicate()).rewind();
+                return (ByteBuffer)((Java.Buffer)data.duplicate()).rewind();
             }
             else
             {
@@ -67,13 +68,13 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             }
             ByteBuffer header = ByteBuffer.allocate(8);
             IsoTypeWriter.writeUInt32(header, 8 + data.limit());
-            header.put(TYPE.getBytes());
-            ((Buffer)header).rewind();
+            header.put(Encoding.UTF8.GetBytes(TYPE));
+            ((Java.Buffer)header).rewind();
             os.write(header);
-            ((Buffer)header).rewind();
-            ((Buffer)data).rewind();
+            ((Java.Buffer)header).rewind();
+            ((Java.Buffer)data).rewind();
             os.write(data);
-            ((Buffer)data).rewind();
+            ((Java.Buffer)data).rewind();
         }
 
         public long getSize()
@@ -106,7 +107,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
         public void addAndReplace(ParsableBox parsableBox)
         {
-            ((Buffer)data).position(CastUtils.l2i(parsableBox.getSize()));
+            ((Java.Buffer)data).position(CastUtils.l2i(parsableBox.getSize()));
             data = data.slice();
             replacers.Add(parsableBox);
         }
@@ -114,18 +115,18 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
         public override bool Equals(object o)
         {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (o == null || GetType() != o.GetType()) return false;
 
             FreeBox freeBox = (FreeBox)o;
 
-            if (getData() != null ? !getData().equals(freeBox.getData()) : freeBox.getData() != null) return false;
+            if (getData() != null ? !getData().Equals(freeBox.getData()) : freeBox.getData() != null) return false;
 
             return true;
         }
 
         public override int GetHashCode()
         {
-            return data != null ? data.hashCode() : 0;
+            return data != null ? data.GetHashCode() : 0;
         }
     }
 }

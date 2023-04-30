@@ -14,6 +14,9 @@
  * limitations under the License. 
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
+
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
 {
     /**
@@ -39,12 +42,12 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             this.chunkOffsets = chunkOffsets;
         }
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
             return 8 + chunkOffsets.Length * 4;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             int entryCount = CastUtils.l2i(IsoTypeReader.readUInt32(content));

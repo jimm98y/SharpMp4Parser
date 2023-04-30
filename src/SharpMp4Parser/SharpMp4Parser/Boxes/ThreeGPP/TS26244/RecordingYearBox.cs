@@ -14,6 +14,10 @@
  * limitations under the License. 
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+
 namespace SharpMp4Parser.Boxes.ThreeGPP.TS26244
 {
     /**
@@ -28,7 +32,7 @@ namespace SharpMp4Parser.Boxes.ThreeGPP.TS26244
         public RecordingYearBox() : base(TYPE)
         { }
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
             return 6;
         }
@@ -43,7 +47,7 @@ namespace SharpMp4Parser.Boxes.ThreeGPP.TS26244
             this.recordingYear = recordingYear;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             recordingYear = IsoTypeReader.readUInt16(content);

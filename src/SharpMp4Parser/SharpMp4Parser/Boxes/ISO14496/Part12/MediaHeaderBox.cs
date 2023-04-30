@@ -16,6 +16,9 @@
 
 using System.Text;
 using System;
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
+using SharpMp4Parser.Support;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
 {
@@ -87,7 +90,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             this.language = language;
         }
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
             long contentSize = 4;
             if (getVersion() == 1)
@@ -104,7 +107,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             if (getVersion() == 1)
@@ -123,7 +126,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             }
             if (duration < -1)
             {
-                LOG.warn("mdhd duration is not in expected range");
+                //LOG.warn("mdhd duration is not in expected range");
             }
 
 
@@ -149,7 +152,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             return result.ToString();
         }
 
-        protected void getContent(ByteBuffer byteBuffer)
+        protected override void getContent(ByteBuffer byteBuffer)
         {
             writeVersionAndFlags(byteBuffer);
             if (getVersion() == 1)

@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
 using System.Text;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
@@ -101,7 +104,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             }
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             trackId = IsoTypeReader.readUInt32(content);

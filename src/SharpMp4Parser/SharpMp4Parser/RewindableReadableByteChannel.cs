@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 
+using SharpMp4Parser.Java;
 using System;
 
 namespace SharpMp4Parser
@@ -39,12 +40,12 @@ namespace SharpMp4Parser
         /**
          * @see ReadableByteChannel#read(ByteBuffer)
          */
-        public int read(ByteBuffer dst)
+        public override int read(ByteBuffer dst)
         {
             int initialDstPosition = dst.position();
             // Read data from |readableByteChannel| into |buffer|.
-            ((Buffer)buffer).limit(buffer.capacity());
-            ((Buffer)buffer).position(nextBufferWritePosition);
+            ((Java.Buffer)buffer).limit(buffer.capacity());
+            ((Java.Buffer)buffer).position(nextBufferWritePosition);
             if (buffer.capacity() > 0)
             {
                 readableByteChannel.read(buffer);
@@ -52,11 +53,11 @@ namespace SharpMp4Parser
             }
 
             // Read data from |buffer| into |dst|.
-            ((Buffer)buffer).position(nextBufferReadPosition);
-            ((Buffer)buffer).limit(nextBufferWritePosition);
+            ((Java.Buffer)buffer).position(nextBufferReadPosition);
+            ((Java.Buffer)buffer).limit(nextBufferWritePosition);
             if (buffer.remaining() > dst.remaining())
             {
-                ((Buffer)buffer).limit(buffer.position() + dst.remaining());
+                ((Java.Buffer)buffer).limit(buffer.position() + dst.remaining());
             }
             dst.put(buffer);
             nextBufferReadPosition = buffer.position();
@@ -76,7 +77,7 @@ namespace SharpMp4Parser
             return dst.position() - initialDstPosition;
         }
 
-        public void rewind()
+        public new void rewind()
         {
             if (passedRewindPoint)
             {
@@ -88,7 +89,7 @@ namespace SharpMp4Parser
         /**
          * @see ReadableByteChannel#isOpen()
          */
-        public bool isOpen()
+        public override bool isOpen()
         {
             return readableByteChannel.isOpen();
         }
@@ -96,7 +97,7 @@ namespace SharpMp4Parser
         /**
          * @see ReadableByteChannel#close()
          */
-        public void close()
+        public override void close()
         {
             readableByteChannel.close();
         }

@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace SharpMp4Parser.Boxes.ISO23001.Part7
@@ -23,13 +27,13 @@ namespace SharpMp4Parser.Boxes.ISO23001.Part7
     {
         public const string TYPE = "pssh";
 
-        public static byte[] OMA2_SYSTEM_ID = UUIDConverter.convert(UUID.fromString("A2B55680-6F43-11E0-9A3F-0002A5D5C51B"));
-        public static byte[] WIDEVINE = UUIDConverter.convert(UUID.fromString("edef8ba9-79d6-4ace-a3c8-27dcd51d21ed"));
-        public static byte[] PLAYREADY_SYSTEM_ID = UUIDConverter.convert(UUID.fromString("9A04F079-9840-4286-AB92-E65BE0885F95"));
+        public static byte[] OMA2_SYSTEM_ID = UUIDConverter.convert(Uuid.Parse("A2B55680-6F43-11E0-9A3F-0002A5D5C51B"));
+        public static byte[] WIDEVINE = UUIDConverter.convert(Uuid.Parse("edef8ba9-79d6-4ace-a3c8-27dcd51d21ed"));
+        public static byte[] PLAYREADY_SYSTEM_ID = UUIDConverter.convert(Uuid.Parse("9A04F079-9840-4286-AB92-E65BE0885F95"));
 
         byte[] content;
         byte[] systemId;
-        List<UUID> keyIds = new List<UUID>();
+        List<Uuid> keyIds = new List<Uuid>();
 
         public ProtectionSystemSpecificHeaderBox(byte[] systemId, byte[] content) : base(TYPE)
         {
@@ -40,12 +44,12 @@ namespace SharpMp4Parser.Boxes.ISO23001.Part7
         public ProtectionSystemSpecificHeaderBox() : base(TYPE)
         { }
 
-        public List<UUID> getKeyIds()
+        public List<Uuid> getKeyIds()
         {
             return keyIds;
         }
 
-        public void setKeyIds(List<UUID> keyIds)
+        public void setKeyIds(List<Uuid> keyIds)
         {
             this.keyIds = keyIds;
         }
@@ -77,7 +81,7 @@ namespace SharpMp4Parser.Boxes.ISO23001.Part7
             if (getVersion() > 0)
             {
                 l += 4;
-                l += 16 * keyIds.size();
+                l += 16 * keyIds.Count;
             }
             return l;
         }
@@ -89,8 +93,8 @@ namespace SharpMp4Parser.Boxes.ISO23001.Part7
             byteBuffer.put(systemId, 0, 16);
             if (getVersion() > 0)
             {
-                IsoTypeWriter.writeUInt32(byteBuffer, keyIds.size());
-                foreach (UUID keyId in keyIds)
+                IsoTypeWriter.writeUInt32(byteBuffer, keyIds.Count);
+                foreach (Uuid keyId in keyIds)
                 {
                     byteBuffer.put(UUIDConverter.convert(keyId));
                 }

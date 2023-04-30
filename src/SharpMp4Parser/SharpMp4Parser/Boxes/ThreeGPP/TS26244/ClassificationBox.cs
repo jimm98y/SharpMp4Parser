@@ -14,6 +14,9 @@
  * limitations under the License. 
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
 using System.Text;
 
 namespace SharpMp4Parser.Boxes.ThreeGPP.TS26244
@@ -75,12 +78,12 @@ namespace SharpMp4Parser.Boxes.ThreeGPP.TS26244
             this.classificationInfo = classificationInfo;
         }
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
             return 4 + 2 + 2 + Utf8.utf8StringLengthInBytes(classificationInfo) + 1;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             byte[] cE = new byte[4];
@@ -101,7 +104,7 @@ namespace SharpMp4Parser.Boxes.ThreeGPP.TS26244
         }
 
 
-        public string toString()
+        public override string ToString()
         {
             StringBuilder buffer = new StringBuilder();
             buffer.Append("ClassificationBox[language=").Append(getLanguage());

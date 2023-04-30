@@ -1,4 +1,6 @@
-﻿namespace SharpMp4Parser.Boxes.ISO14496.Part12
+﻿using SharpMp4Parser.Support;
+
+namespace SharpMp4Parser.Boxes.ISO14496.Part12
 {
     /**
      * Abstract Chunk Offset Box
@@ -14,7 +16,7 @@
 
         public override string ToString()
         {
-            return this.getClass().getSimpleName() + "[entryCount=" + getChunkOffsets().Length + "]";
+            return this.GetType().Name + "[entryCount=" + getChunkOffsets().Length + "]";
         }
     }
 }

@@ -16,6 +16,7 @@
 
 using System.Text;
 using System;
+using SharpMp4Parser.Java;
 
 namespace SharpMp4Parser.Tools
 {
@@ -119,7 +120,7 @@ namespace SharpMp4Parser.Tools
             bb.get(bytes);
 
             int result = 0;
-            result |= ((bytes[0] << 24) & 0xFF000000);
+            result |= (int)((bytes[0] << 24) & 0xFF000000);
             result |= ((bytes[1] << 16) & 0xFF0000);
             result |= ((bytes[2] << 8) & 0xFF00);
             result |= ((bytes[3]) & 0xFF);
@@ -133,7 +134,7 @@ namespace SharpMp4Parser.Tools
             bb.get(bytes);
 
             int result = 0;
-            result |= ((bytes[0] << 24) & 0xFF000000);
+            result |= (int)((bytes[0] << 24) & 0xFF000000);
             result |= ((bytes[1] << 16) & 0xFF0000);
             result |= ((bytes[2] << 8) & 0xFF00);
             result |= ((bytes[3]) & 0xFF);
@@ -145,8 +146,8 @@ namespace SharpMp4Parser.Tools
             byte[] bytes = new byte[2];
             bb.get(bytes);
             short result = 0;
-            result |= ((bytes[0] << 8) & 0xFF00);
-            result |= ((bytes[1]) & 0xFF);
+            result |= (short)((bytes[0] << 8) & 0xFF00);
+            result |= (short)((bytes[1]) & 0xFF);
             return ((float)result) / 256;
         }
 
@@ -170,9 +171,9 @@ namespace SharpMp4Parser.Tools
 
             try
             {
-                return new string(codeBytes, "ISO-8859-1");
+                return Encoding.GetEncoding("ISO-8859-1").GetString(codeBytes);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw;
             }

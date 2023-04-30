@@ -14,6 +14,8 @@
  * limitations under the License. 
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
 using System;
 using System.Linq;
 
@@ -62,7 +64,7 @@ namespace SharpMp4Parser.Boxes.SampleEntry
         {
             ByteBuffer content = ByteBuffer.allocate(38);
             dataSource.read(content);
-            ((Buffer)content).position(6);
+            ((Java.Buffer)content).position(6);
             dataReferenceIndex = IsoTypeReader.readUInt16(content);
             displayFlags = IsoTypeReader.readUInt32(content);
             horizontalJustification = IsoTypeReader.readUInt8(content);
@@ -84,7 +86,7 @@ namespace SharpMp4Parser.Boxes.SampleEntry
         {
             writableByteChannel.write(getHeader());
             ByteBuffer byteBuffer = ByteBuffer.allocate(38);
-            ((Buffer)byteBuffer).position(6);
+            ((Java.Buffer)byteBuffer).position(6);
             IsoTypeWriter.writeUInt16(byteBuffer, dataReferenceIndex);
             IsoTypeWriter.writeUInt32(byteBuffer, displayFlags);
             IsoTypeWriter.writeUInt8(byteBuffer, horizontalJustification);
@@ -95,12 +97,12 @@ namespace SharpMp4Parser.Boxes.SampleEntry
             IsoTypeWriter.writeUInt8(byteBuffer, backgroundColorRgba[3]);
             boxRecord.getContent(byteBuffer);
             styleRecord.getContent(byteBuffer);
-            writableByteChannel.write((ByteBuffer)((Buffer)byteBuffer).rewind());
+            writableByteChannel.write((ByteBuffer)((Java.Buffer)byteBuffer).rewind());
             writeContainer(writableByteChannel);
         }
 
 
-        public string toString()
+        public override string ToString()
         {
             return "TextSampleEntry";
         }
@@ -318,7 +320,7 @@ namespace SharpMp4Parser.Boxes.SampleEntry
             public override bool Equals(object o)
             {
                 if (this == o) return true;
-                if (o == null || getClass() != o.getClass()) return false;
+                if (o == null || GetType() != o.GetType()) return false;
 
                 BoxRecord boxRecord = (BoxRecord)o;
 
@@ -357,13 +359,13 @@ namespace SharpMp4Parser.Boxes.SampleEntry
             int fontId;
             int faceStyleFlags;
             int fontSize;
-            int[] textColor = new int[] { 0xff, 0xff, 0xff, 0xff };
+            byte[] textColor = new byte[] { 0xff, 0xff, 0xff, 0xff };
 
             public StyleRecord()
             {
             }
 
-            public StyleRecord(int startChar, int endChar, int fontId, int faceStyleFlags, int fontSize, int[] textColor)
+            public StyleRecord(int startChar, int endChar, int fontId, int faceStyleFlags, int fontSize, byte[] textColor)
             {
                 this.startChar = startChar;
                 this.endChar = endChar;
@@ -380,11 +382,11 @@ namespace SharpMp4Parser.Boxes.SampleEntry
                 fontId = IsoTypeReader.readUInt16(input);
                 faceStyleFlags = IsoTypeReader.readUInt8(input);
                 fontSize = IsoTypeReader.readUInt8(input);
-                textColor = new int[4];
-                textColor[0] = IsoTypeReader.readUInt8(input);
-                textColor[1] = IsoTypeReader.readUInt8(input);
-                textColor[2] = IsoTypeReader.readUInt8(input);
-                textColor[3] = IsoTypeReader.readUInt8(input);
+                textColor = new byte[4];
+                textColor[0] = (byte)IsoTypeReader.readUInt8(input);
+                textColor[1] = (byte)IsoTypeReader.readUInt8(input);
+                textColor[2] = (byte)IsoTypeReader.readUInt8(input);
+                textColor[3] = (byte)IsoTypeReader.readUInt8(input);
             }
 
 
@@ -404,7 +406,7 @@ namespace SharpMp4Parser.Boxes.SampleEntry
             public override bool Equals(object o)
             {
                 if (this == o) return true;
-                if (o == null || getClass() != o.getClass()) return false;
+                if (o == null || GetType() != o.GetType()) return false;
 
                 StyleRecord that = (StyleRecord)o;
 

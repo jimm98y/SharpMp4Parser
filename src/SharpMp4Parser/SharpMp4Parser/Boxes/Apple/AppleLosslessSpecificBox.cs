@@ -1,4 +1,8 @@
-﻿namespace SharpMp4Parser.Boxes.Apple
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+
+namespace SharpMp4Parser.Boxes.Apple
 {
     /**
      * <h1>4cc = "{@value #TYPE}"</h1>
@@ -138,7 +142,7 @@
             this.sampleRate = sampleRate;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             maxSamplePerFrame = IsoTypeReader.readUInt32(content);
@@ -170,7 +174,7 @@
             IsoTypeWriter.writeUInt32(byteBuffer, sampleRate);
         }
 
-        public long getContentSize()
+        protected override long getContentSize()
         {
             return 28;
         }

@@ -14,6 +14,9 @@
  * limitations under the License. 
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
+
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
 {
     /**
@@ -54,12 +57,12 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             return avgBitrate;
         }
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
             return 20;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             maxPduSize = IsoTypeReader.readUInt16(content);

@@ -14,36 +14,38 @@
  * limitations under the License.
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
 using System.Collections.Generic;
 using System.Text;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
 {
     /*
-class InitialObjectDescriptor extends ObjectDescriptorBase : bit(8)
-tag=InitialObjectDescrTag {
-bit(10) ObjectDescriptorID;
-bit(1) URL_Flag;
-bit(1) includeInlineProfileLevelFlag;
-const bit(4) reserved=0b1111;
-if (URL_Flag) {
-bit(8) URLlength;
-bit(8) URLstring[URLlength];
-} else {
-bit(8) ODProfileLevelIndication;
-bit(8) sceneProfileLevelIndication;
-bit(8) audioProfileLevelIndication;
-bit(8) visualProfileLevelIndication;
-bit(8) graphicsProfileLevelIndication;
-ES_Descriptor esDescr[1 .. 255];
-OCI_Descriptor ociDescr[0 .. 255];
-IPMP_DescriptorPointer ipmpDescrPtr[0 .. 255];
-IPMP_Descriptor ipmpDescr [0 .. 255];
-IPMP_ToolListDescriptor toolListDescr[0 .. 1];
-}
-ExtensionDescriptor extDescr[0 .. 255];
-}
-*/
+    class InitialObjectDescriptor extends ObjectDescriptorBase : bit(8)
+    tag=InitialObjectDescrTag {
+    bit(10) ObjectDescriptorID;
+    bit(1) URL_Flag;
+    bit(1) includeInlineProfileLevelFlag;
+    const bit(4) reserved=0b1111;
+    if (URL_Flag) {
+    bit(8) URLlength;
+    bit(8) URLstring[URLlength];
+    } else {
+    bit(8) ODProfileLevelIndication;
+    bit(8) sceneProfileLevelIndication;
+    bit(8) audioProfileLevelIndication;
+    bit(8) visualProfileLevelIndication;
+    bit(8) graphicsProfileLevelIndication;
+    ES_Descriptor esDescr[1 .. 255];
+    OCI_Descriptor ociDescr[0 .. 255];
+    IPMP_DescriptorPointer ipmpDescrPtr[0 .. 255];
+    IPMP_Descriptor ipmpDescr [0 .. 255];
+    IPMP_ToolListDescriptor toolListDescr[0 .. 1];
+    }
+    ExtensionDescriptor extDescr[0 .. 255];
+    }
+    */
     //@Descriptor(tags = {0x02, 0x10})
     public abstract class InitialObjectDescriptor : ObjectDescriptorBase
     {

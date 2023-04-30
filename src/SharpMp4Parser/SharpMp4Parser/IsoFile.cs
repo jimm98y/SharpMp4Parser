@@ -17,6 +17,8 @@
 using SharpMp4Parser.Boxes.ISO14496.Part12;
 using System;
 using SharpMp4Parser.Support;
+using SharpMp4Parser.Java;
+using System.Text;
 
 namespace SharpMp4Parser
 {
@@ -24,31 +26,30 @@ namespace SharpMp4Parser
      * The most upper container for ISO Boxes. It is a container box that is a file.
      * Uses IsoBufferWrapper  to access the underlying file.
      */
+#warning TODO
     [DoNotParseDetail]
-    public class IsoFile : BasicContainer, Closeable
+    public class IsoFile : BasicContainer /*, Closeable */
     {
         private readonly ReadableByteChannel readableByteChannel;
 
-        private FileInputStream fis;
+        //private FileInputStream fis;
 
-        public IsoFile(string file) : this(new File(file))
-        {  }
+        //public IsoFile(string file) : this(new File(file))
+        //{  }
 
-        public IsoFile(File file)
-        {
-            this.fis = new FileInputStream(file);
-            this.readableByteChannel = fis.getChannel();
-            initContainer(readableByteChannel, -1, new PropertyBoxParserImpl());
-        }
+        //public IsoFile(File file)
+        //{
+        //    this.fis = new FileInputStream(file);
+        //    this.readableByteChannel = fis.getChannel();
+        //    initContainer(readableByteChannel, -1, new PropertyBoxParserImpl());
+        //}
 
         /**
          * @param readableByteChannel the data source
          * @throws IOException in case I/O error
          */
-        public IsoFile(ReadableByteChannel readableByteChannel)
-        {
-            this(readableByteChannel, new PropertyBoxParserImpl());
-        }
+        public IsoFile(ReadableByteChannel readableByteChannel): this(readableByteChannel, new PropertyBoxParserImpl())
+        {  }
 
         public IsoFile(ReadableByteChannel readableByteChannel, BoxParser boxParser)
         {
@@ -56,14 +57,14 @@ namespace SharpMp4Parser
             initContainer(readableByteChannel, -1, boxParser);
         }
 
-        public static byte[] fourCCtoBytes(String fourCC)
+        public static byte[] fourCCtoBytes(string fourCC)
         {
             byte[] result = new byte[4];
             if (fourCC != null)
             {
                 for (int i = 0; i < Math.Min(4, fourCC.Length); i++)
                 {
-                    result[i] = (byte)fourCC.charAt(i);
+                    result[i] = (byte)fourCC[i];
                 }
             }
             return result;
@@ -76,7 +77,7 @@ namespace SharpMp4Parser
             {
                 System.Array.Copy(type, 0, result, 0, Math.Min(type.Length, 4));
             }
-            return new string(result, StandardCharsets.ISO_8859_1);
+            return Encoding.GetEncoding("ISO-8859-1").GetString(result);
         }
 
 
@@ -108,13 +109,15 @@ namespace SharpMp4Parser
             writeContainer(os);
         }
 
-        public override void close()
+        public void close()
         {
-            this.readableByteChannel.close();
+            this.readableByteChannel.Close();
+            /*
             if (this.fis != null)
             {
                 this.fis.close();
             }
+            
             foreach (Box box in getBoxes())
             {
                 if (box is Closeable)
@@ -122,6 +125,7 @@ namespace SharpMp4Parser
                     ((Closeable)box).close();
                 }
             }
+            */
         }
 
         public override string ToString()

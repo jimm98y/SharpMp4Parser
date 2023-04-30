@@ -1,4 +1,8 @@
-﻿using System;
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
+using System;
+using System.Runtime.Serialization;
+using System.Text.RegularExpressions;
 
 namespace SharpMp4Parser.Boxes.Apple
 {
@@ -7,43 +11,41 @@ namespace SharpMp4Parser.Boxes.Apple
      */
     public class AppleRecordingYearBox : AppleDataBox
     {
-        DateFormat df;
+        DateTimeFormat df;
 
-        Date date = new Date();
+        DateTime date = new DateTime();
 
         public AppleRecordingYearBox() : base("©day", 1)
         {
-            df = new SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ssZ");
-            df.setTimeZone(TimeZone.getTimeZone("UTC"));
+            df = new DateTimeFormat("yyyy-MM-dd'T'kk:mm:ssZ");
         }
 
         protected static string iso8601toRfc822Date(string iso8601)
         {
-            iso8601 = iso8601.replaceAll("Z$", "+0000");
-            iso8601 = iso8601.replaceAll("([0-9][0-9]):([0-9][0-9])$", "$1$2");
+            iso8601 = Regex.Replace(iso8601, "Z$", "+0000");
+            iso8601 = Regex.Replace(iso8601, "([0-9][0-9]):([0-9][0-9])$", "$1$2");
             return iso8601;
         }
 
         protected static string rfc822toIso8601Date(string rfc622)
         {
-            rfc622 = rfc622.replaceAll("\\+0000$", "Z");
+            rfc622 = Regex.Replace(rfc622, "\\+0000$", "Z");
             return rfc622;
         }
 
-        public Date getDate()
+        public DateTime getDate()
         {
             return date;
         }
 
-        public void setDate(Date date)
+        public void setDate(DateTime date)
         {
             this.date = date;
         }
 
         protected override byte[] writeData()
         {
-
-            return Utf8.convert(rfc822toIso8601Date(df.format(date)));
+            return Utf8.convert(rfc822toIso8601Date(date.ToString(df.FormatProvider)));
         }
 
         protected override void parseData(ByteBuffer data)
@@ -51,17 +53,17 @@ namespace SharpMp4Parser.Boxes.Apple
             string dateString = IsoTypeReader.readString(data, data.remaining());
             try
             {
-                date = df.parse(iso8601toRfc822Date(dateString));
+                date = DateTime.Parse(iso8601toRfc822Date(dateString), df.FormatProvider);
             }
-            catch (ParseException e)
+            catch (Exception)
             {
-                throw new RuntimeException(e);
+                throw;
             }
         }
 
         protected override int getDataLength()
         {
-            return Utf8.convert(rfc822toIso8601Date(df.format(date))).length;
+            return Utf8.convert(rfc822toIso8601Date(date.ToString(df.FormatProvider))).Length;
         }
     }
 }

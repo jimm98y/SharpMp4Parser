@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using SharpMp4Parser.Java;
+
 namespace SharpMp4Parser.Tools
 {
     /**
@@ -21,31 +23,30 @@ namespace SharpMp4Parser.Tools
      */
     public class UUIDConverter
     {
-        public static byte[] convert(UUID uuid)
+        public static byte[] convert(Uuid uuid)
         {
-
-            long msb = uuid.getMostSignificantBits();
-            long lsb = uuid.getLeastSignificantBits();
+            long msb = uuid.MostSignificantBits;
+            long lsb = uuid.LeastSignificantBits;
             byte[] buffer = new byte[16];
 
             for (int i = 0; i < 8; i++)
             {
-                buffer[i] = (byte)(msb >>> 8 * (7 - i));
+                buffer[i] = (byte)((ulong)msb >> 8 * (7 - i));
             }
             for (int i = 8; i < 16; i++)
             {
-                buffer[i] = (byte)(lsb >>> 8 * (7 - i));
+                buffer[i] = (byte)((ulong)lsb >> 8 * (7 - i));
             }
 
             return buffer;
 
         }
 
-        public static UUID convert(byte[] uuidBytes)
+        public static Uuid convert(byte[] uuidBytes)
         {
             ByteBuffer b = ByteBuffer.wrap(uuidBytes);
             b.order(ByteOrder.BIG_ENDIAN);
-            return new UUID(b.getLong(), b.getLong());
+            return new Uuid(b.getLong(), b.getLong());
         }
     }
 }

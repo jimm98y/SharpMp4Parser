@@ -1,4 +1,8 @@
-﻿namespace SharpMp4Parser.Boxes.WebM
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+
+namespace SharpMp4Parser.Boxes.WebM
 {
     public class SMPTE2086MasteringDisplayMetadataBox : AbstractFullBox
     {

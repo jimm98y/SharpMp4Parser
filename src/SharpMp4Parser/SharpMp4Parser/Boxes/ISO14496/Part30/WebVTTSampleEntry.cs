@@ -1,4 +1,8 @@
-﻿namespace SharpMp4Parser.Boxes.ISO14496.Part30
+﻿using SharpMp4Parser.Boxes.SampleEntry;
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
+
+namespace SharpMp4Parser.Boxes.ISO14496.Part30
 {
     /**
      * Sample Entry for WebVTT subtitles.
@@ -30,12 +34,12 @@
 
         public WebVTTConfigurationBox getConfig()
         {
-            return Path.getPath(this, "vttC");
+            return Path.getPath<WebVTTConfigurationBox>(this, "vttC");
         }
 
         public WebVTTSourceLabelBox getSourceLabel()
         {
-            return Path.getPath(this, "vlab");
+            return Path.getPath<WebVTTSourceLabelBox>(this, "vlab");
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿namespace SharpMp4Parser.Boxes.SampleEntry
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
+
+namespace SharpMp4Parser.Boxes.SampleEntry
 {
     public class DfxpSampleEntry : AbstractSampleEntry
     {

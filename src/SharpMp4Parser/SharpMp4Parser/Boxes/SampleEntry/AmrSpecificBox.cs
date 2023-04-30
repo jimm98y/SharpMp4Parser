@@ -14,6 +14,9 @@
  * limitations under the License. 
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
 using System.Text;
 
 namespace SharpMp4Parser.Boxes.SampleEntry
@@ -62,12 +65,12 @@ namespace SharpMp4Parser.Boxes.SampleEntry
             return framesPerSample;
         }
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
             return 9;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             byte[] v = new byte[4];
             content.get(v);
@@ -80,7 +83,7 @@ namespace SharpMp4Parser.Boxes.SampleEntry
 
         }
 
-        public void getContent(ByteBuffer byteBuffer)
+        protected override void getContent(ByteBuffer byteBuffer)
         {
             byteBuffer.put(IsoFile.fourCCtoBytes(vendor));
             IsoTypeWriter.writeUInt8(byteBuffer, decoderVersion);
@@ -89,7 +92,7 @@ namespace SharpMp4Parser.Boxes.SampleEntry
             IsoTypeWriter.writeUInt8(byteBuffer, framesPerSample);
         }
 
-        public string toString()
+        public override string ToString()
         {
             StringBuilder buffer = new StringBuilder();
             buffer.Append("AmrSpecificBox[vendor=").Append(getVendor());

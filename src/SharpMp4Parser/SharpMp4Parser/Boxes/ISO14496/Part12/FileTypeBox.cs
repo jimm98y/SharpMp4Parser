@@ -14,6 +14,9 @@
  * limitations under the License. 
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
 using System.Collections.Generic;
 using System.Text;
 
@@ -43,13 +46,13 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             this.compatibleBrands = compatibleBrands;
         }
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
-            return 8 + compatibleBrands.size() * 4;
+            return 8 + compatibleBrands.Count * 4;
 
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             majorBrand = IsoTypeReader.read4cc(content);
             minorVersion = IsoTypeReader.readUInt32(content);

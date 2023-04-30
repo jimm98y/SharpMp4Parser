@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
+using SharpMp4Parser.Boxes.SampleEntry;
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace SharpMp4Parser.Boxes.Apple
 {
@@ -47,7 +51,7 @@ namespace SharpMp4Parser.Boxes.Apple
         int foregroundB = 65535;
 
         string fontName = "";
-        int dataReferenceIndex;
+        //int dataReferenceIndex;
 
         public QuicktimeTextSampleEntry() : base(TYPE)
         { }
@@ -56,7 +60,7 @@ namespace SharpMp4Parser.Boxes.Apple
         {
             ByteBuffer content = ByteBuffer.allocate(CastUtils.l2i(contentSize));
             dataSource.read(content);
-            ((Buffer)content).position(6);
+            ((Java.Buffer)content).position(6);
             dataReferenceIndex = IsoTypeReader.readUInt16(content);
             displayFlags = content.getInt();
             textJustification = content.getInt();
@@ -77,7 +81,7 @@ namespace SharpMp4Parser.Boxes.Apple
                 int length = IsoTypeReader.readUInt8(content);
                 byte[] myFontName = new byte[length];
                 content.get(myFontName);
-                fontName = new String(myFontName);
+                fontName = Encoding.UTF8.GetString(myFontName);
             }
             else
             {
@@ -93,15 +97,15 @@ namespace SharpMp4Parser.Boxes.Apple
 
         public override void addBox(Box box)
         {
-            throw new RuntimeException("QuicktimeTextSampleEntries may not have child boxes");
+            throw new Exception("QuicktimeTextSampleEntries may not have child boxes");
         }
 
         public override void getBox(WritableByteChannel writableByteChannel)
         {
             writableByteChannel.write(getHeader());
 
-            ByteBuffer byteBuffer = ByteBuffer.allocate(52 + (fontName != null ? fontName.length() : 0));
-            ((Buffer)byteBuffer).position(6);
+            ByteBuffer byteBuffer = ByteBuffer.allocate(52 + (fontName != null ? fontName.Length : 0));
+            ((Java.Buffer)byteBuffer).position(6);
             IsoTypeWriter.writeUInt16(byteBuffer, dataReferenceIndex);
             byteBuffer.putInt(displayFlags);
             byteBuffer.putInt(textJustification);
@@ -120,16 +124,16 @@ namespace SharpMp4Parser.Boxes.Apple
             IsoTypeWriter.writeUInt16(byteBuffer, foregroundB);
             if (fontName != null)
             {
-                IsoTypeWriter.writeUInt8(byteBuffer, fontName.length());
-                byteBuffer.put(fontName.getBytes());
+                IsoTypeWriter.writeUInt8(byteBuffer, fontName.Length);
+                byteBuffer.put(Encoding.UTF8.GetBytes(fontName));
             }
-            writableByteChannel.write((ByteBuffer)((Buffer)byteBuffer).rewind());
+            writableByteChannel.write((ByteBuffer)((Java.Buffer)byteBuffer).rewind());
             // writeContainer(writableByteChannel); there are no child boxes!?
         }
 
         public override long getSize()
         {
-            long s = getContainerSize() + 52 + (fontName != null ? fontName.length() : 0);
+            long s = getContainerSize() + 52 + (fontName != null ? fontName.Length : 0);
             s += ((largeBox || (s + 8) >= (1L << 32)) ? 16 : 8);
             return s;
         }
@@ -274,12 +278,12 @@ namespace SharpMp4Parser.Boxes.Apple
             this.foregroundB = foregroundB;
         }
 
-        public String getFontName()
+        public string getFontName()
         {
             return fontName;
         }
 
-        public void setFontName(String fontName)
+        public void setFontName(string fontName)
         {
             this.fontName = fontName;
         }

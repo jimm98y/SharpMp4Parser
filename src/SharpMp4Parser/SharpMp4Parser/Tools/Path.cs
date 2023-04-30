@@ -16,14 +16,14 @@
 
 using SharpMp4Parser.Support;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System;
+using System.Text.RegularExpressions;
 
 namespace SharpMp4Parser.Tools
 {
     public class Path
     {
-        public static Pattern component = Pattern.compile("(....|\\.\\.)(\\[(.*)\\])?");
+        public static Regex component = new Regex("(....|\\.\\.)(\\[(.*)\\])?");
 
         private Path()
         {
@@ -31,46 +31,46 @@ namespace SharpMp4Parser.Tools
 
         public static T getPath<T>(Box parsableBox, string path)
         {
-            List<T> all = getPaths(parsableBox, path, true);
+            List<T> all = getPaths<T>(parsableBox, path, true);
             return all.Count == 0 ? default(T) : all[0];
         }
 
         public static T getPath<T>(Container container, string path)
         {
-            List<T> all = getPaths(container, path, true);
+            List<T> all = getPaths<T>(container, path, true);
             return all.Count == 0 ? default(T) : all[0];
         }
 
         public static T getPath<T>(AbstractContainerBox containerBox, string path)
         {
-            List<T> all = getPaths(containerBox, path, true);
+            List<T> all = getPaths<T>(containerBox, path, true);
             return all.Count == 0 ? default(T) : all[0];
         }
 
 
         public static List<T> getPaths<T>(Box box, string path)
         {
-            return getPaths(box, path, false);
+            return getPaths<T>(box, path, false);
         }
 
         public static List<T> getPaths<T>(Container container, string path)
         {
-            return getPaths(container, path, false);
+            return getPaths<T>(container, path, false);
         }
 
         private static List<T> getPaths<T>(AbstractContainerBox container, string path, bool singleResult)
         {
-            return getPaths((object)container, path, singleResult);
+            return getPaths<T>((object)container, path, singleResult);
         }
 
         private static List<T> getPaths<T>(Container container, string path, bool singleResult)
         {
-            return getPaths((object)container, path, singleResult);
+            return getPaths<T>((object)container, path, singleResult);
         }
 
         private static List<T> getPaths<T>(ParsableBox parsableBox, string path, bool singleResult)
         {
-            return getPaths((object)parsableBox, path, singleResult);
+            return getPaths<T>((object)parsableBox, path, singleResult);
         }
 
         private static List<T> getPaths<T>(object thing, string path, bool singleResult)
@@ -84,7 +84,7 @@ namespace SharpMp4Parser.Tools
             {
                 if (thing is ParsableBox)
                 {
-                    return Collections.singletonList((T)thing);
+                    return new List<T> { (T)thing };
                 }
                 else
                 {
@@ -106,10 +106,10 @@ namespace SharpMp4Parser.Tools
                     later = "";
                 }
 
-                Matcher m = component.matcher(now);
-                if (m.matches())
+                Match m = component.Match(now);
+                if (m.Success)
                 {
-                    String type = m.group(1);
+                    string type = m.Groups[1].Value;
                     if ("..".Equals(type))
                     {
                         throw new Exception(".. notation no longer allowed");
@@ -119,10 +119,10 @@ namespace SharpMp4Parser.Tools
                         if (thing is Container)
                         {
                             int index = -1;
-                            if (m.group(2) != null)
+                            if (m.Groups.Count >= 3 && m.Groups[2].Value != null)
                             {
                                 // we have a specific index
-                                string indexString = m.group(3);
+                                string indexString = m.Groups[3].Value;
                                 index = int.Parse(indexString);
                             }
                             List<T> children = new List<T>();
@@ -130,28 +130,29 @@ namespace SharpMp4Parser.Tools
                             // I'm suspecting some Dalvik VM to create indexed loops from for-each loops
                             // using the iterator instead makes sure that this doesn't happen
                             // (and yes - it could be completely useless)
-                            Iterator<Box> iterator = ((Container)thing).getBoxes().iterator();
-                            while (iterator.hasNext())
+                            List<Box>.Enumerator iterator = ((Container)thing).getBoxes().GetEnumerator();
+                            do
                             {
-                                Box box1 = iterator.next();
-                                if (box1.getType().matches(type))
+                                Box box1 = iterator.Current;
+                                if (box1.getType().CompareTo(type) == 0)
                                 {
                                     if (index == -1 || index == currentIndex)
                                     {
-                                        children.addAll(Path.getPaths<T>(box1, later, singleResult));
+                                        children.AddRange(Path.getPaths<T>(box1, later, singleResult));
                                     }
                                     currentIndex++;
                                 }
-                                if ((singleResult || index >= 0) && !children.Count == 0)
+                                if ((singleResult || index >= 0) && children.Count != 0)
                                 {
                                     return children;
                                 }
                             }
+                            while (iterator.MoveNext());
                             return children;
                         }
                         else
                         {
-                            return Collections.emptyList();
+                            return new List<T>();
                         }
                     }
                 }
@@ -162,9 +163,9 @@ namespace SharpMp4Parser.Tools
             }
         }
 
-        public static bool isContained(Container refc, Box box, String path)
+        public static bool isContained(Container refc, Box box, string path)
         {
-            return getPaths(refc, path).contains(box);
+            return getPaths<Box>(refc, path).Contains(box);
         }
     }
 }

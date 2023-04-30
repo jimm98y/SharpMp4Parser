@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+using System.Collections.Generic;
 
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
 {
@@ -57,7 +60,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             {
                 size += 4;
                 size += 2;
-                for (int j = 0; j < entry.getSubsampleEntries().size(); j++)
+                for (int j = 0; j < entry.getSubsampleEntries().Count; j++)
                 {
 
                     if (getVersion() == 1)
@@ -75,7 +78,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             return size;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
 
@@ -93,7 +96,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
                     subsampleEntry.setSubsamplePriority(IsoTypeReader.readUInt8(content));
                     subsampleEntry.setDiscardable(IsoTypeReader.readUInt8(content));
                     subsampleEntry.setReserved(IsoTypeReader.readUInt32(content));
-                    SubSampleEntry.getSubsampleEntries().add(subsampleEntry);
+                    SubSampleEntry.getSubsampleEntries().Add(subsampleEntry);
                 }
                 entries.Add(SubSampleEntry);
             }
@@ -102,7 +105,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
         protected override void getContent(ByteBuffer byteBuffer)
         {
             writeVersionAndFlags(byteBuffer);
-            IsoTypeWriter.writeUInt32(byteBuffer, entries.size());
+            IsoTypeWriter.writeUInt32(byteBuffer, entries.Count);
             foreach (SubSampleEntry subSampleEntry in entries)
             {
                 IsoTypeWriter.writeUInt32(byteBuffer, subSampleEntry.getSampleDelta());
@@ -128,7 +131,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
         public override string ToString()
         {
             return "SubSampleInformationBox{" +
-                    "entryCount=" + entries.size() +
+                    "entryCount=" + entries.Count +
                     ", entries=" + entries +
                     '}';
         }
@@ -150,7 +153,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
             public int getSubsampleCount()
             {
-                return subsampleEntries.size();
+                return subsampleEntries.Count;
             }
 
             public List<SubsampleEntry> getSubsampleEntries()
@@ -162,7 +165,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             {
                 return "SampleEntry{" +
                         "sampleDelta=" + sampleDelta +
-                        ", subsampleCount=" + subsampleEntries.size() +
+                        ", subsampleCount=" + subsampleEntries.Count +
                         ", subsampleEntries=" + subsampleEntries +
                         '}';
             }

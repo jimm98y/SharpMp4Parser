@@ -1,6 +1,6 @@
-﻿using System;
+﻿using SharpMp4Parser.Java;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Text;
 
@@ -24,7 +24,7 @@ namespace SharpMp4Parser
             return boxes;
         }
 
-        public void setBoxes(List<Box> boxes)
+        public virtual void setBoxes(List<Box> boxes)
         {
             this.boxes = new List<Box>(boxes);
         }
@@ -32,16 +32,16 @@ namespace SharpMp4Parser
         protected long getContainerSize()
         {
             long contentSize = 0;
-            for (int i = 0; i < getBoxes().size(); i++)
+            for (int i = 0; i < getBoxes().Count; i++)
             {
                 // it's quicker to iterate an array list like that since no iterator
                 // needs to be instantiated
-                contentSize += boxes.get(i).getSize();
+                contentSize += boxes[i].getSize();
             }
             return contentSize;
         }
 
-        public List<T> getBoxes<T>(Type clazz)
+        public virtual List<T> getBoxes<T>(Type clazz) where T: Box
         {
             List<T> boxesToBeReturned = null;
             T oneBox = default;
@@ -74,7 +74,7 @@ namespace SharpMp4Parser
             }
             else if (oneBox != null)
             {
-                return Collections.singletonList(oneBox);
+                return new List<T>() { oneBox };
             }
             else
             {
@@ -82,11 +82,11 @@ namespace SharpMp4Parser
             }
         }
 
-        public List<T> getBoxes<T>(Type clazz, bool recursive)
+        public List<T> getBoxes<T>(Type clazz, bool recursive) where T: Box
         {
             List<T> boxesToBeReturned = new List<T>(2);
             List<Box> boxes = getBoxes();
-            for (int i = 0; i < boxes.size(); i++)
+            for (int i = 0; i < boxes.Count; i++)
             {
                 Box boxe = boxes[i];
                 //clazz.isInstance(boxe) / clazz == boxe.getClass()?
@@ -99,7 +99,7 @@ namespace SharpMp4Parser
 
                 if (recursive && boxe is Container)
                 {
-                    boxesToBeReturned.addAll(((Container)boxe).getBoxes(clazz, recursive));
+                    boxesToBeReturned.AddRange(((Container)boxe).getBoxes<T>(clazz, recursive));
                 }
             }
             return boxesToBeReturned;
@@ -111,7 +111,7 @@ namespace SharpMp4Parser
          *
          * @param box will be added to the container
          */
-        public void addBox(Box box)
+        public virtual void addBox(Box box)
         {
             if (box != null)
             {
@@ -150,8 +150,8 @@ namespace SharpMp4Parser
         {
             StringBuilder buffer = new StringBuilder();
 
-            buffer.Append(this.getClass().getSimpleName()).append("[");
-            for (int i = 0; i < boxes.size(); i++)
+            buffer.Append(this.GetType().Name).Append("[");
+            for (int i = 0; i < boxes.Count; i++)
             {
                 if (i > 0)
                 {
@@ -162,7 +162,6 @@ namespace SharpMp4Parser
             buffer.Append("]");
             return buffer.ToString();
         }
-
 
         public void writeContainer(WritableByteChannel bb)
         {

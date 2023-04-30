@@ -14,6 +14,9 @@
  * limitations under the License. 
  */
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
 using System.Collections.Generic;
 using System.Text;
 
@@ -85,21 +88,21 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             {
                 IsoTypeWriter.writeUInt8(byteBuffer, (baseOffsetSize << 4));
             }
-            IsoTypeWriter.writeUInt16(byteBuffer, items.size());
+            IsoTypeWriter.writeUInt16(byteBuffer, items.Count);
             foreach (Item item in items)
             {
                 item.getContent(byteBuffer);
             }
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
             int tmp = IsoTypeReader.readUInt8(content);
-            offsetSize = tmp >>> 4;
+            offsetSize = (int)((uint)tmp >> 4);
             lengthSize = tmp & 0xf;
             tmp = IsoTypeReader.readUInt8(content);
-            baseOffsetSize = tmp >>> 4;
+            baseOffsetSize = (int)((uint)tmp >> 4);
 
             if (getVersion() == 1)
             {
@@ -108,7 +111,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             int itemCount = IsoTypeReader.readUInt16(content);
             for (int i = 0; i < itemCount; i++)
             {
-                items.Add(new Item(content));
+                items.Add(new Item(this, content));
             }
         }
 
@@ -164,46 +167,48 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
         public Item createItem(int itemId, int constructionMethod, int dataReferenceIndex, long baseOffset, List<Extent> extents)
         {
-            return new Item(itemId, constructionMethod, dataReferenceIndex, baseOffset, extents);
+            return new Item(this, itemId, constructionMethod, dataReferenceIndex, baseOffset, extents);
         }
 
         public Item createItem(ByteBuffer bb)
         {
-            return new Item(bb);
+            return new Item(this, bb);
         }
 
         public Extent createExtent(long extentOffset, long extentLength, long extentIndex)
         {
-            return new Extent(extentOffset, extentLength, extentIndex);
+            return new Extent(this, extentOffset, extentLength, extentIndex);
         }
 
         public Extent createExtent(ByteBuffer bb)
         {
-            return new Extent(bb);
+            return new Extent(this, bb);
         }
 
         public class Item
         {
+            private ItemLocationBox box;
             public int itemId;
             public int constructionMethod;
             public int dataReferenceIndex;
             public long baseOffset;
             public List<Extent> extents = new List<Extent>();
 
-            public Item(ByteBuffer input)
+            public Item(ItemLocationBox box, ByteBuffer input)
             {
+                this.box = box;
                 itemId = IsoTypeReader.readUInt16(input);
 
-                if (getVersion() == 1)
+                if (box.getVersion() == 1)
                 {
                     int tmp = IsoTypeReader.readUInt16(input);
                     constructionMethod = tmp & 0xf;
                 }
 
                 dataReferenceIndex = IsoTypeReader.readUInt16(input);
-                if (baseOffsetSize > 0)
+                if (box.baseOffsetSize > 0)
                 {
-                    baseOffset = IsoTypeReaderVariable.read(input, baseOffsetSize);
+                    baseOffset = IsoTypeReaderVariable.read(input, box.baseOffsetSize);
                 }
                 else
                 {
@@ -214,12 +219,13 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
                 for (int i = 0; i < extentCount; i++)
                 {
-                    extents.Add(new Extent(input));
+                    extents.Add(new Extent(this.box, input));
                 }
             }
 
-            public Item(int itemId, int constructionMethod, int dataReferenceIndex, long baseOffset, List<Extent> extents)
+            public Item(ItemLocationBox box, int itemId, int constructionMethod, int dataReferenceIndex, long baseOffset, List<Extent> extents)
             {
+                this.box = box;
                 this.itemId = itemId;
                 this.constructionMethod = constructionMethod;
                 this.dataReferenceIndex = dataReferenceIndex;
@@ -231,13 +237,13 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             {
                 int size = 2;
 
-                if (getVersion() == 1)
+                if (box.getVersion() == 1)
                 {
                     size += 2;
                 }
 
                 size += 2;
-                size += baseOffsetSize;
+                size += box.baseOffsetSize;
                 size += 2;
 
 
@@ -257,18 +263,18 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             {
                 IsoTypeWriter.writeUInt16(bb, itemId);
 
-                if (getVersion() == 1)
+                if (box.getVersion() == 1)
                 {
                     IsoTypeWriter.writeUInt16(bb, constructionMethod);
                 }
 
 
                 IsoTypeWriter.writeUInt16(bb, dataReferenceIndex);
-                if (baseOffsetSize > 0)
+                if (box.baseOffsetSize > 0)
                 {
-                    IsoTypeWriterVariable.write(baseOffset, bb, baseOffsetSize);
+                    IsoTypeWriterVariable.write(baseOffset, bb, box.baseOffsetSize);
                 }
-                IsoTypeWriter.writeUInt16(bb, extents.size());
+                IsoTypeWriter.writeUInt16(bb, extents.Count);
 
                 foreach (Extent extent in extents)
                 {
@@ -279,7 +285,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             public override bool Equals(object o)
             {
                 if (this == o) return true;
-                if (o == null || getClass() != o.getClass()) return false;
+                if (o == null || this.GetType() != o.GetType()) return false;
 
                 Item item = (Item)o;
 
@@ -297,7 +303,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
                 int result = itemId;
                 result = 31 * result + constructionMethod;
                 result = 31 * result + dataReferenceIndex;
-                result = 31 * result + (int)(baseOffset ^ (baseOffset >>> 32));
+                result = 31 * result + (int)(baseOffset ^ (long)((ulong)baseOffset >> 32));
                 result = 31 * result + (extents != null ? extents.GetHashCode() : 0);
                 return result;
             }
@@ -316,46 +322,49 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
         public class Extent
         {
+            private ItemLocationBox box;
             public long extentOffset;
             public long extentLength;
             public long extentIndex;
 
-            public Extent(long extentOffset, long extentLength, long extentIndex)
+            public Extent(ItemLocationBox box, long extentOffset, long extentLength, long extentIndex)
             {
+                this.box = box;
                 this.extentOffset = extentOffset;
                 this.extentLength = extentLength;
                 this.extentIndex = extentIndex;
             }
 
-            public Extent(ByteBuffer input)
+            public Extent(ItemLocationBox box, ByteBuffer input)
             {
-                if ((getVersion() == 1) && indexSize > 0)
+                this.box = box;
+                if ((box.getVersion() == 1) && box.indexSize > 0)
                 {
-                    extentIndex = IsoTypeReaderVariable.read(input, indexSize);
+                    extentIndex = IsoTypeReaderVariable.read(input, box.indexSize);
                 }
-                extentOffset = IsoTypeReaderVariable.read(input, offsetSize);
-                extentLength = IsoTypeReaderVariable.read(input, lengthSize);
+                extentOffset = IsoTypeReaderVariable.read(input, box.offsetSize);
+                extentLength = IsoTypeReaderVariable.read(input, box.lengthSize);
             }
 
             public void getContent(ByteBuffer os)
             {
-                if ((getVersion() == 1) && indexSize > 0)
+                if ((box.getVersion() == 1) && box.indexSize > 0)
                 {
-                    IsoTypeWriterVariable.write(extentIndex, os, indexSize);
+                    IsoTypeWriterVariable.write(extentIndex, os, box.indexSize);
                 }
-                IsoTypeWriterVariable.write(extentOffset, os, offsetSize);
-                IsoTypeWriterVariable.write(extentLength, os, lengthSize);
+                IsoTypeWriterVariable.write(extentOffset, os, box.offsetSize);
+                IsoTypeWriterVariable.write(extentLength, os, box.lengthSize);
             }
 
             public int getSize()
             {
-                return (indexSize > 0 ? indexSize : 0) + offsetSize + lengthSize;
+                return (box.indexSize > 0 ? box.indexSize : 0) + box.offsetSize + box.lengthSize;
             }
 
             public override bool Equals(object o)
             {
                 if (this == o) return true;
-                if (o == null || getClass() != o.getClass()) return false;
+                if (o == null || GetType() != o.GetType()) return false;
 
                 Extent extent = (Extent)o;
 
@@ -368,9 +377,9 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
 
             public override int GetHashCode()
             {
-                int result = (int)(extentOffset ^ (extentOffset >>> 32));
-                result = 31 * result + (int)(extentLength ^ (extentLength >>> 32));
-                result = 31 * result + (int)(extentIndex ^ (extentIndex >>> 32));
+                int result = (int)(extentOffset ^ (long)((ulong)extentOffset >> 32));
+                result = 31 * result + (int)(extentLength ^ (long)((ulong)extentLength >> 32));
+                result = 31 * result + (int)(extentIndex ^ (long)((ulong)extentIndex >> 32));
                 return result;
             }
 

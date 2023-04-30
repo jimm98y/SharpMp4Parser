@@ -16,6 +16,8 @@
 
 using System.Collections.Generic;
 using System;
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
 
 namespace SharpMp4Parser.Boxes.SampleGrouping
 {
@@ -91,7 +93,7 @@ namespace SharpMp4Parser.Boxes.SampleGrouping
             buf.putInt(maximumBitrate);
             buf.putInt(minimumBitrate);
             IsoTypeWriter.writeUInt8(buf, discardPriority);
-            ((Buffer)buf).rewind();
+            ((Java.Buffer)buf).rewind();
             return buf;
         }
 
@@ -101,7 +103,7 @@ namespace SharpMp4Parser.Boxes.SampleGrouping
             {
                 return true;
             }
-            if (o == null || getClass() != o.getClass())
+            if (o == null || GetType() != o.GetType())
             {
                 return false;
             }
@@ -252,7 +254,7 @@ namespace SharpMp4Parser.Boxes.SampleGrouping
                 {
                     return true;
                 }
-                if (o == null || getClass() != o.getClass())
+                if (o == null || GetType() != o.GetType())
                 {
                     return false;
                 }

@@ -1,4 +1,7 @@
-﻿using System;
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,7 +11,7 @@ namespace SharpMp4Parser.Boxes.ISO23001.Part7
     {
         protected int algorithmId = -1;
         protected int ivSize = -1;
-        protected sbyte[] kid = new sbyte[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+        protected byte[] kid = new byte[] { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
         List<CencSampleAuxiliaryDataFormat> entries = new List<CencSampleAuxiliaryDataFormat>();
 
         protected AbstractSampleEncryptionBox(string type) : base(type)
@@ -22,7 +25,7 @@ namespace SharpMp4Parser.Boxes.ISO23001.Part7
             return offset;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
 
@@ -30,7 +33,7 @@ namespace SharpMp4Parser.Boxes.ISO23001.Part7
             {
                 algorithmId = IsoTypeReader.readUInt24(content);
                 ivSize = IsoTypeReader.readUInt8(content);
-                kid = new sbyte[16];
+                kid = new byte[16];
                 content.get(kid);
             }
 
@@ -42,21 +45,21 @@ namespace SharpMp4Parser.Boxes.ISO23001.Part7
             entries = parseEntries(parseEight, numOfEntries, 8);
             if (entries != null)
             {
-                ((Buffer)content).position(content.position() + content.remaining() - parseEight.remaining());
+                ((Java.Buffer)content).position(content.position() + content.remaining() - parseEight.remaining());
                 return;
             }
 
             entries = parseEntries(parseSixteen, numOfEntries, 16);
             if (entries != null)
             {
-                ((Buffer)content).position(content.position() + content.remaining() - parseSixteen.remaining());
+                ((Java.Buffer)content).position(content.position() + content.remaining() - parseSixteen.remaining());
                 return;
             }
 
             entries = parseEntries(parseZero, numOfEntries, 0);
             if (entries != null)
             {
-                ((Buffer)content).position(content.position() + content.remaining() - parseZero.remaining());
+                ((Java.Buffer)content).position(content.position() + content.remaining() - parseZero.remaining());
                 return;
             }
 
@@ -78,7 +81,7 @@ namespace SharpMp4Parser.Boxes.ISO23001.Part7
                     {
                         int numOfPairs = IsoTypeReader.readUInt16(content);
                         e.pairs = new CencSampleAuxiliaryDataFormat.Pair[numOfPairs];
-                        for (int i = 0; i < e.pairs.length; i++)
+                        for (int i = 0; i < e.pairs.Length; i++)
                         {
                             e.pairs[i] = e.createPair(
                                     IsoTypeReader.readUInt16(content),
@@ -88,7 +91,7 @@ namespace SharpMp4Parser.Boxes.ISO23001.Part7
                     _entries.Add(e);
                 }
             }
-            catch (Exception bue)
+            catch (Exception)
             {
                 return null;
             }
@@ -122,7 +125,7 @@ namespace SharpMp4Parser.Boxes.ISO23001.Part7
             }
         }
 
-        protected bool isOverrideTrackEncryptionBoxParameters()
+        protected virtual bool isOverrideTrackEncryptionBoxParameters()
         {
             return (getFlags() & 0x1) > 0;
         }
@@ -141,18 +144,18 @@ namespace SharpMp4Parser.Boxes.ISO23001.Part7
             {
                 if (entry.getSize() > 0)
                 {
-                    if (entry.iv.length != 8 && entry.iv.length != 16)
+                    if (entry.iv.Length != 8 && entry.iv.Length != 16)
                     {
                         throw new Exception("IV must be either 8 or 16 bytes");
                     }
                     byteBuffer.put(entry.iv);
                     if (isSubSampleEncryption())
                     {
-                        IsoTypeWriter.writeUInt16(byteBuffer, entry.pairs.length);
+                        IsoTypeWriter.writeUInt16(byteBuffer, entry.pairs.Length);
                         foreach (CencSampleAuxiliaryDataFormat.Pair pair in entry.pairs)
                         {
-                            IsoTypeWriter.writeUInt16(byteBuffer, pair.clear());
-                            IsoTypeWriter.writeUInt32(byteBuffer, pair.encrypted());
+                            IsoTypeWriter.writeUInt16(byteBuffer, pair.Clear);
+                            IsoTypeWriter.writeUInt32(byteBuffer, pair.Encrypted);
                         }
                     }
                 }
@@ -200,7 +203,7 @@ namespace SharpMp4Parser.Boxes.ISO23001.Part7
             {
                 return true;
             }
-            if (o == null || getClass() != o.getClass())
+            if (o == null || this.GetType() != o.GetType())
             {
                 return false;
             }
@@ -237,14 +240,14 @@ namespace SharpMp4Parser.Boxes.ISO23001.Part7
 
         public List<short> getEntrySizes()
         {
-            List<short> entrySizes = new List<short>(entries.size());
+            List<short> entrySizes = new List<short>(entries.Count);
             foreach (CencSampleAuxiliaryDataFormat entry in entries)
             {
-                short size = (short)entry.iv.length;
+                short size = (short)entry.iv.Length;
                 if (isSubSampleEncryption())
                 {
                     size += 2; //numPairs
-                    size += entry.pairs.length * 6;
+                    size += (short)(entry.pairs.Length * 6);
                 }
                 entrySizes.Add(size);
             }

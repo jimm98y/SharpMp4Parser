@@ -1,4 +1,8 @@
-﻿namespace SharpMp4Parser.Boxes.Dolby
+﻿using SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors;
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+
+namespace SharpMp4Parser.Boxes.Dolby
 {
     /**
      * <h1>4cc = "{@value #TYPE}"</h1>
@@ -20,7 +24,7 @@
             return 10;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             BitReaderBuffer brb = new BitReaderBuffer(content);
             format_info = brb.readBits(32);

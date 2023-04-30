@@ -15,6 +15,8 @@
  */
 
 
+using SharpMp4Parser.Java;
+using SharpMp4Parser.Tools;
 using System;
 using System.Text;
 
@@ -70,7 +72,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
             {
                 return true;
             }
-            if (o == null || getClass() != o.getClass())
+            if (o == null || GetType() != o.GetType())
             {
                 return false;
             }

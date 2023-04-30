@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using SharpMp4Parser.Java;
+
 namespace SharpMp4Parser.Boxes.ISO14496.Part12
 {
     /**
@@ -33,7 +35,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part12
             return 4;
         }
 
-        public override void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             parseVersionAndFlags(content);
         }

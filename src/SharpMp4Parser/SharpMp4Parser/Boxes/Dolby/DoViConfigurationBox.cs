@@ -1,4 +1,8 @@
-﻿namespace SharpMp4Parser.Boxes.Dolby
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Support;
+using SharpMp4Parser.Tools;
+
+namespace SharpMp4Parser.Boxes.Dolby
 {
     public class DoViConfigurationBox : AbstractBox
     {
@@ -20,12 +24,12 @@
         public DoViConfigurationBox() : base(TYPE)
         { }
 
-        protected long getContentSize()
+        protected override long getContentSize()
         {
             return 24;
         }
 
-        protected void getContent(ByteBuffer byteBuffer)
+        protected override void getContent(ByteBuffer byteBuffer)
         {
             IsoTypeWriter.writeUInt8(byteBuffer, dvVersionMajor);
             IsoTypeWriter.writeUInt8(byteBuffer, dvVersionMinor);
@@ -45,7 +49,7 @@
             IsoTypeWriter.writeUInt32(byteBuffer, reserved5);
         }
 
-        protected void _parseDetails(ByteBuffer content)
+        protected override void _parseDetails(ByteBuffer content)
         {
             dvVersionMajor = IsoTypeReader.readUInt8(content);
             dvVersionMinor = IsoTypeReader.readUInt8(content);
