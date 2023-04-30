@@ -1,18 +1,9 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 
 namespace SharpMp4Parser.Java
 {
-    public static class Integer
-    {
-        public static string toHexString(int value)
-        {
-            return value.ToString("X");
-        }
-    }
-
+    
     public static class Channels
     {
         public static WritableByteChannel newChannel(ByteArrayOutputStream outputStream)
@@ -29,35 +20,6 @@ namespace SharpMp4Parser.Java
         {
             throw new NotImplementedException();
         }
-    }
-
-    public static class Arrays
-    {
-        public static int hashCode<T>(T[] array)
-        {
-            return ((IStructuralEquatable)array).GetHashCode(EqualityComparer<int>.Default);
-        }
-
-        public static string toString<T>(this IEnumerable<T> list)
-        {
-            return "[" + string.Join(",", list) + "]";
-        }
-    }
-
-    public static class DateTimeExtensions
-    { 
-        public static long getTime(this DateTime date)
-        {
-            DateTime oldTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-            TimeSpan diff = date.ToUniversalTime() - oldTime;
-            return (long)Math.Floor(diff.TotalMilliseconds);
-        }
-    }
-
-    public enum ByteOrder
-    {
-        BIG_ENDIAN,
-        LITTLE_ENDIAN,
     }
 
     public class Buffer : MemoryStream
