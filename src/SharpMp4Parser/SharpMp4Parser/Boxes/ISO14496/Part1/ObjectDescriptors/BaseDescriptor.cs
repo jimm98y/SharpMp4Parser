@@ -110,7 +110,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
             ByteBuffer detailSource = bb.slice();
             ((Buffer)detailSource).limit(sizeOfInstance);
             parseDetail(detailSource);
-            Debug.Assert(detailSource.remaining() == 0 : this.getClass().getSimpleName() + " has not been fully parsed");
+            Debug.Assert(detailSource.remaining() == 0, this.getClass().getSimpleName() + " has not been fully parsed");
             ((Buffer)bb).position(bb.position() + sizeOfInstance);
         }
 

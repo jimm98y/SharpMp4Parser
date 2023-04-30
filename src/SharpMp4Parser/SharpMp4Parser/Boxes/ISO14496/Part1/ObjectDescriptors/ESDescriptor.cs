@@ -99,11 +99,15 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
 
             while (bb.remaining() > 1) {
                 BaseDescriptor descriptor = ObjectDescriptorFactory.createFrom(-1, bb);
-                if (descriptor instanceof DecoderConfigDescriptor) {
+                if (descriptor is DecoderConfigDescriptor)
+                {
                     decoderConfigDescriptor = (DecoderConfigDescriptor)descriptor;
-                } else if (descriptor instanceof SLConfigDescriptor) {
+                }
+                else if (descriptor is SLConfigDescriptor) 
+                {
                     slConfigDescriptor = (SLConfigDescriptor)descriptor;
-                } else
+                } 
+                else
                 {
                     otherDescriptors.Add(descriptor);
                 }
@@ -337,7 +341,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
                 return false;
             if (otherDescriptors != null ? !otherDescriptors.Equals(that.otherDescriptors) : that.otherDescriptors != null)
                 return false;
-            if (slConfigDescriptor != null ? !slConfigDescriptor.equals(that.slConfigDescriptor) : that.slConfigDescriptor != null)
+            if (slConfigDescriptor != null ? !slConfigDescriptor.Equals(that.slConfigDescriptor) : that.slConfigDescriptor != null)
                 return false;
 
             return true;
@@ -356,7 +360,7 @@ namespace SharpMp4Parser.Boxes.ISO14496.Part1.ObjectDescriptors
             result = 31 * result + dependsOnEsId;
             result = 31 * result + oCREsId;
             result = 31 * result + (decoderConfigDescriptor != null ? decoderConfigDescriptor.GetHashCode() : 0);
-            result = 31 * result + (slConfigDescriptor != null ? slConfigDescriptor.hashCode() : 0);
+            result = 31 * result + (slConfigDescriptor != null ? slConfigDescriptor.GetHashCode() : 0);
             result = 31 * result + (otherDescriptors != null ? otherDescriptors.GetHashCode() : 0);
             return result;
         }

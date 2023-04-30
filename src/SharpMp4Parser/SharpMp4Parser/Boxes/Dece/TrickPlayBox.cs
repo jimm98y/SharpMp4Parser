@@ -51,7 +51,7 @@ namespace SharpMp4Parser.Boxes.Dece
         protected override void getContent(ByteBuffer byteBuffer)
         {
             writeVersionAndFlags(byteBuffer);
-            for (Entry entry : entries)
+            foreach (Entry entry in entries)
             {
                 IsoTypeWriter.writeUInt8(byteBuffer, entry.value);
             }
