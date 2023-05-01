@@ -138,7 +138,7 @@ namespace SharpMp4Parser.Muxer.Container.MP4
         {
 
             Sample cachedSample;
-            if (sampleCache[index] != null && (sampleCache[index].TryGetTarget(out cachedSample))
+            if (sampleCache[index] != null && (sampleCache[index].TryGetTarget(out cachedSample)))
             {
                 return cachedSample;
             }

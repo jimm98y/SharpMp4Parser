@@ -27,8 +27,7 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
         private Dictionary<GroupEntry, long[]> groupEntries = new Dictionary<GroupEntry, long[]>();
 
         public CencEncryptingTrackImpl(Track source, Uuid defaultKeyId, SecretKey key, bool dummyIvs) :
-                this(source, new RangeStartMap<>(0, defaultKeyId), new Dictionary<Uuid, SecretKey>() { { defaultKeyId, key },
-                    "cenc", dummyIvs, false)
+                this(source, new RangeStartMap<int, Uuid>(0, defaultKeyId), new Dictionary<Uuid, SecretKey>() { { defaultKeyId, key } }, "cenc", dummyIvs, false)
         { }
 
 

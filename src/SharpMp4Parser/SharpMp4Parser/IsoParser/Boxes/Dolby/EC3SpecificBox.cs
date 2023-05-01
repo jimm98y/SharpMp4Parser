@@ -126,7 +126,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.Dolby
             this.numIndSub = numIndSub;
         }
 
-        public sealed class Entry
+        public class Entry
         {
             public int fscod;
             public int bsid;
