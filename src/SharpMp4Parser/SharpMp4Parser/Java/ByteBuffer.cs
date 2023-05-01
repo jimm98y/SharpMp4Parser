@@ -35,6 +35,11 @@ namespace SharpMp4Parser.Java
             throw new System.NotImplementedException();
         }
 
+        public int limit()
+        {
+            throw new System.NotImplementedException();
+        }
+
         public ByteBuffer position(int nextBufferWritePosition)
         {
             throw new System.NotImplementedException();
@@ -195,9 +200,10 @@ namespace SharpMp4Parser.Java
             throw new NotImplementedException();
         }
 
-        public void write(ByteBuffer value)
+        public virtual int write(ByteBuffer value)
         {
             put(value);
+            return (int)value.Length;
         }
 
         public void write(int value)
@@ -223,6 +229,21 @@ namespace SharpMp4Parser.Java
         public int hashCode()
         {
             return GetHashCode();
+        }
+
+        internal int arrayOffset()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal bool hasArray()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static ByteBuffer wrap(byte[] bytes, int v1, int v2)
+        {
+            throw new NotImplementedException();
         }
     }
 

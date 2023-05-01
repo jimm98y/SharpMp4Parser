@@ -21,7 +21,7 @@ namespace SharpMp4Parser.IsoParser.Tools
     /**
      * Creates a <code>ReadableByteChannel</code> that is backed by a <code>ByteBuffer</code>.
      */
-    public class ByteBufferByteChannel /* : ByteChannel */
+    public class ByteBufferByteChannel : ReadableByteChannel /* : ByteChannel */
     {
         ByteBuffer byteBuffer;
 
@@ -33,7 +33,7 @@ namespace SharpMp4Parser.IsoParser.Tools
             this.byteBuffer = byteBuffer;
         }
 
-        public int read(ByteBuffer dst)
+        public override int read(ByteBuffer dst)
         {
             int rem = dst.remaining();
             if (byteBuffer.remaining() <= 0)
@@ -45,16 +45,17 @@ namespace SharpMp4Parser.IsoParser.Tools
             return rem;
         }
 
-        public bool isOpen()
+        public override bool isOpen()
         {
             return true;
         }
 
-        public void close()
+        public override void close()
         {
+            base.close();
         }
 
-        public int write(ByteBuffer src)
+        public override int write(ByteBuffer src)
         {
             int r = src.remaining();
             byteBuffer.put(src);
