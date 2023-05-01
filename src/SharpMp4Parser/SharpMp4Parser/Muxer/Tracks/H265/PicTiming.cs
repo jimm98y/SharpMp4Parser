@@ -1,11 +1,13 @@
-﻿namespace SharpMp4Parser.Muxer.Tracks.H265
+﻿using System.IO;
+
+namespace SharpMp4Parser.Muxer.Tracks.H265
 {
     /**
      * Created by sannies on 03.02.2015.
      */
     public class PicTiming
     {
-        public PicTiming(int payloadSize, InputStream input)
+        public PicTiming(int payloadSize, Stream input)
         {
             /* if (frame_field_info_present_flag) {
                  int pic_struct = (int) bsr.readNBit(4);

@@ -211,7 +211,7 @@ namespace SharpMp4Parser.Java
             throw new System.NotImplementedException();
         }
 
-        public int read()
+        public virtual int read()
         {
             return get();
         }
@@ -270,5 +270,9 @@ namespace SharpMp4Parser.Java
 
     public class ByteArrayInputStream : ReadableByteChannel
     {
+        internal int available()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -44,7 +44,7 @@ namespace SharpMp4Parser.Muxer.Tracks
                 }
             }
 
-            samples = new ReplaceSyncSamplesList(parent.getSamples());
+            samples = new ReplaceSyncSamplesList(parent.getSamples(), this);
         }
 
         public override List<SampleEntry> getSampleEntries()
@@ -164,23 +164,25 @@ namespace SharpMp4Parser.Muxer.Tracks
         private class ReplaceSyncSamplesList : List<Sample>
         {
             List<Sample> parentSamples;
+            Avc1ToAvc3TrackImpl that;
 
-            public ReplaceSyncSamplesList(List<Sample> parentSamples)
+            public ReplaceSyncSamplesList(List<Sample> parentSamples, Avc1ToAvc3TrackImpl that)
             {
+                this.that = that;
                 this.parentSamples = parentSamples;
             }
 
             public override Sample get(int index)
             {
                 Sample orignalSample = parentSamples[index];
-                if (orignalSample.getSampleEntry().getType().Equals("avc1") && Arrays.binarySearch(getSyncSamples(), index + 1) >= 0)
+                if (orignalSample.getSampleEntry().getType().Equals("avc1") && Arrays.binarySearch(that.getSyncSamples(), index + 1) >= 0)
                 {
 
                     AvcConfigurationBox avcC = orignalSample.getSampleEntry().getBoxes<AvcConfigurationBox>(typeof(AvcConfigurationBox))[0];
                     int len = avcC.getLengthSizeMinusOne() + 1;
                     ByteBuffer buf = ByteBuffer.allocate(len);
 
-                    SampleEntry se = avc1toavc3[orignalSample.getSampleEntry()];
+                    SampleEntry se = that.avc1toavc3[orignalSample.getSampleEntry()];
 
 
                     return new CustomSample(buf, len, avcC, se, orignalSample);

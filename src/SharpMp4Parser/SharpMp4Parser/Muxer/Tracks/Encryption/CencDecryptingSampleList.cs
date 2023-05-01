@@ -31,7 +31,7 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
 
         private string getSchemeType(SampleEntry s)
         {
-            SchemeTypeBox schm = Path.getPath((IsoParser.Container)s, "sinf/schm");
+            SchemeTypeBox schm = Path.getPath< SchemeTypeBox>((IsoParser.Container)s, "sinf/schm");
 
             Debug.Assert(schm != null, "Cannot get cipher without schemetypebox");
             return schm.getSchemeType();
@@ -45,7 +45,7 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
             // The IV
             try
             {
-                String schemeType = getSchemeType(se);
+                string schemeType = getSchemeType(se);
                 if ("cenc".Equals(schemeType) || "piff".Equals(schemeType))
                 {
                     Cipher c = Cipher.getInstance("AES/CTR/NoPadding");
@@ -134,7 +134,7 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
                     }
                     ((Java.Buffer)encSampleBuffer).rewind();
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     throw;
                 }

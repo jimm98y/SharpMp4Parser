@@ -59,7 +59,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             return subs;
         }
 
-        public void close()
+        public override void close()
         {
             // nothing to close
         }

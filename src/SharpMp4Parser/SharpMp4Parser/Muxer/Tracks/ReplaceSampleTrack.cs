@@ -38,7 +38,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             this.origTrack = origTrack;
             this.sampleNumber = sampleNumber;
             this.sampleContent = new SampleImpl(content, this.origTrack.getSamples()[CastUtils.l2i(sampleNumber)].getSampleEntry());
-            this.samples = new ReplaceASingleEntryList();
+            this.samples = new ReplaceASingleEntryList(sampleNumber, sampleContent, origTrack);
         }
 
         public override void close()
@@ -102,21 +102,32 @@ namespace SharpMp4Parser.Muxer.Tracks
 
         private class ReplaceASingleEntryList : List<Sample>
         {
-            public Sample get(int index)
+            private long sampleNumber;
+            private Sample sampleContent;
+            private Track origTrack;
+
+            public ReplaceASingleEntryList(long sampleNumber, Sample sampleContent, Track origTrack)
             {
-                if (ReplaceSampleTrack.sampleNumber == index)
+                this.sampleNumber = sampleNumber;
+                this.sampleContent = sampleContent;
+                this.origTrack = origTrack;
+            }
+
+            public override Sample get(int index)
+            {
+                if (sampleNumber == index)
                 {
-                    return ReplaceSampleTrack.sampleContent;
+                    return sampleContent;
                 }
                 else
                 {
-                    return ReplaceSampleTrack.origTrack.getSamples()[index];
+                    return origTrack.getSamples()[index];
                 }
             }
 
             public override int size()
             {
-                return ReplaceSampleTrack.origTrack.getSamples().size();
+                return origTrack.getSamples().Count;
             }
         }
     }

@@ -53,17 +53,17 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing
             }
         }
 
-        public static void print8x8(ShortBuffer output)
-        {
-            for (int x = 0; x < 8; x++)
-            {
-                for (int y = 0; y < 8; y++)
-                {
-                    System.Diagnostics.Debug.Write(string.Format("{0}, ", output.get()));
-                }
-                System.Diagnostics.Debug.WriteLine("");
-            }
-        }
+        //public static void print8x8(ShortBuffer output)
+        //{
+        //    for (int x = 0; x < 8; x++)
+        //    {
+        //        for (int y = 0; y < 8; y++)
+        //        {
+        //            System.Diagnostics.Debug.Write(string.Format("{0}, ", output.get()));
+        //        }
+        //        System.Diagnostics.Debug.WriteLine("");
+        //    }
+        //}
 
         public static void print(short[] table)
         {

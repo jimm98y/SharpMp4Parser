@@ -1,4 +1,5 @@
-﻿using SharpMp4Parser.Muxer.Tracks.H264.Parsing.Model;
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Muxer.Tracks.H264.Parsing.Model;
 using SharpMp4Parser.Muxer.Tracks.H264.Parsing.Read;
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
         public PictureParameterSet pps;
         public SeqParameterSet sps;
 
-        public SliceHeader(InputStream input, Dictionary<int, SeqParameterSet> spss, Dictionary<int, PictureParameterSet> ppss, bool IdrPicFlag)
+        public SliceHeader(ByteArrayInputStream input, Dictionary<int, SeqParameterSet> spss, Dictionary<int, PictureParameterSet> ppss, bool IdrPicFlag)
         {
             try
             {
@@ -74,7 +75,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
                     }
                     throw new Exception("PPS with ids " + ids + " available but not " + pic_parameter_set_id);
                 }
-                sps = spss.get(pps.seq_parameter_set_id);
+                sps = spss[pps.seq_parameter_set_id];
                 if (sps.residual_color_transform_flag)
                 {
                     colour_plane_id = reader.readU(2, "SliceHeader: colour_plane_id");

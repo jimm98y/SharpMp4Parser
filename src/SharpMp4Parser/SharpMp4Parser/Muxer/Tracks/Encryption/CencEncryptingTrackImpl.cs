@@ -252,7 +252,7 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
             return source.getEdits();
         }
 
-        public override Dictionary<GroupEntry, long[]> getSampleGroups()
+        public virtual Dictionary<GroupEntry, long[]> getSampleGroups()
         {
             return groupEntries;
         }

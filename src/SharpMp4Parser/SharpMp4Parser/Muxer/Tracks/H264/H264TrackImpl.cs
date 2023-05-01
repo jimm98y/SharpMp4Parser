@@ -683,7 +683,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
             }
         }
 
-        public class ByteBufferBackedInputStream : InputStream
+        public class ByteBufferBackedInputStream : ByteArrayInputStream
         {
             private readonly ByteBuffer buf;
 
@@ -693,7 +693,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
                 this.buf = buf.duplicate();
             }
 
-            public int read()
+            public override int read()
             {
                 if (!buf.hasRemaining())
                 {
@@ -714,6 +714,5 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
                 return len;
             }
         }
-
     }
 }

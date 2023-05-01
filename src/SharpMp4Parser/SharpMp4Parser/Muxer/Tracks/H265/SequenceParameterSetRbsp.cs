@@ -1,5 +1,7 @@
-﻿using SharpMp4Parser.Muxer.Tracks.H264.Parsing.Read;
+﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Muxer.Tracks.H264.Parsing.Read;
 using System;
+using System.IO;
 
 namespace SharpMp4Parser.Muxer.Tracks.H265
 {
@@ -23,7 +25,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
         public int sps_max_sub_layers_minus1;
         public bool sps_temporal_id_nesting_flag;
 
-        public SequenceParameterSetRbsp(InputStream input)
+        public SequenceParameterSetRbsp(ByteArrayInputStream input)
         {
             CAVLCReader bsr = new CAVLCReader(input);
 

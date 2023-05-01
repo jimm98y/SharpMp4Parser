@@ -53,13 +53,9 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
                 List<string> r = new List<string>(new List<string>(Arrays.asList(sw.getBuffer().ToString().Split("\n"))));
                 return r.toArray(new string[r.Count]);
             }
-            catch (TransformerConfigurationException e)
+            catch (Exception)
             {
-                throw new RuntimeException(e);
-            }
-            catch (TransformerException e)
-            {
-                throw new RuntimeException(e);
+                throw;
             }
         }
 
@@ -136,9 +132,9 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
             {
                 transformer = transformerFactory.newTransformer();
             }
-            catch (TransformerConfigurationException e)
+            catch (Exception)
             {
-                throw new RuntimeException(e);
+                throw;
             }
             transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
             if (indent > 0)
@@ -152,9 +148,9 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
             {
                 transformer.transform(source, result);
             }
-            catch (TransformerException e)
+            catch (Exception e)
             {
-                throw new IOException(e);
+                throw;
             }
         }
 
@@ -207,29 +203,23 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
                 for (int i = 0; i < nl.getLength(); i++)
                 {
                     Node backgroundImage = nl.item(i);
-                    URI backgroundImageUri = URI.create(backgroundImage.getNodeValue());
+                    Uri backgroundImageUri = new Uri(backgroundImage.getNodeValue());
                     if (!backgroundImageUri.isAbsolute())
                     {
-                        copyLarge(new URI(ttml.getDocumentURI()).resolve(backgroundImageUri).toURL().openStream(), new File(target.toURI().resolve(backgroundImageUri).toURL().getFile()));
+                        copyLarge(new Uri(ttml.getDocumentURI()).resolve(backgroundImageUri).toURL().openStream(), new File(target.toURI().resolve(backgroundImageUri).toURL().getFile()));
                     }
                 }
-                copyLarge(new URI(ttml.getDocumentURI()).toURL().openStream(), target);
-
+                copyLarge(new Uri(ttml.getDocumentURI()).toURL().openStream(), target);
             }
-            catch (XPathExpressionException e)
+            catch (Exception)
             {
-                throw new IOException(e);
-            }
-            catch (URISyntaxException e)
-            {
-                throw new IOException(e);
+                throw;
             }
         }
 
         private static long copyLarge(InputStream input, File outputFile)
         {
-            byte[]
-        buffer = new byte[16384];
+            byte[] buffer = new byte[16384];
             long count = 0;
             int n = 0;
             outputFile.getParentFile().mkdirs();

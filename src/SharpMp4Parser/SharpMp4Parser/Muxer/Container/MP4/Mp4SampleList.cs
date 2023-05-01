@@ -1,4 +1,5 @@
-﻿using SharpMp4Parser.IsoParser.Tools;
+﻿using SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12;
+using SharpMp4Parser.IsoParser.Tools;
 using System.Collections.Generic;
 
 namespace SharpMp4Parser.Muxer.Container.MP4
@@ -13,7 +14,7 @@ namespace SharpMp4Parser.Muxer.Container.MP4
         public Mp4SampleList(long trackId, IsoParser.Container isofile, RandomAccessSource source)
         {
 
-            if (Path.getPaths(isofile, "moov/mvex/trex").Count == 0)
+            if (Path.getPaths< TrackExtendsBox>(isofile, "moov/mvex/trex").Count == 0)
             {
                 samples = new DefaultMp4SampleList(trackId, isofile, source);
             }

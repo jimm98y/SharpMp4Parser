@@ -49,7 +49,7 @@ namespace SharpMp4Parser.Muxer
             }
         }
 
-        public override SampleEntry getSampleEntry()
+        public SampleEntry getSampleEntry()
         {
             return sampleEntry;
         }

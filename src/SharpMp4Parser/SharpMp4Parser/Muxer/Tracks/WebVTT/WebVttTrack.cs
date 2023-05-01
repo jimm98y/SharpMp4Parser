@@ -74,7 +74,7 @@ namespace SharpMp4Parser.Muxer.Tracks.WebVTT
         long[] sampleDurations = new long[0];
         public static WebVTTSampleEntry sampleEntry;
 
-        public WebVttTrack(InputStream input, string trackName, CultureInfo locale) : base(trackName)
+        public WebVttTrack(ByteArrayInputStream input, string trackName, CultureInfo locale) : base(trackName)
         {
             trackMetaData.setTimescale(1000);
             trackMetaData.setLanguage(locale.getISO3Language());
@@ -212,7 +212,7 @@ namespace SharpMp4Parser.Muxer.Tracks.WebVTT
         {
             if (!s.matches(WEBVTT_TIMESTAMP_STRING))
             {
-                throw new NumberFormatException("has invalid format");
+                throw new FormatException("has invalid format");
             }
 
             string[]
