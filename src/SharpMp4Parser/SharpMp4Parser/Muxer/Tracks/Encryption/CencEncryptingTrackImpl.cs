@@ -9,6 +9,8 @@ using SharpMp4Parser.Java;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using SharpMp4Parser.Muxer.Tracks.H264;
+using SharpMp4Parser.Muxer.Tracks.H265;
 
 namespace SharpMp4Parser.Muxer.Tracks.Encryption
 {

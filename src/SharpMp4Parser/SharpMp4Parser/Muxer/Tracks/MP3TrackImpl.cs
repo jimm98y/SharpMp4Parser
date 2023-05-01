@@ -40,7 +40,7 @@ namespace SharpMp4Parser.Muxer.Tracks
         public MP3TrackImpl(DataSource channel) : this(channel, "eng")
         { }
 
-        public MP3TrackImpl(DataSource dataSource, string lang) : base(dataSource.toString())
+        public MP3TrackImpl(DataSource dataSource, string lang) : base(dataSource.ToString())
         {
             this.dataSource = dataSource;
             samples = new List<Sample>();
@@ -112,32 +112,32 @@ namespace SharpMp4Parser.Muxer.Tracks
             Arrays.fill(durations, SAMPLES_PER_FRAME);
         }
 
-        public void close()
+        public override void close()
         {
             dataSource.close();
         }
 
-        public List<SampleEntry> getSampleEntries()
+        public override List<SampleEntry> getSampleEntries()
         {
             return new List<SampleEntry>() { audioSampleEntry };
         }
 
-        public long[] getSampleDurations()
+        public override long[] getSampleDurations()
         {
             return durations;
         }
 
-        public TrackMetaData getTrackMetaData()
+        public override TrackMetaData getTrackMetaData()
         {
             return trackMetaData;
         }
 
-        public string getHandler()
+        public override string getHandler()
         {
             return "soun";
         }
 
-        public List<Sample> getSamples()
+        public override List<Sample> getSamples()
         {
             return samples;
         }
@@ -213,7 +213,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             return hdr;
         }
 
-        public override string toString()
+        public override string ToString()
         {
             return "MP3TrackImpl";
         }

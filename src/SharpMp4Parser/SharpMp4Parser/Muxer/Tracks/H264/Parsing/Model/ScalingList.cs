@@ -19,6 +19,9 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR TH
 OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+using SharpMp4Parser.Muxer.Tracks.H264.Parsing.Read;
+using SharpMp4Parser.Muxer.Tracks.H264.Parsing.Write;
+
 namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Model
 {
     /**

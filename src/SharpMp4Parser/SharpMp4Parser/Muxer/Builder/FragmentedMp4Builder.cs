@@ -21,9 +21,11 @@ using SharpMp4Parser.IsoParser.Boxes.SampleEntry;
 using SharpMp4Parser.IsoParser.Boxes.SampleGrouping;
 using SharpMp4Parser.IsoParser.Tools;
 using SharpMp4Parser.Java;
+using SharpMp4Parser.Muxer.Tracks.Encryption;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace SharpMp4Parser.Muxer.Builder
 {
@@ -152,7 +154,7 @@ namespace SharpMp4Parser.Muxer.Builder
         /**
          * {@inheritDoc}
          */
-        public Container build(Movie movie)
+        public IsoParser.Container build(Movie movie)
         {
             //LOG.debug("Creating movie " + movie);
             if (fragmenter == null)
@@ -224,7 +226,7 @@ namespace SharpMp4Parser.Muxer.Builder
 
             tfhd.setDefaultSampleFlags(sf);
             tfhd.setBaseDataOffset(-1);
-            tfhd.setSampleDescriptionIndex(track.getSampleEntries().indexOf(track.getSamples().get(CastUtils.l2i(startSample)).getSampleEntry()) + 1);
+            tfhd.setSampleDescriptionIndex(track.getSampleEntries().IndexOf(track.getSamples()[CastUtils.l2i(startSample)].getSampleEntry()) + 1);
             tfhd.setTrackId(track.getTrackMetaData().getTrackId());
             tfhd.setDefaultBaseIsMoof(true);
             parent.addBox(tfhd);
@@ -245,7 +247,8 @@ namespace SharpMp4Parser.Muxer.Builder
             createTfdt(startSample, track, traf);
             createTrun(startSample, endSample, track, sequenceNumber, traf);
 
-            if (track is CencEncryptedTrack) {
+            if (track is CencEncryptedTrack)
+            {
                 createSaiz(startSample, endSample, (CencEncryptedTrack)track, sequenceNumber, traf);
                 createSenc(startSample, endSample, (CencEncryptedTrack)track, sequenceNumber, traf);
                 createSaio(startSample, endSample, (CencEncryptedTrack)track, sequenceNumber, traf, parent);
@@ -255,14 +258,14 @@ namespace SharpMp4Parser.Muxer.Builder
             Dictionary<string, List<GroupEntry>> groupEntryFamilies = new Dictionary<string, List<GroupEntry>>();
             foreach (var sg in track.getSampleGroups())
             {
-                String type = sg.getKey().getType();
+                string type = sg.Key.getType();
                 List<GroupEntry> groupEntries = groupEntryFamilies[type];
                 if (groupEntries == null)
                 {
                     groupEntries = new List<GroupEntry>();
                     groupEntryFamilies.Add(type, groupEntries);
                 }
-                groupEntries.Add(sg.getKey());
+                groupEntries.Add(sg.Key);
             }
 
 
@@ -281,7 +284,7 @@ namespace SharpMp4Parser.Muxer.Builder
                     for (int j = 0; j < sg.Value.Count; j++)
                     {
                         GroupEntry groupEntry = sg.Value[j];
-                        long[] sampleNums = track.getSampleGroups().get(groupEntry);
+                        long[] sampleNums = track.getSampleGroups()[groupEntry];
                         if (Arrays.binarySearch(sampleNums, i) >= 0)
                         {
                             index = j + 0x10001;
@@ -306,7 +309,7 @@ namespace SharpMp4Parser.Muxer.Builder
         {
             SampleEncryptionBox senc = new SampleEncryptionBox();
             senc.setSubSampleEncryption(track.hasSubSampleEncryption());
-            senc.setEntries(track.getSampleEncryptionEntries().subList(CastUtils.l2i(startSample - 1), CastUtils.l2i(endSample - 1)));
+            senc.setEntries(track.getSampleEncryptionEntries().GetRange(CastUtils.l2i(startSample - 1), CastUtils.l2i(endSample - 1)));
             parent.addBox(senc);
         }
 
@@ -352,9 +355,9 @@ namespace SharpMp4Parser.Muxer.Builder
 
         protected void createSaiz(long startSample, long endSample, CencEncryptedTrack track, int sequenceNumber, TrackFragmentBox parent)
         {
-            SampleEntry se = track.getSampleEntries().get(CastUtils.l2i(parent.getTrackFragmentHeaderBox().getSampleDescriptionIndex() - 1));
+            SampleEntry se = track.getSampleEntries()[CastUtils.l2i(parent.getTrackFragmentHeaderBox().getSampleDescriptionIndex() - 1)];
 
-            TrackEncryptionBox tenc = Path.getPath< TrackEncryptionBox>((Container)se, "sinf[0]/schi[0]/tenc[0]");
+            TrackEncryptionBox tenc = Path.getPath< TrackEncryptionBox>((IsoParser.Container)se, "sinf[0]/schi[0]/tenc[0]");
 
             SampleAuxiliaryInformationSizesBox saiz = new SampleAuxiliaryInformationSizesBox();
             saiz.setAuxInfoType("cenc");
@@ -363,7 +366,7 @@ namespace SharpMp4Parser.Muxer.Builder
             {
                 short[] sizes = new short[CastUtils.l2i(endSample - startSample)];
                 List<CencSampleAuxiliaryDataFormat> auxs =
-                        track.getSampleEncryptionEntries().subList(CastUtils.l2i(startSample - 1), CastUtils.l2i(endSample - 1));
+                        track.getSampleEncryptionEntries().GetRange(CastUtils.l2i(startSample - 1), CastUtils.l2i(endSample - 1));
                 for (int i = 0; i < sizes.Length; i++)
                 {
                     sizes[i] = (short)auxs[i].getSize();
@@ -391,7 +394,7 @@ namespace SharpMp4Parser.Muxer.Builder
         protected List<Sample> getSamples(long startSample, long endSample, Track track)
         {
             // since startSample and endSample are one-based substract 1 before addressing list elements
-            return track.getSamples().subList(CastUtils.l2i(startSample) - 1, CastUtils.l2i(endSample) - 1);
+            return track.getSamples().GetRange(CastUtils.l2i(startSample) - 1, CastUtils.l2i(endSample) - 1);
         }
 
         /**
@@ -486,14 +489,14 @@ namespace SharpMp4Parser.Muxer.Builder
                     //if (false) {
                     SampleFlags sflags = new SampleFlags();
 
-                    if (track.getSampleDependencies() != null && !track.getSampleDependencies().isEmpty())
+                    if (track.getSampleDependencies() != null && track.getSampleDependencies().Count != 0)
                     {
-                        SampleDependencyTypeBox.Entry e = track.getSampleDependencies().get(i);
+                        SampleDependencyTypeBox.Entry e = track.getSampleDependencies()[i];
                         sflags.setSampleDependsOn(e.getSampleDependsOn());
                         sflags.setSampleIsDependedOn(e.getSampleIsDependedOn());
                         sflags.setSampleHasRedundancy(e.getSampleHasRedundancy());
                     }
-                    if (track.getSyncSamples() != null && track.getSyncSamples().length > 0)
+                    if (track.getSyncSamples() != null && track.getSyncSamples().Length > 0)
                     {
                         // we have to mark non-sync samples!
                         if (Arrays.binarySearch(track.getSyncSamples(), startSample + i) >= 0)
@@ -613,7 +616,7 @@ namespace SharpMp4Parser.Muxer.Builder
          * @param isoFile the track is contained in
          * @return a track fragment random access box.
          */
-        protected Box createTfra(Track track, Container isoFile)
+        protected Box createTfra(Track track, IsoParser.Container isoFile)
         {
             TrackFragmentRandomAccessBox tfra = new TrackFragmentRandomAccessBox();
             tfra.setVersion(1); // use long offsets and times
@@ -666,7 +669,7 @@ namespace SharpMp4Parser.Muxer.Builder
                                     {
                                         sf = trex.getDefaultSampleFlags();
                                     }
-                                    if (sf == null && track.getHandler().equals("vide"))
+                                    if (sf == null && track.getHandler().Equals("vide"))
                                     {
                                         throw new Exception("Cannot find SampleFlags for video track but it's required to build tfra");
                                     }
@@ -712,7 +715,7 @@ namespace SharpMp4Parser.Muxer.Builder
          * @param isoFile concerned isofile
          * @return a complete 'mfra' box
          */
-        protected ParsableBox createMfra(Movie movie, Container isoFile)
+        protected ParsableBox createMfra(Movie movie, IsoParser.Container isoFile)
         {
             MovieFragmentRandomAccessBox mfra = new MovieFragmentRandomAccessBox();
             foreach (Track track in movie.getTracks())
@@ -823,7 +826,7 @@ namespace SharpMp4Parser.Muxer.Builder
         protected void createStsd(Track track, SampleTableBox stbl)
         {
             SampleDescriptionBox stsd = new SampleDescriptionBox();
-            stsd.setBoxes(track.getSampleEntries());
+            stsd.setBoxes(track.getSampleEntries().Select(x => (Box)x).ToList());
             stbl.addBox(stsd);
         }
 
@@ -895,7 +898,7 @@ namespace SharpMp4Parser.Muxer.Builder
 
         protected ParsableBox createEdts(Track track, Movie movie)
         {
-            if (track.getEdits() != null && track.getEdits().size() > 0)
+            if (track.getEdits() != null && track.getEdits().Count > 0)
             {
                 EditListBox elst = new EditListBox();
                 elst.setVersion(1);
@@ -904,7 +907,7 @@ namespace SharpMp4Parser.Muxer.Builder
                 foreach (Edit edit in track.getEdits()) 
                 {
                     entries.Add(new EditListBox.Entry(elst,
-                            Math.Round(edit.getSegmentDuration() * movie.getTimescale()),
+                            (long)Math.Round(edit.getSegmentDuration() * movie.getTimescale()),
                             edit.getMediaTime() * track.getTrackMetaData().getTimescale() / edit.getTimeScale(),
                             edit.getMediaRate()));
                 }

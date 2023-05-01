@@ -21,6 +21,7 @@ using SharpMp4Parser.IsoParser.Boxes.SampleEntry;
 using SharpMp4Parser.IsoParser.Boxes.SampleGrouping;
 using SharpMp4Parser.IsoParser.Tools;
 using SharpMp4Parser.Java;
+using SharpMp4Parser.Muxer.Tracks.Encryption;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -72,7 +73,7 @@ namespace SharpMp4Parser.Muxer.Builder
         /**
          * {@inheritDoc}
          */
-        public Container build(Movie movie)
+        public IsoParser.Container build(Movie movie)
         {
             if (fragmenter == null)
             {
@@ -468,7 +469,7 @@ namespace SharpMp4Parser.Muxer.Builder
             else
             {
                 saiz.setDefaultSampleInfoSize(8); // 8 bytes iv
-                saiz.setSampleCount(track.getSamples().size());
+                saiz.setSampleCount(track.getSamples().Count);
             }
 
             SampleAuxiliaryInformationOffsetsBox saio = new SampleAuxiliaryInformationOffsetsBox();
@@ -717,7 +718,7 @@ namespace SharpMp4Parser.Muxer.Builder
             long timescale = movie.getTracks().iterator().next().getTrackMetaData().getTimescale();
             foreach (Track track in movie.getTracks())
             {
-                timescale = lcm(timescale, track.getTrackMetaData().getTimescale());
+                timescale = Mp4Math.lcm(timescale, track.getTrackMetaData().getTimescale());
             }
             return timescale;
         }
@@ -773,7 +774,7 @@ namespace SharpMp4Parser.Muxer.Builder
                     {
                         time += (double)nextChunksTrack.getSampleDurations()[j] / nextChunksTrack.getTrackMetaData().getTimescale();
                     }
-                    chunkList.Add(nextChunksTrack.getSamples().subList(startSample, startSample + numberOfSampleInNextChunk));
+                    chunkList.Add(nextChunksTrack.getSamples().GetRange(startSample, startSample + numberOfSampleInNextChunk));
 
                     trackToChunk.Add(nextChunksTrack, nextChunksIndex + 1);
                     trackToSample.Add(nextChunksTrack, startSample + numberOfSampleInNextChunk);

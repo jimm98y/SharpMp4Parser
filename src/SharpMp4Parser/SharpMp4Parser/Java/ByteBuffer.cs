@@ -74,11 +74,6 @@ namespace SharpMp4Parser.Java
             return this.Capacity;
         }
 
-        public int limit()
-        {
-            throw new System.NotImplementedException();
-        }
-
         public ByteBuffer duplicate()
         {
             throw new System.NotImplementedException();
@@ -242,6 +237,11 @@ namespace SharpMp4Parser.Java
         }
 
         internal static ByteBuffer wrap(byte[] bytes, int v1, int v2)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal bool hasRemaining()
         {
             throw new NotImplementedException();
         }

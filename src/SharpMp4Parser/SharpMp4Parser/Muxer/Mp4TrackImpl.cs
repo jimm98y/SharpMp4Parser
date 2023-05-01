@@ -48,7 +48,7 @@ namespace SharpMp4Parser.Muxer
          * @param randomAccess the RandomAccessSource to read the samples from
          * @param name         an arbitrary naem to identify track later - e.g. filename
          */
-        public Mp4TrackImpl(long trackId, Container isofile, RandomAccessSource randomAccess, string name) : base(name)
+        public Mp4TrackImpl(long trackId, IsoParser.Container isofile, RandomAccessSource randomAccess, string name) : base(name)
         {
             samples = new Mp4SampleList(trackId, isofile, randomAccess);
             TrackBox trackBox = null;
@@ -115,8 +115,8 @@ namespace SharpMp4Parser.Muxer
                                     {
                                         sampleGroups = getSampleGroups(
                                                 stbl.getBoxes< SampleGroupDescriptionBox>(typeof(SampleGroupDescriptionBox)),  // global descriptions
-                                                                            Path.getPaths<SampleGroupDescriptionBox>((Container)traf, "sgpd"),  // local description
-                                                                            Path.getPaths<SampleToGroupBox>((Container)traf, "sbgp"),
+                                                                            Path.getPaths<SampleGroupDescriptionBox>((IsoParser.Container)traf, "sgpd"),  // local description
+                                                                            Path.getPaths<SampleToGroupBox>((IsoParser.Container)traf, "sbgp"),
                                                                             sampleGroups, sampleNumber - 1);
 
                                         SubSampleInformationBox subs = Path.getPath<SubSampleInformationBox>(traf, "subs");
@@ -233,8 +233,8 @@ namespace SharpMp4Parser.Muxer
                         {
                             sampleGroups = getSampleGroups(
                                     stbl.getBoxes<SampleGroupDescriptionBox>(typeof(SampleGroupDescriptionBox)),
-                                                    Path.getPaths<SampleGroupDescriptionBox>((Container)traf, "sgpd"),
-                                                    Path.getPaths<SampleToGroupBox>((Container)traf, "sbgp"), sampleGroups, 0);
+                                                    Path.getPaths<SampleGroupDescriptionBox>((IsoParser.Container)traf, "sgpd"),
+                                                    Path.getPaths<SampleToGroupBox>((IsoParser.Container)traf, "sbgp"), sampleGroups, 0);
                         }
                     }
                 }
@@ -261,7 +261,7 @@ namespace SharpMp4Parser.Muxer
             trackMetaData.setMatrix(tkhd.getMatrix());
             trackMetaData.setVolume(tkhd.getVolume());
             EditListBox elst = Path.getPath< EditListBox>(trackBox, "edts/elst");
-            MovieHeaderBox mvhd = Path.getPath(isofile, "moov/mvhd");
+            MovieHeaderBox mvhd = Path.getPath< MovieHeaderBox>(isofile, "moov/mvhd");
             if (elst != null)
             {
                 Debug.Assert(mvhd != null);
@@ -329,7 +329,7 @@ namespace SharpMp4Parser.Muxer
             return sampleGroups;
         }
 
-        public void close()
+        public override void close()
         {
 
         }

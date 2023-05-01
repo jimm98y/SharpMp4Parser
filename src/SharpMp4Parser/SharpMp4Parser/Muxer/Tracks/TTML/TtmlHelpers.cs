@@ -50,8 +50,8 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
                 transformer = tf.newTransformer(new StreamSource(new ByteArrayInputStream(namespacesStyleSheet1)));
                 StringWriter sw = new StringWriter();
                 transformer.transform(new DOMSource(doc), new StreamResult(sw));
-                List<String> r = new ArrayList<String>(new LinkedHashSet<String>(Arrays.asList(sw.getBuffer().toString().split("\n"))));
-                return r.toArray(new String[r.size()]);
+                List<string> r = new List<string>(new List<string>(Arrays.asList(sw.getBuffer().ToString().Split("\n"))));
+                return r.toArray(new string[r.Count]);
             }
             catch (TransformerConfigurationException e)
             {
@@ -107,20 +107,20 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
                     fraction = ".000";
                 }
 
-                fraction = fraction.replace(":", ".");
-                long ms = Long.parseLong(hours) * 60 * 60 * 1000;
-                ms += Long.parseLong(minutes) * 60 * 1000;
-                ms += Long.parseLong(seconds) * 1000;
-                if (fraction.contains(":"))
+                fraction = fraction.Replace(":", ".");
+                long ms = long.Parse(hours) * 60 * 60 * 1000;
+                ms += long.Parse(minutes) * 60 * 1000;
+                ms += long.Parse(seconds) * 1000;
+                if (fraction.Contains(":"))
                 {
-                    ms += Double.parseDouble("0" + fraction.replace(":", ".")) * 40 * 1000; // 40ms == 25fps - simplifying assumption should be ok for here
+                    ms += (long)Double.Parse("0" + fraction.Replace(":", ".")) * 40 * 1000; // 40ms == 25fps - simplifying assumption should be ok for here
                 }
                 else
                 {
-                    ms += Double.parseDouble("0" + fraction) * 1000;
+                    ms += (long)Double.Parse("0" + fraction) * 1000;
                 }
 
-                return ms * ("-".equals(minus) ? -1 : 1);
+                return ms * ("-".Equals(minus) ? -1 : 1);
             }
             else
             {
@@ -249,7 +249,7 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
             return count;
         }
 
-        private static class TextTrackNamespaceContext : NamespaceContext
+        private class TextTrackNamespaceContext : NamespaceContext
         {
             public string getNamespaceURI(string prefix)
             {

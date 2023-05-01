@@ -141,7 +141,7 @@ namespace SharpMp4Parser.Muxer.Builder
                 {
                     if (track1.getTrackMetaData().getTimescale() != track.getTrackMetaData().getTimescale())
                     {
-                        timeScale = lcm(timeScale, track1.getTrackMetaData().getTimescale());
+                        timeScale = Mp4Math.lcm(timeScale, track1.getTrackMetaData().getTimescale());
                     }
                 }
             }

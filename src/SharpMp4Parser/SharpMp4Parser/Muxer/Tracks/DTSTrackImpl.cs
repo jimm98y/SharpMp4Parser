@@ -52,20 +52,20 @@ namespace SharpMp4Parser.Muxer.Tracks
         private List<Sample> samples;
         private string lang = "eng";
 
-        public DTSTrackImpl(DataSource dataSource, string lang) : base(dataSource.toString())
+        public DTSTrackImpl(DataSource dataSource, string lang) : base(dataSource.ToString())
         {
             this.lang = lang;
             this.dataSource = dataSource;
             parse();
         }
 
-        public DTSTrackImpl(DataSource dataSource) : base(dataSource.toString())
+        public DTSTrackImpl(DataSource dataSource) : base(dataSource.ToString())
         {
             this.dataSource = dataSource;
             parse();
         }
 
-        public void close()
+        public override void close()
         {
             dataSource.close();
         }
@@ -90,43 +90,43 @@ namespace SharpMp4Parser.Muxer.Tracks
             trackMetaData.setTimescale(samplerate); // Audio tracks always use samplerate as timescale
         }
 
-        public List<Sample> getSamples()
+        public override List<Sample> getSamples()
         {
 
             return samples;
         }
 
-        public List<SampleEntry> getSampleEntries()
+        public override List<SampleEntry> getSampleEntries()
         {
             return new List<SampleEntry>() { audioSampleEntry };
         }
 
-        public long[] getSampleDurations()
+        public override long[] getSampleDurations()
         {
             return sampleDurations;
         }
 
-        public List<CompositionTimeToSample.Entry> getCompositionTimeEntries()
+        public override List<CompositionTimeToSample.Entry> getCompositionTimeEntries()
         {
             return null;
         }
 
-        public long[] getSyncSamples()
+        public override long[] getSyncSamples()
         {
             return null;
         }
 
-        public List<SampleDependencyTypeBox.Entry> getSampleDependencies()
+        public override List<SampleDependencyTypeBox.Entry> getSampleDependencies()
         {
             return null;
         }
 
-        public TrackMetaData getTrackMetaData()
+        public override TrackMetaData getTrackMetaData()
         {
             return trackMetaData;
         }
 
-        public string getHandler()
+        public override string getHandler()
         {
             return "soun";
         }

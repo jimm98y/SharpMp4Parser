@@ -41,24 +41,24 @@ namespace SharpMp4Parser.Muxer.Tracks
             this.samples = new ReplaceASingleEntryList();
         }
 
-        public void close()
+        public override void close()
         {
             origTrack.close();
         }
 
-        public List<Sample> getSamples()
+        public override List<Sample> getSamples()
         {
             return samples;
         }
 
-        public List<SampleEntry> getSampleEntries()
+        public override List<SampleEntry> getSampleEntries()
         {
             return origTrack.getSampleEntries();
         }
 
         private readonly object _syncRoot = new object();
 
-        public long[] getSampleDurations()
+        public override long[] getSampleDurations()
         {
             lock (_syncRoot)
             {
@@ -66,13 +66,13 @@ namespace SharpMp4Parser.Muxer.Tracks
             }
         }
 
-        public List<CompositionTimeToSample.Entry> getCompositionTimeEntries()
+        public override List<CompositionTimeToSample.Entry> getCompositionTimeEntries()
         {
             return origTrack.getCompositionTimeEntries();
 
         }
 
-        public long[] getSyncSamples()
+        public override long[] getSyncSamples()
         {
             lock (_syncRoot)
             {
@@ -80,22 +80,22 @@ namespace SharpMp4Parser.Muxer.Tracks
             }
         }
 
-        public List<SampleDependencyTypeBox.Entry> getSampleDependencies()
+        public override List<SampleDependencyTypeBox.Entry> getSampleDependencies()
         {
             return origTrack.getSampleDependencies();
         }
 
-        public TrackMetaData getTrackMetaData()
+        public override TrackMetaData getTrackMetaData()
         {
             return origTrack.getTrackMetaData();
         }
 
-        public string getHandler()
+        public override string getHandler()
         {
             return origTrack.getHandler();
         }
 
-        public SubSampleInformationBox getSubsampleInformationBox()
+        public override SubSampleInformationBox getSubsampleInformationBox()
         {
             return origTrack.getSubsampleInformationBox();
         }

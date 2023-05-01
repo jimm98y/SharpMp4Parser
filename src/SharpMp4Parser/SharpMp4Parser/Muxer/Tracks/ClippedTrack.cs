@@ -136,24 +136,24 @@ namespace SharpMp4Parser.Muxer.Tracks
             }
         }
 
-        public void close()
+        public override void close()
         {
             origTrack.close();
         }
 
-        public List<Sample> getSamples()
+        public override List<Sample> getSamples()
         {
-            return origTrack.getSamples().subList(fromSample, toSample);
+            return origTrack.getSamples().GetRange(fromSample, toSample);
         }
 
-        public List<SampleEntry> getSampleEntries()
+        public override List<SampleEntry> getSampleEntries()
         {
             return origTrack.getSampleEntries();
         }
 
         private readonly object _syncRoot = new object();
 
-        public long[] getSampleDurations()
+        public override long[] getSampleDurations()
         {
             lock (_syncRoot)
             {
@@ -163,12 +163,12 @@ namespace SharpMp4Parser.Muxer.Tracks
             }
         }
 
-        public List<CompositionTimeToSample.Entry> getCompositionTimeEntries()
+        public override List<CompositionTimeToSample.Entry> getCompositionTimeEntries()
         {
             return getCompositionTimeEntries(origTrack.getCompositionTimeEntries(), fromSample, toSample);
         }
 
-        public long[] getSyncSamples()
+        public override long[] getSyncSamples()
         {
             lock (_syncRoot)
             {
@@ -196,11 +196,11 @@ namespace SharpMp4Parser.Muxer.Tracks
             }
         }
 
-        public List<SampleDependencyTypeBox.Entry> getSampleDependencies()
+        public override List<SampleDependencyTypeBox.Entry> getSampleDependencies()
         {
             if (origTrack.getSampleDependencies() != null && origTrack.getSampleDependencies().Count != 0)
             {
-                return origTrack.getSampleDependencies().subList(fromSample, toSample);
+                return origTrack.getSampleDependencies().GetRange(fromSample, toSample);
             }
             else
             {
@@ -208,17 +208,17 @@ namespace SharpMp4Parser.Muxer.Tracks
             }
         }
 
-        public TrackMetaData getTrackMetaData()
+        public override TrackMetaData getTrackMetaData()
         {
             return origTrack.getTrackMetaData();
         }
 
-        public string getHandler()
+        public override string getHandler()
         {
             return origTrack.getHandler();
         }
 
-        public SubSampleInformationBox getSubsampleInformationBox()
+        public override SubSampleInformationBox getSubsampleInformationBox()
         {
             return origTrack.getSubsampleInformationBox();
         }

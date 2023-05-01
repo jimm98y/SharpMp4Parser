@@ -3,6 +3,7 @@ using SharpMp4Parser.IsoParser.Boxes.SampleEntry;
 using SharpMp4Parser.Java;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using static SharpMp4Parser.Muxer.Container.MP4.DefaultMp4SampleList;
 
 namespace SharpMp4Parser.Muxer.Tracks
@@ -22,18 +23,16 @@ namespace SharpMp4Parser.Muxer.Tracks
         bool tripleZeroIsEndOfSequence = true;
         private DataSource dataSource;
 
-        public AbstractH26XTrack(DataSource dataSource, bool tripleZeroIsEndOfSequence) : base(dataSource.toString())
+        public AbstractH26XTrack(DataSource dataSource, bool tripleZeroIsEndOfSequence) : base(dataSource.ToString())
         {
             this.dataSource = dataSource;
             this.tripleZeroIsEndOfSequence = tripleZeroIsEndOfSequence;
         }
 
-        public AbstractH26XTrack(DataSource dataSource)
-        {
-            this(dataSource, true);
-        }
+        public AbstractH26XTrack(DataSource dataSource) : this(dataSource, true)
+        { }
 
-        protected static InputStream cleanBuffer(InputStream input)
+        protected static Stream cleanBuffer(Stream input)
         {
             return new CleanInputStream(input);
         }
@@ -46,7 +45,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             return b;
         }
 
-        public TrackMetaData getTrackMetaData()
+        public override TrackMetaData getTrackMetaData()
         {
             return trackMetaData;
         }
@@ -82,7 +81,7 @@ namespace SharpMp4Parser.Muxer.Tracks
          * @param nals a list of NALs that form the sample
          * @return sample as it appears in the MP4 file
          */
-        protected Sample createSampleObject(List<ByteBuffer> nals)
+        protected virtual Sample createSampleObject(List<ByteBuffer> nals)
         {
             byte[] sizeInfo = new byte[nals.Count * 4];
             ByteBuffer sizeBuf = ByteBuffer.wrap(sizeInfo);
@@ -102,17 +101,17 @@ namespace SharpMp4Parser.Muxer.Tracks
             return new SampleImpl(data, getCurrentSampleEntry());
         }
 
-        public long[] getSampleDurations()
+        public override long[] getSampleDurations()
         {
             return decodingTimes;
         }
 
-        public List<CompositionTimeToSample.Entry> getCompositionTimeEntries()
+        public override List<CompositionTimeToSample.Entry> getCompositionTimeEntries()
         {
             return ctts;
         }
 
-        public long[] getSyncSamples()
+        public override long[] getSyncSamples()
         {
             long[] returns = new long[stss.Count];
             for (int i = 0; i < stss.Count; i++)
@@ -122,12 +121,12 @@ namespace SharpMp4Parser.Muxer.Tracks
             return returns;
         }
 
-        public List<SampleDependencyTypeBox.Entry> getSampleDependencies()
+        public override List<SampleDependencyTypeBox.Entry> getSampleDependencies()
         {
             return sdtp;
         }
 
-        public void close()
+        public override void close()
         {
             dataSource.close();
         }

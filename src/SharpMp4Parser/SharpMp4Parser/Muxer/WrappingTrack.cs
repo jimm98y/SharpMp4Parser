@@ -7,8 +7,8 @@ using System.Collections.Generic;
 namespace SharpMp4Parser.Muxer
 {
     /**
- * A simple track wrapper that delegates all calls to parent track. Override certain methods inline to change result.
- */
+     * A simple track wrapper that delegates all calls to parent track. Override certain methods inline to change result.
+     */
     public class WrappingTrack : Track
     {
         private Track parent;
@@ -18,7 +18,7 @@ namespace SharpMp4Parser.Muxer
             this.parent = parent;
         }
 
-        public List<SampleEntry> getSampleEntries()
+        public virtual List<SampleEntry> getSampleEntries()
         {
             return parent.getSampleEntries();
         }
@@ -58,7 +58,7 @@ namespace SharpMp4Parser.Muxer
             return parent.getHandler();
         }
 
-        public List<Sample> getSamples()
+        public virtual List<Sample> getSamples()
         {
             return parent.getSamples();
         }

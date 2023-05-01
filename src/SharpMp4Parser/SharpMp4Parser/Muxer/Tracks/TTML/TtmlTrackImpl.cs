@@ -217,7 +217,7 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
                 }
                 return firstTimestamp;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw;
             }
@@ -302,13 +302,13 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
             return lastTimestamp(ttml) - firstTimestamp(ttml);
         }
 
-        public List<SampleEntry> getSampleEntries()
+        public override List<SampleEntry> getSampleEntries()
         {
             return new List<SampleEntry>() { xmlSubtitleSampleEntry };
         }
 
 
-        public long[] getSampleDurations()
+        public override long[] getSampleDurations()
         {
             long[] adoptedSampleDuration = new long[sampleDurations.Length];
             for (int i = 0; i < adoptedSampleDuration.Length; i++)
@@ -319,17 +319,17 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
 
         }
 
-        public TrackMetaData getTrackMetaData()
+        public override TrackMetaData getTrackMetaData()
         {
             return trackMetaData;
         }
 
-        public string getHandler()
+        public override string getHandler()
         {
             return "subt";
         }
 
-        public List<Sample> getSamples()
+        public override List<Sample> getSamples()
         {
             return samples;
         }
@@ -340,7 +340,7 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
 
         }
 
-        public void close()
+        public override void close()
         {
 
         }

@@ -51,7 +51,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
 
         VisualSampleEntry visualSampleEntry;
 
-        protected SampleEntry getCurrentSampleEntry()
+        protected override SampleEntry getCurrentSampleEntry()
         {
             return visualSampleEntry;
         }
@@ -168,17 +168,17 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
             trackMetaData.setHeight(height);
         }
 
-        public List<SampleEntry> getSampleEntries()
+        public override List<SampleEntry> getSampleEntries()
         {
             return new List<SampleEntry>() { visualSampleEntry };
         }
 
-        public string getHandler()
+        public override string getHandler()
         {
             return "vide";
         }
 
-        public List<Sample> getSamples()
+        public override List<Sample> getSamples()
         {
             return samples;
         }
@@ -582,13 +582,13 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
                 pictureOrderCounts = Mp4Arrays.copyOfAndAppend(pictureOrderCounts, samples.Count);
             }
 
-            sdtp.add(sampleDependency);
+            sdtp.Add(sampleDependency);
             frameNrInGop++;
 
             samples.Add(bb);
             if (IdrPicFlag)
             { // IDR Picture
-                stss.add(samples.Count);
+                stss.Add(samples.Count);
             }
         }
 

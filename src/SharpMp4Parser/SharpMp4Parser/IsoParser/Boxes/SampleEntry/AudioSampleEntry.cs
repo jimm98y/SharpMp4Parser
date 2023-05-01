@@ -204,6 +204,34 @@ namespace SharpMp4Parser.IsoParser.Boxes.SampleEntry
             this.reserved2 = reserved2;
         }
 
+        class CustomBox : Box
+        {
+            private ByteBuffer owmaSpecifics;
+            private long remaining;
+
+            public CustomBox(ByteBuffer owmaSpecifics, long remaining)
+            {
+                this.owmaSpecifics = owmaSpecifics;
+                this.remaining = remaining;
+            }
+
+            public long getSize()
+            {
+                return remaining;
+            }
+
+            public string getType()
+            {
+                return "----";
+            }
+
+            public void getBox(WritableByteChannel writableByteChannel)
+            {
+                ((Buffer)owmaSpecifics).rewind();
+                writableByteChannel.write(owmaSpecifics);
+            }
+        }
+
         public override void parse(ReadableByteChannel dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
         {
             ByteBuffer content = ByteBuffer.allocate(28);
@@ -266,27 +294,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.SampleEntry
                 ByteBuffer owmaSpecifics = ByteBuffer.allocate(CastUtils.l2i(remaining));
                 dataSource.read(owmaSpecifics);
 
-#warning TODO
-                //addBox(new Box()
-                //{
-
-                //public long getSize()
-                //{
-                //    return remaining;
-                //}
-
-                //public string getType()
-                //{
-                //    return "----";
-                //}
-
-                //public void getBox(WritableByteChannel writableByteChannel)
-                //{
-                //    ((Buffer)owmaSpecifics).rewind();
-                //    writableByteChannel.write(owmaSpecifics);
-                //}
-
-                //});
+                addBox(new CustomBox(owmaSpecifics, remaining));
             }
             else
             {

@@ -47,12 +47,12 @@ namespace SharpMp4Parser.Muxer.Tracks
             samples = new ReplaceSyncSamplesList(parent.getSamples());
         }
 
-        public List<SampleEntry> getSampleEntries()
+        public override List<SampleEntry> getSampleEntries()
         {
             return new List<SampleEntry>(avc1toavc3.Values);
         }
 
-        public List<Sample> getSamples()
+        public override List<Sample> getSamples()
         {
             return samples;
         }

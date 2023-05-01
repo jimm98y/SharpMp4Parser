@@ -55,7 +55,7 @@ namespace SharpMp4Parser.Muxer
             return null;
         }
 
-        public long getDuration()
+        public virtual long getDuration()
         {
             long duration = 0;
             foreach (long delta in getSampleDurations())
@@ -65,17 +65,17 @@ namespace SharpMp4Parser.Muxer
             return duration;
         }
 
-        public string getName()
+        public virtual string getName()
         {
             return this.name;
         }
 
-        public List<Edit> getEdits()
+        public virtual List<Edit> getEdits()
         {
             return edits;
         }
 
-        public Dictionary<GroupEntry, long[]> getSampleGroups()
+        public virtual Dictionary<GroupEntry, long[]> getSampleGroups()
         {
             return sampleGroups;
         }
@@ -85,5 +85,6 @@ namespace SharpMp4Parser.Muxer
         public abstract TrackMetaData getTrackMetaData();
         public abstract string getHandler();
         public abstract List<Sample> getSamples();
+        public virtual void close() { }
     }
 }

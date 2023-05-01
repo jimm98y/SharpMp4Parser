@@ -66,7 +66,7 @@ namespace SharpMp4Parser.Muxer.Tracks
 
         private readonly object _syncRoot = new object();
 
-        public List<Sample> getSamples()
+        public override List<Sample> getSamples()
         {
             lock (_syncRoot)
             {
@@ -105,12 +105,12 @@ namespace SharpMp4Parser.Muxer.Tracks
             }
         }
 
-        public List<SampleEntry> getSampleEntries()
+        public override List<SampleEntry> getSampleEntries()
         {
             return new List<SampleEntry>() { tx3g };
         }
 
-        public long[] getSampleDurations()
+        public override long[] getSampleDurations()
         {
             List<long> decTimes = new List<long>();
 
@@ -139,32 +139,32 @@ namespace SharpMp4Parser.Muxer.Tracks
             return decTimesArray;
         }
 
-        public List<CompositionTimeToSample.Entry> getCompositionTimeEntries()
+        public override List<CompositionTimeToSample.Entry> getCompositionTimeEntries()
         {
             return null;
         }
 
-        public long[] getSyncSamples()
+        public override long[] getSyncSamples()
         {
             return null;
         }
 
-        public List<SampleDependencyTypeBox.Entry> getSampleDependencies()
+        public override List<SampleDependencyTypeBox.Entry> getSampleDependencies()
         {
             return null;
         }
 
-        public TrackMetaData getTrackMetaData()
+        public override TrackMetaData getTrackMetaData()
         {
             return trackMetaData;
         }
 
-        public string getHandler()
+        public override string getHandler()
         {
             return "sbtl";
         }
 
-        public SubSampleInformationBox getSubsampleInformationBox()
+        public override SubSampleInformationBox getSubsampleInformationBox()
         {
             return null;
         }

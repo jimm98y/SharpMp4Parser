@@ -66,7 +66,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             return name.Substring(0, name.Length - 3);
         }
 
-        public void close()
+        public override void close()
         {
             foreach (Track track in tracks)
             {
@@ -83,7 +83,7 @@ namespace SharpMp4Parser.Muxer.Tracks
                 stsd1.getBox(Channels.newChannel(curBaos));
                 stsd2.getBox(Channels.newChannel(refBaos));
             }
-            catch (IOException e)
+            catch (IOException)
             {
                 //LOG.error(e.getMessage());
                 return null;
@@ -213,7 +213,7 @@ namespace SharpMp4Parser.Muxer.Tracks
                         cur1.getBox(Channels.newChannel(baos1));
                         cur2.getBox(Channels.newChannel(baos2));
                     }
-                    catch (IOException e)
+                    catch (IOException)
                     {
                         //LOG.warn(e.getMessage());
                         return null;
@@ -345,7 +345,7 @@ namespace SharpMp4Parser.Muxer.Tracks
                         cur1.getBox(Channels.newChannel(baos1));
                         cur2.getBox(Channels.newChannel(baos2));
                     }
-                    catch (IOException e)
+                    catch (IOException)
                     {
                         //LOG.warn(e.getMessage());
                         return null;
@@ -481,17 +481,17 @@ namespace SharpMp4Parser.Muxer.Tracks
             }
         }
 
-        public List<Sample> getSamples()
+        public override List<Sample> getSamples()
         {
             return lists;
         }
-        public List<SampleEntry> getSampleEntries()
+        public override List<SampleEntry> getSampleEntries()
         {
             return sampleEntries;
         }
 
         private readonly object _syncRoot = new object();
-        public long[] getSampleDurations()
+        public override long[] getSampleDurations()
         {
             lock (_syncRoot)
             {
@@ -499,7 +499,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             }
         }
 
-        public List<CompositionTimeToSample.Entry> getCompositionTimeEntries()
+        public override List<CompositionTimeToSample.Entry> getCompositionTimeEntries()
         {
             if (tracks[0].getCompositionTimeEntries() != null && tracks[0].getCompositionTimeEntries().Count != 0)
             {
@@ -533,7 +533,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             }
         }
 
-        public long[] getSyncSamples()
+        public override long[] getSyncSamples()
         {
             if (tracks[0].getSyncSamples() != null && tracks[0].getSyncSamples().Length > 0)
             {
@@ -565,7 +565,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             }
         }
 
-        public List<SampleDependencyTypeBox.Entry> getSampleDependencies()
+        public override List<SampleDependencyTypeBox.Entry> getSampleDependencies()
         {
             if (tracks[0].getSampleDependencies() != null && tracks[0].getSampleDependencies().Count != 0)
             {
@@ -582,17 +582,17 @@ namespace SharpMp4Parser.Muxer.Tracks
             }
         }
 
-        public TrackMetaData getTrackMetaData()
+        public override TrackMetaData getTrackMetaData()
         {
             return tracks[0].getTrackMetaData();
         }
 
-        public string getHandler()
+        public override string getHandler()
         {
             return tracks[0].getHandler();
         }
 
-        public SubSampleInformationBox getSubsampleInformationBox()
+        public override SubSampleInformationBox getSubsampleInformationBox()
         {
             return tracks[0].getSubsampleInformationBox();
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace SharpMp4Parser.Muxer.Tracks
 {
@@ -11,7 +12,7 @@ namespace SharpMp4Parser.Muxer.Tracks
         int prevprev = -1;
         int prev = -1;
 
-        public CleanInputStream(InputStream input) : base(input)
+        public CleanInputStream(Stream input) : base(input)
         { }
 
         public bool markSupported()
@@ -74,7 +75,7 @@ namespace SharpMp4Parser.Muxer.Tracks
                     b[off + i] = (byte)c;
                 }
             }
-            catch (Exception ee)
+            catch (Exception)
             {
             }
             return i;

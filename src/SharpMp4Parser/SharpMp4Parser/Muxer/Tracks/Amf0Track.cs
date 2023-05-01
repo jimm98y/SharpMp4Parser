@@ -49,7 +49,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             amf0.setDataReferenceIndex(1);
         }
 
-        public List<Sample> getSamples()
+        public override List<Sample> getSamples()
         {
             List<Sample> samples = new List<Sample>();
             foreach (byte[] bytes in rawSamples.Values)
@@ -59,17 +59,17 @@ namespace SharpMp4Parser.Muxer.Tracks
             return samples;
         }
 
-        public void close()
+        public override void close()
         {
             // no resources involved - doing nothing
         }
 
-        public List<SampleEntry> getSampleEntries()
+        public override List<SampleEntry> getSampleEntries()
         {
             return new List<SampleEntry>() { amf0 };
         }
 
-        public long[] getSampleDurations()
+        public override long[] getSampleDurations()
         {
             List<long> keys = new List<long>(rawSamples.Keys);
             keys = keys.OrderBy(x => x).ToList();
@@ -84,35 +84,35 @@ namespace SharpMp4Parser.Muxer.Tracks
             return rc;
         }
 
-        public List<CompositionTimeToSample.Entry> getCompositionTimeEntries()
+        public override List<CompositionTimeToSample.Entry> getCompositionTimeEntries()
         {
             // AMF0 tracks do not have Composition Time
             return null;
         }
 
-        public long[] getSyncSamples()
+        public override long[] getSyncSamples()
         {
             // AMF0 tracks do not have Sync Samples
             return null;
         }
 
-        public List<SampleDependencyTypeBox.Entry> getSampleDependencies()
+        public override List<SampleDependencyTypeBox.Entry> getSampleDependencies()
         {
             // AMF0 tracks do not have Sample Dependencies
             return null;
         }
 
-        public TrackMetaData getTrackMetaData()
+        public override TrackMetaData getTrackMetaData()
         {
             return trackMetaData;  //To change body of implemented methods use File | Settings | File Templates.
         }
 
-        public string getHandler()
+        public override string getHandler()
         {
             return "data";
         }
 
-        public SubSampleInformationBox getSubsampleInformationBox()
+        public override SubSampleInformationBox getSubsampleInformationBox()
         {
             return null;
         }

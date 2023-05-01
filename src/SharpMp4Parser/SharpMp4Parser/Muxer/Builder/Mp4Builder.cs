@@ -31,6 +31,6 @@ namespace SharpMp4Parser.Muxer.Builder
          * @param movie data source
          * @return the freshly built IsoFile
          */
-        Container build(Movie movie);
+        IsoParser.Container build(Movie movie);
     }
 }

@@ -1,9 +1,12 @@
 ﻿using SharpMp4Parser.IsoParser;
+using SharpMp4Parser.IsoParser.Boxes.ISO14496.Part30;
 using SharpMp4Parser.IsoParser.Boxes.SampleEntry;
 using SharpMp4Parser.IsoParser.Tools;
 using SharpMp4Parser.Java;
+using SharpMp4Parser.Muxer.Tracks.WebVTT.SampleBoxes;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace SharpMp4Parser.Muxer.Tracks.WebVTT
@@ -67,11 +70,11 @@ namespace SharpMp4Parser.Muxer.Tracks.WebVTT
 
         private readonly Sample EMPTY_SAMPLE = new EmptySample();
         TrackMetaData trackMetaData = new TrackMetaData();
-        List<Sample> samples = new ArrayList<Sample>();
+        List<Sample> samples = new List<Sample>();
         long[] sampleDurations = new long[0];
         public static WebVTTSampleEntry sampleEntry;
 
-        public WebVttTrack(InputStream input, string trackName, Locale locale) : base(trackName)
+        public WebVttTrack(InputStream input, string trackName, CultureInfo locale) : base(trackName)
         {
             trackMetaData.setTimescale(1000);
             trackMetaData.setLanguage(locale.getISO3Language());
@@ -222,12 +225,12 @@ namespace SharpMp4Parser.Muxer.Tracks.WebVTT
             return (value * 1000 + long.Parse(parts[1]));
         }
 
-        public List<SampleEntry> getSampleEntries()
+        public override List<SampleEntry> getSampleEntries()
         {
             return new List<SampleEntry>() { sampleEntry };
         }
 
-        public long[] getSampleDurations()
+        public override long[] getSampleDurations()
         {
             long[] adoptedSampleDuration = new long[sampleDurations.Length];
             for (int i = 0; i < adoptedSampleDuration.Length; i++)
@@ -238,17 +241,17 @@ namespace SharpMp4Parser.Muxer.Tracks.WebVTT
 
         }
 
-        public TrackMetaData getTrackMetaData()
+        public override TrackMetaData getTrackMetaData()
         {
             return trackMetaData;
         }
 
-        public string getHandler()
+        public override string getHandler()
         {
             return "text";
         }
 
-        public List<Sample> getSamples()
+        public override List<Sample> getSamples()
         {
             return samples;
         }
@@ -300,7 +303,7 @@ namespace SharpMp4Parser.Muxer.Tracks.WebVTT
                 return ByteBuffer.wrap(baos.toByteArray());
             }
 
-            public override SampleEntry getSampleEntry()
+            public SampleEntry getSampleEntry()
             {
                 return WebVttTrack.sampleEntry;
             }

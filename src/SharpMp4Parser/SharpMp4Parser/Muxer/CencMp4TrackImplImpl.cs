@@ -29,7 +29,7 @@ namespace SharpMp4Parser.Muxer
          * @param name         an arbitrary naem to identify track later - e.g. filename
          * @throws java.io.IOException if reading from underlying <code>DataSource</code> fails
          */
-        public CencMp4TrackImplImpl(long trackId, Container isofile, RandomAccessSource randomAccess, string name) : base(trackId, isofile, randomAccess, name)
+        public CencMp4TrackImplImpl(long trackId, IsoParser.Container isofile, RandomAccessSource randomAccess, string name) : base(trackId, isofile, randomAccess, name)
         {
             TrackBox trackBox = null;
             foreach (TrackBox box in Path.getPaths<TrackBox>(isofile, "moov/trak"))
@@ -41,7 +41,7 @@ namespace SharpMp4Parser.Muxer
                 }
             }
             Debug.Assert(trackBox != null);
-            List<SchemeTypeBox> schms = Path.getPaths((Container)trackBox, "mdia[0]/minf[0]/stbl[0]/stsd[0]/enc./sinf[0]/schm[0]");
+            List<SchemeTypeBox> schms = Path.getPaths<SchemeTypeBox>((IsoParser.Container)trackBox, "mdia[0]/minf[0]/stbl[0]/stsd[0]/enc./sinf[0]/schm[0]");
             foreach (SchemeTypeBox schm in schms)
             {
                 Debug.Assert(schm != null && (schm.getSchemeType().Equals("cenc") || schm.getSchemeType().Equals("cbc1")), "Track must be CENC (cenc or cbc1) encrypted");
@@ -75,7 +75,7 @@ namespace SharpMp4Parser.Muxer
                                     baseOffset += b.getSize();
                                 }
                             }
-                            TrackEncryptionBox tenc = Path.getPath((Container)sampleEntries[CastUtils.l2i(traf.getTrackFragmentHeaderBox().getSampleDescriptionIndex() - 1)], "sinf[0]/schi[0]/tenc[0]");
+                            TrackEncryptionBox tenc = Path.getPath<TrackEncryptionBox>((IsoParser.Container)sampleEntries[CastUtils.l2i(traf.getTrackFragmentHeaderBox().getSampleDescriptionIndex() - 1)], "sinf[0]/schi[0]/tenc[0]");
 
 
                             FindSaioSaizPair saizSaioPair = new FindSaioSaizPair(traf).invoke();
@@ -135,7 +135,7 @@ namespace SharpMp4Parser.Muxer
                 long[] chunkSizes = trackBox.getSampleTableBox().getSampleToChunkBox().blowup(chunkOffsetBox.getChunkOffsets().Length);
 
 
-                FindSaioSaizPair saizSaioPair = new FindSaioSaizPair((Container)Path.getPath< FindSaioSaizPair>(trackBox, "mdia[0]/minf[0]/stbl[0]")).invoke();
+                FindSaioSaizPair saizSaioPair = new FindSaioSaizPair((IsoParser.Container)Path.getPath< FindSaioSaizPair>(trackBox, "mdia[0]/minf[0]/stbl[0]")).invoke();
                 SampleAuxiliaryInformationOffsetsBox saio = saizSaioPair.saio;
                 SampleAuxiliaryInformationSizesBox saiz = saizSaioPair.saiz;
                 SampleEntry se = null;
@@ -166,7 +166,7 @@ namespace SharpMp4Parser.Muxer
                         SampleEntry _se = samples[i].getSampleEntry();
                         if (se != _se)
                         {
-                            tenc = Path.getPath((Container)_se, "sinf[0]/schi[0]/tenc[0]");
+                            tenc = Path.getPath<TrackEncryptionBox>((IsoParser.Container)_se, "sinf[0]/schi[0]/tenc[0]");
                         }
                         se = _se;
                         if (tenc != null)
@@ -210,7 +210,7 @@ namespace SharpMp4Parser.Muxer
                             SampleEntry _se = samples[currentSampleNo + j].getSampleEntry();
                             if (se != _se)
                             {
-                                tenc = Path.getPath((Container)_se, "sinf[0]/schi[0]/tenc[0]");
+                                tenc = Path.getPath<TrackEncryptionBox>((IsoParser.Container)_se, "sinf[0]/schi[0]/tenc[0]");
                             }
                             se = _se;
                             if (tenc != null)
@@ -281,11 +281,11 @@ namespace SharpMp4Parser.Muxer
 
         public class FindSaioSaizPair
         {
-            public Container container;
+            public IsoParser.Container container;
             public SampleAuxiliaryInformationSizesBox saiz;
             public SampleAuxiliaryInformationOffsetsBox saio;
 
-            public FindSaioSaizPair(Container container)
+            public FindSaioSaizPair(IsoParser.Container container)
             {
                 this.container = container;
             }

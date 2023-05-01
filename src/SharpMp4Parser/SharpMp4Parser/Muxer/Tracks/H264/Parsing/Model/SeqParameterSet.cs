@@ -20,6 +20,8 @@ OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 using SharpMp4Parser.Java;
+using SharpMp4Parser.Muxer.Tracks.H264.Parsing.Read;
+using SharpMp4Parser.Muxer.Tracks.H264.Parsing.Write;
 
 namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Model
 {

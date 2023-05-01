@@ -81,6 +81,6 @@ namespace SharpMp4Parser.Muxer
          *
          * @throws IOException If some I/O error occurs
          */
-        void close();
+        //void close();
     }
 }

@@ -6,7 +6,6 @@ using SharpMp4Parser.Java;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using static SharpMp4Parser.Muxer.Container.MP4.DefaultMp4SampleList;
 
 namespace SharpMp4Parser.Muxer.Tracks.H263
 {
@@ -73,7 +72,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H263
                     BitReaderBuffer bitReaderBuffer = new BitReaderBuffer(nal);
                     int time_code = bitReaderBuffer.readBits(18);
                     last_sync_point = ((time_code & 0x3f) + (((int)((uint)time_code >> 7) & 0x3f) * 60) + (((int)((uint)time_code >> 13) & 0x1f) * 60 * 60));
-                    stss.add(samples.Count + 1);
+                    stss.Add(samples.Count + 1);
                     nalsInSample.Add(origNal);
                 }
                 else if (type == 0xb6)
@@ -372,7 +371,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H263
             }
         }
 
-        protected Sample createSampleObject(List<ByteBuffer> nals)
+        protected override Sample createSampleObject(List<ByteBuffer> nals)
         {
             ByteBuffer startcode = ByteBuffer.wrap(new byte[] { 0, 0, 1 });
             ByteBuffer[] data = new ByteBuffer[nals.Count * 2];
@@ -384,17 +383,17 @@ namespace SharpMp4Parser.Muxer.Tracks.H263
             return new SampleImpl(data, mp4v);
         }
 
-        public List<SampleEntry> getSampleEntries()
+        public override List<SampleEntry> getSampleEntries()
         {
             return new List<SampleEntry>() { mp4v };
         }
 
-        public string getHandler()
+        public override string getHandler()
         {
             return "vide";
         }
 
-        public List<Sample> getSamples()
+        public override List<Sample> getSamples()
         {
             return samples;
         }

@@ -21,7 +21,7 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
             Dictionary<Uuid, SecretKey> keys = new Dictionary<Uuid, SecretKey>();
             foreach (SampleEntry sampleEntry in original.getSampleEntries())
             {
-                TrackEncryptionBox tenc = Path.getPath((Container)sampleEntry, "sinf[0]/schi[0]/tenc[0]");
+                TrackEncryptionBox tenc = Path.getPath((IsoParser.Container)sampleEntry, "sinf[0]/schi[0]/tenc[0]");
                 Debug.Assert(tenc != null);
                 keys.Add(tenc.getDefault_KID(), sk);
             }
@@ -51,7 +51,7 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
                 if (previousSampleEntry != current)
                 {
                     indexToSampleEntry.Add(i, current);
-                    TrackEncryptionBox tenc = Path.getPath((Container)encSample.getSampleEntry(), "sinf[0]/schi[0]/tenc[0]");
+                    TrackEncryptionBox tenc = Path.getPath((IsoParser.Container)encSample.getSampleEntry(), "sinf[0]/schi[0]/tenc[0]");
                     if (tenc != null)
                     {
                         indexToKey.Add(i, keys[tenc.getDefault_KID()]);
@@ -67,37 +67,37 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
             samples = new CencDecryptingSampleList(indexToKey, indexToSampleEntry, encSamples, original.getSampleEncryptionEntries());
         }
 
-        public void close()
+        public override void close()
         {
             original.close();
         }
 
-        public long[] getSyncSamples()
+        public override long[] getSyncSamples()
         {
             return original.getSyncSamples();
         }
 
-        public List<SampleEntry> getSampleEntries()
+        public override List<SampleEntry> getSampleEntries()
         {
             return new List<SampleEntry>(sampleEntries);
         }
 
-        public long[] getSampleDurations()
+        public override long[] getSampleDurations()
         {
             return original.getSampleDurations();
         }
 
-        public TrackMetaData getTrackMetaData()
+        public override TrackMetaData getTrackMetaData()
         {
             return original.getTrackMetaData();
         }
 
-        public string getHandler()
+        public override string getHandler()
         {
             return original.getHandler();
         }
 
-        public List<Sample> getSamples()
+        public override List<Sample> getSamples()
         {
             return samples;
         }

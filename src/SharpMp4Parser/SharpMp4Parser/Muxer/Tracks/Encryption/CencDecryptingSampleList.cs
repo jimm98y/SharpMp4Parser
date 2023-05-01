@@ -31,7 +31,7 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
 
         private string getSchemeType(SampleEntry s)
         {
-            SchemeTypeBox schm = Path.getPath((Container)s, "sinf/schm");
+            SchemeTypeBox schm = Path.getPath((IsoParser.Container)s, "sinf/schm");
 
             Debug.Assert(schm != null, "Cannot get cipher without schemetypebox");
             return schm.getSchemeType();

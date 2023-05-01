@@ -96,7 +96,7 @@ namespace SharpMp4Parser.Muxer.Tracks.MJpeg
                 int[] ptss = CompositionTimeToSample.blowupCompositionTimes(alignTo.getCompositionTimeEntries());
                 for (int j = 0; j < ptss.Length && j < 50; j++)
                 {
-                    ptss[j] += currentTime;
+                    ptss[j] += (int)currentTime;
                     currentTime += alignTo.getSampleDurations()[j];
                 }
                 ptss = ptss.OrderBy(x => x).ToArray();
@@ -105,32 +105,32 @@ namespace SharpMp4Parser.Muxer.Tracks.MJpeg
 
             if (earliestTrackPresentationTime < 0)
             {
-                getEdits().add(new Edit((long)(-earliestTrackPresentationTime * getTrackMetaData().getTimescale()), getTrackMetaData().getTimescale(), 1.0, (double)getDuration() / getTrackMetaData().getTimescale()));
+                getEdits().Add(new Edit((long)(-earliestTrackPresentationTime * getTrackMetaData().getTimescale()), getTrackMetaData().getTimescale(), 1.0, (double)getDuration() / getTrackMetaData().getTimescale()));
             }
             else if (earliestTrackPresentationTime > 0)
             {
-                getEdits().add(new Edit(-1, getTrackMetaData().getTimescale(), 1.0, earliestTrackPresentationTime));
-                getEdits().add(new Edit(0, getTrackMetaData().getTimescale(), 1.0, (double)getDuration() / getTrackMetaData().getTimescale()));
+                getEdits().Add(new Edit(-1, getTrackMetaData().getTimescale(), 1.0, earliestTrackPresentationTime));
+                getEdits().Add(new Edit(0, getTrackMetaData().getTimescale(), 1.0, (double)getDuration() / getTrackMetaData().getTimescale()));
             }
 
         }
 
-        public List<SampleEntry> getSampleEntries()
+        public override List<SampleEntry> getSampleEntries()
         {
             return new List<SampleEntry>() { mp4v };
         }
 
-        public long[] getSampleDurations()
+        public override long[] getSampleDurations()
         {
             return sampleDurations;
         }
 
-        public TrackMetaData getTrackMetaData()
+        public override TrackMetaData getTrackMetaData()
         {
             return trackMetaData;
         }
 
-        public string getHandler()
+        public override string getHandler()
         {
             return "vide";
         }
@@ -181,7 +181,7 @@ namespace SharpMp4Parser.Muxer.Tracks.MJpeg
                 return sample;
             }
 
-            public override SampleEntry getSampleEntry()
+            public SampleEntry getSampleEntry()
             {
                 return mp4v;
             }
@@ -190,26 +190,28 @@ namespace SharpMp4Parser.Muxer.Tracks.MJpeg
         public class JpegSampleList : List<Sample>
         {
             File[] jpegs;
+            VisualSampleEntry mp4v;
 
-            public JpegSampleList(File[] jpegs)
+            public JpegSampleList(File[] jpegs, VisualSampleEntry mp4v)
             {
+                this.mp4v = mp4v;
                 this.jpegs = jpegs;
             }
 
-            public override int size()
+            public int size()
             {
                 return jpegs.Length;
             }
 
-            public override Sample get(int index)
+            public Sample get(int index)
             {
                 return new JpegSample(jpegs, index);
             }
         }
 
-        public List<Sample> getSamples()
+        public override List<Sample> getSamples()
         {
-            return new JpegSampleList(jpegs);
+            return new JpegSampleList(jpegs, mp4v);
         }
 
         public override void close()

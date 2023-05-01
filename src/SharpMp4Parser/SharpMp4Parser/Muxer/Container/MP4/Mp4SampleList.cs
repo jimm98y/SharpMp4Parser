@@ -10,8 +10,7 @@ namespace SharpMp4Parser.Muxer.Container.MP4
     {
         private List<Sample> samples;
 
-
-        public Mp4SampleList(long trackId, Container isofile, RandomAccessSource source)
+        public Mp4SampleList(long trackId, IsoParser.Container isofile, RandomAccessSource source)
         {
 
             if (Path.getPaths(isofile, "moov/mvex/trex").Count == 0)
@@ -26,7 +25,7 @@ namespace SharpMp4Parser.Muxer.Container.MP4
 
         public override Sample get(int index)
         {
-            return samples.get(index);
+            return samples[index];
         }
 
         public override int size()

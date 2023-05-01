@@ -11,7 +11,7 @@ namespace SharpMp4Parser.Muxer.Container.MP4
 {
     public class FragmentedMp4SampleList : List<Sample>
     {
-        private Container isofile;
+        private IsoParser.Container isofile;
         private TrackBox trackBox = null;
         private TrackExtendsBox trex = null;
         private readonly Dictionary<TrackFragmentBox, MovieFragmentBox> traf2moof = new Dictionary<TrackFragmentBox, MovieFragmentBox>();
@@ -24,7 +24,7 @@ namespace SharpMp4Parser.Muxer.Container.MP4
         private readonly RandomAccessSource randomAccess;
         private readonly List<SampleEntry> sampleEntries;
 
-        public FragmentedMp4SampleList(long track, Container isofile, RandomAccessSource randomAccess)
+        public FragmentedMp4SampleList(long track, IsoParser.Container isofile, RandomAccessSource randomAccess)
         {
             this.isofile = isofile;
             this.randomAccess = randomAccess;
@@ -277,14 +277,16 @@ namespace SharpMp4Parser.Muxer.Container.MP4
                 return size_;
             }
             long i = 0;
-            foreach (MovieFragmentBox moof in isofile.getBoxes(typeof(MovieFragmentBox))) {
-                foreach (TrackFragmentBox trackFragmentBox in moof.getBoxes<TrackFragmentBox>(typeof(TrackFragmentBox))) {
+            foreach (MovieFragmentBox moof in isofile.getBoxes< MovieFragmentBox>(typeof(MovieFragmentBox)))
+            {
+                foreach (TrackFragmentBox trackFragmentBox in moof.getBoxes<TrackFragmentBox>(typeof(TrackFragmentBox))) 
+                {
                     if (trackFragmentBox.getTrackFragmentHeaderBox().getTrackId() == trackBox.getTrackHeaderBox().getTrackId())
                     {
-                        foreach (TrackRunBox trackRunBox in trackFragmentBox.getBoxes<TrackRunBox>(typeof(TrackRunBox))) {
+                        foreach (TrackRunBox trackRunBox in trackFragmentBox.getBoxes<TrackRunBox>(typeof(TrackRunBox))) 
+                        {
                             i += trackRunBox.getSampleCount();
                         }
-
                     }
                 }
             }

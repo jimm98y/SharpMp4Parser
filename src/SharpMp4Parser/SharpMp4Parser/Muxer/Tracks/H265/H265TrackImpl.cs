@@ -3,7 +3,6 @@ using SharpMp4Parser.IsoParser.Boxes.ISO14496.Part15;
 using SharpMp4Parser.IsoParser.Boxes.SampleEntry;
 using SharpMp4Parser.IsoParser.Tools;
 using SharpMp4Parser.Java;
-using SharpMp4Parser.Muxer.Tracks.H264;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -12,7 +11,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
     /**
      * Takes a raw H265 stream and muxes into an MP4.
      */
-    public class H265TrackImpl : AbstractH26XTrack, H265NalUnitTypes
+    public class H265TrackImpl : AbstractH26XTrack
     {
         List<ByteBuffer> sps = new List<ByteBuffer>();
         List<ByteBuffer> pps = new List<ByteBuffer>();
@@ -231,17 +230,17 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
             nals.Clear();
         }
 
-        public List<SampleEntry> getSampleEntries()
+        public override List<SampleEntry> getSampleEntries()
         {
             return null;
         }
 
-        public string getHandler()
+        public override string getHandler()
         {
             return "vide";
         }
 
-        public List<Sample> getSamples()
+        public override List<Sample> getSamples()
         {
             return samples;
         }
