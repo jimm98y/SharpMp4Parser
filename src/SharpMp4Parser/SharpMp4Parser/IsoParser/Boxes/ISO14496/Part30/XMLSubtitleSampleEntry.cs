@@ -26,7 +26,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part30
         public override void parse(ReadableByteChannel dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
         {
             ByteBuffer byteBuffer = ByteBuffer.allocate(8);
-            dataSource.read(byteBuffer.rewind());
+            dataSource.read((ByteBuffer)byteBuffer.rewind());
             ((Java.Buffer)byteBuffer).position(6);
             dataReferenceIndex = IsoTypeReader.readUInt16(byteBuffer);
 

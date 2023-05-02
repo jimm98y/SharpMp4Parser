@@ -38,9 +38,9 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO23001.Part7
             }
 
             long numOfEntries = IsoTypeReader.readUInt32(content);
-            ByteBuffer parseEight = content.duplicate();
-            ByteBuffer parseSixteen = content.duplicate();
-            ByteBuffer parseZero = content.duplicate();
+            ByteBuffer parseEight = (ByteBuffer)content.duplicate();
+            ByteBuffer parseSixteen = (ByteBuffer)content.duplicate();
+            ByteBuffer parseZero = (ByteBuffer)content.duplicate();
 
             entries = parseEntries(parseEight, numOfEntries, 8);
             if (entries != null)

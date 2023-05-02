@@ -61,7 +61,7 @@ namespace SharpMp4Parser.Muxer.Tracks.WebVTT
 
             public ByteBuffer asByteBuffer()
             {
-                return vtte.duplicate();
+                return (ByteBuffer)vtte.duplicate();
             }
 
             public SampleEntry getSampleEntry()

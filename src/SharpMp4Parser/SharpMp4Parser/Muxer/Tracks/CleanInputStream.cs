@@ -13,7 +13,7 @@ namespace SharpMp4Parser.Muxer.Tracks
         int prevprev = -1;
         int prev = -1;
 
-        public CleanInputStream(Stream input) : base(input)
+        public CleanInputStream(InputStream input) : base(input)
         { }
 
         public bool markSupported()

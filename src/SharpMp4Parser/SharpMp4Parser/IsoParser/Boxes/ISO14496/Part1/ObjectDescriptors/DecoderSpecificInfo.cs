@@ -60,7 +60,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part1.ObjectDescriptors
             IsoTypeWriter.writeUInt8(output, tag);
             writeSize(output, getContentSize());
             output.put(bytes);
-            return output.rewind();
+            return (ByteBuffer)output.rewind();
         }
 
         public override string ToString()

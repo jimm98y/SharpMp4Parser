@@ -694,7 +694,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
             public ByteBufferBackedInputStream(ByteBuffer buf) : base(buf)
             {
                 // make a coy of the buffer
-                this.buf = buf.duplicate();
+                this.buf = (ByteBuffer)buf.duplicate();
             }
 
             public override int read()

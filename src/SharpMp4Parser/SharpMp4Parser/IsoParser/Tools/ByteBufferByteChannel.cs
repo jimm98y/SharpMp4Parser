@@ -55,7 +55,7 @@ namespace SharpMp4Parser.IsoParser.Tools
             base.close();
         }
 
-        public override int write(ByteBuffer src)
+        public override int write(Buffer src)
         {
             int r = src.remaining();
             byteBuffer.put(src);

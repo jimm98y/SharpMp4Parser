@@ -80,7 +80,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part14
             try
             {
                 data.rewind();
-                descriptor = ObjectDescriptorFactory.createFrom(-1, data.duplicate());
+                descriptor = ObjectDescriptorFactory.createFrom(-1, (ByteBuffer)data.duplicate());
             }
             catch (IOException)
             {

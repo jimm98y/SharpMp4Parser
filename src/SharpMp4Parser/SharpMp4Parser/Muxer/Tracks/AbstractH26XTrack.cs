@@ -32,14 +32,14 @@ namespace SharpMp4Parser.Muxer.Tracks
         public AbstractH26XTrack(DataSource dataSource) : this(dataSource, true)
         { }
 
-        protected static InputStream cleanBuffer(Stream input)
+        protected static InputStream cleanBuffer(InputStream input)
         {
             return new CleanInputStream(input);
         }
 
         protected static byte[] toArray(ByteBuffer buf)
         {
-            buf = buf.duplicate();
+            buf = (ByteBuffer)buf.duplicate();
             byte[] b = new byte[buf.remaining()];
             buf.get(b, 0, b.Length);
             return b;

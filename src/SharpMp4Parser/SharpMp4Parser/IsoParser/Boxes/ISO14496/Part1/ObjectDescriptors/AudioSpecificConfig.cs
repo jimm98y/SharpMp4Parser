@@ -622,7 +622,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part1.ObjectDescriptors
             IsoTypeWriter.writeUInt8(output, tag);
             writeSize(output, getContentSize());
             output.put(serializeConfigBytes());
-            return output.rewind();
+            return (ByteBuffer)output.rewind();
         }
 
         protected ByteBuffer serializeConfigBytes()
@@ -821,7 +821,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part1.ObjectDescriptors
                 }
             }
 
-            return output.rewind();
+            return (ByteBuffer)output.rewind();
         }
 
         private static void writeAudioObjectType(int audioObjectType, BitWriterBuffer bitWriterBuffer)

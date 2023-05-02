@@ -58,7 +58,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.Microsoft
             StringBuilder sb = new StringBuilder();
             sb.Append("ProtectionSpecificHeader");
             sb.Append("{data=");
-            ByteBuffer data = getData().duplicate();
+            ByteBuffer data = (ByteBuffer)getData().duplicate();
             data.rewind();
             byte[] bytes = new byte[data.limit()];
             data.get(bytes);

@@ -28,22 +28,22 @@ namespace SharpMp4Parser.IsoParser.Boxes.SampleGrouping
 
         public void setContent(ByteBuffer content)
         {
-            this.content = content.duplicate().rewind();
+            this.content = (ByteBuffer)content.duplicate().rewind();
         }
 
         public override void parse(ByteBuffer byteBuffer)
         {
-            content = byteBuffer.duplicate().rewind();
+            content = (ByteBuffer)byteBuffer.duplicate().rewind();
         }
 
         public override ByteBuffer get()
         {
-            return content.duplicate();
+            return (ByteBuffer)content.duplicate();
         }
 
         public override string ToString()
         {
-            ByteBuffer bb = content.duplicate();
+            ByteBuffer bb = (ByteBuffer)content.duplicate();
             bb.rewind();
             byte[] b = new byte[bb.limit()];
             bb.get(b);

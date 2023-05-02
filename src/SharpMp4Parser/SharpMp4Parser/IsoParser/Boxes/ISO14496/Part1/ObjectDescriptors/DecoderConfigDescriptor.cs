@@ -141,7 +141,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part1.ObjectDescriptors
             {
                 output.put(profileLevelIndicationDescriptor.serialize());
             }
-            return output.rewind();
+            return (ByteBuffer)output.rewind();
         }
 
         public DecoderSpecificInfo getDecoderSpecificInfo()

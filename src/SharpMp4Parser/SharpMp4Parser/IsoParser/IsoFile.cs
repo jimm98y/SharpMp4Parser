@@ -111,7 +111,7 @@ namespace SharpMp4Parser.IsoParser
 
         public void close()
         {
-            readableByteChannel.Close();
+            readableByteChannel.close();
             /*
             if (this.fis != null)
             {

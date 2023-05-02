@@ -139,7 +139,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.Microsoft.ContentProtection
                             record = new DefaulPlayReadyRecord(type);
                             break;
                     }
-                    record.parse(byteBuffer.slice().limit(length));
+                    record.parse((ByteBuffer)byteBuffer.slice().limit(length));
                     ((Java.Buffer)byteBuffer).position(byteBuffer.position() + length);
                     records.Add(record);
                 }
@@ -227,7 +227,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.Microsoft.ContentProtection
 
                 public override void parse(ByteBuffer bytes)
                 {
-                    value = bytes.duplicate();
+                    value = (ByteBuffer)bytes.duplicate();
                 }
 
                 public override ByteBuffer getValue()
@@ -257,7 +257,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.Microsoft.ContentProtection
 
                 public override void parse(ByteBuffer bytes)
                 {
-                    value = bytes.duplicate();
+                    value = (ByteBuffer)bytes.duplicate();
                 }
 
                 public override ByteBuffer getValue()

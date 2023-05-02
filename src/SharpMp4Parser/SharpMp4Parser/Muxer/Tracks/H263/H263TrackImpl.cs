@@ -43,7 +43,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H263
 
             while ((nal = findNextNal(la)) != null)
             {
-                ByteBuffer origNal = nal.duplicate();
+                ByteBuffer origNal = (ByteBuffer)nal.duplicate();
                 int type = IsoTypeReader.readUInt8(nal);
                 if (((type == 0xb0) || // visual_object_sequence_start_code
                         (type == 0xb5) || // visual_object_start_code

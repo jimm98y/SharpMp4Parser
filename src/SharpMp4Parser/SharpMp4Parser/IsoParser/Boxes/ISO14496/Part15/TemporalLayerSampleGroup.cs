@@ -168,7 +168,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part15
             IsoTypeWriter.writeUInt16(byteBuffer, tlAvgBitRate);
             IsoTypeWriter.writeUInt8(byteBuffer, tlConstantFrameRate);
             IsoTypeWriter.writeUInt16(byteBuffer, tlAvgFrameRate);
-            return byteBuffer.rewind();
+            return (ByteBuffer)byteBuffer.rewind();
         }
 
         public override int size()

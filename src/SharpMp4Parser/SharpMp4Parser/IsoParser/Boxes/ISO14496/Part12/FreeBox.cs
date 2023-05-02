@@ -47,7 +47,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
         {
             if (data != null)
             {
-                return data.duplicate().rewind();
+                return (ByteBuffer)data.duplicate().rewind();
             }
             else
             {

@@ -59,8 +59,8 @@ namespace SharpMp4Parser.IsoParser.Support
                 b1.getBox(Channels.newChannel(baos1));
                 b2.getBox(Channels.newChannel(baos2));
 
-                baos1.Close();
-                baos2.Close();
+                baos1.close();
+                baos2.close();
 
                 Debug.Assert(Convert.ToBase64String(baos1.toByteArray()).Equals(Convert.ToBase64String(baos2.toByteArray())), "Box at " + b1 + " differs from reference\n\n" + b1.ToString() + "\n" + b2.ToString());
             }

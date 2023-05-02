@@ -1,9 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 
 namespace SharpMp4Parser.Java
 {
-    internal class BufferedReader
+    public class BufferedReader
     {
         private InputStreamReader inputStreamReader;
 
@@ -14,19 +15,24 @@ namespace SharpMp4Parser.Java
 
         internal string readLine()
         {
-            throw new NotImplementedException();
+            return inputStreamReader.readLine();
         }
     }
 
-    internal class InputStreamReader
+    public class InputStreamReader
     {
         private ByteArrayInputStream input;
-        private string v;
+        private string encoding;
 
-        public InputStreamReader(ByteArrayInputStream input, string v)
+        public InputStreamReader(ByteArrayInputStream input, string encoding)
         {
             this.input = input;
-            this.v = v;
+            this.encoding = encoding;
+        }
+
+        internal string readLine()
+        {
+            return input.readLine(encoding);
         }
     }
 
@@ -37,11 +43,6 @@ namespace SharpMp4Parser.Java
             return outputStream;
         }
 
-        public static ReadableByteChannel newChannel(ByteArrayInputStream inputStream)
-        {
-            return inputStream;
-        }
-
         public static ByteArrayInputStream newInputStream(ReadableByteChannel dataSource)
         {
             throw new NotImplementedException();
@@ -50,191 +51,88 @@ namespace SharpMp4Parser.Java
 
     public class InputStream : ByteBuffer
     {
-        internal int available()
-        {
-            throw new NotImplementedException();
-        }
+        public InputStream()
+        { }
 
+        public InputStream(Java.Buffer input) : base(input)
+        { }
     }
 
-    public class Buffer : MemoryStream
+    public class Buffer : Closeable
     {
+        protected MemoryStream _ms = new MemoryStream();
+
         public Buffer()
-        { }
-
-        public Buffer(int capacity) : base(capacity)
-        { }
-
-        public ByteBuffer limit(int limit)
         {
-            throw new System.NotImplementedException();
+            _ms = new MemoryStream();
         }
 
-        public int limit()
+        public Buffer(int capacity)
         {
-            throw new System.NotImplementedException();
+            _ms = new MemoryStream(capacity);
         }
 
-        public ByteBuffer position(int nextBufferWritePosition)
+        public Buffer(Buffer input)
         {
-            throw new System.NotImplementedException();
+            _ms = input._ms;
         }
 
-        public ByteBuffer rewind()
+        public Buffer(MemoryStream input)
         {
-            throw new System.NotImplementedException();
-        }
-    }
-
-    public class ByteBuffer : Buffer
-    {
-        public ByteBuffer()
-        { }
-
-        public ByteBuffer(int capacity) : base(capacity)
-        {  }
-
-        public static ByteBuffer allocate(int bufferCapacity)
-        {
-            return new ByteBuffer(bufferCapacity);
+            _ms = input;
         }
 
-        public static ByteBuffer wrap(byte[] bytes)
+        public Buffer(byte[] input)
         {
-            throw new System.NotImplementedException();
+            _ms = new MemoryStream(input);
+        }
+
+        public virtual Buffer duplicate()
+        {
+            return new Buffer(_ms.ToArray());
         }
 
         public int capacity()
         {
-            return this.Capacity;
+            return _ms.Capacity;
         }
 
-        public ByteBuffer duplicate()
+        public byte[] array()
         {
-            throw new System.NotImplementedException();
+            return _ms.ToArray();
         }
 
-        public byte get()
+        public int remaining()
         {
-            return (byte)this.ReadByte();
-        }
-
-        public byte get(int i)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public int getInt()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public short getShort()
-        {
-            throw new System.NotImplementedException();
+            return (int)(_ms.Length - _ms.Position);
         }
 
         public int position()
         {
-            return (int)this.Position;
+            return (int)_ms.Position;
         }
 
-        public ByteBuffer position(long position)
+        public Buffer position(long position)
         {
-            this.Seek(position, SeekOrigin.Begin);
+            _ms.Seek(position, SeekOrigin.Begin);
             return this;
         }
 
         public void put(byte[] data)
         {
-            this.Write(data, 0, data.Length);
+            _ms.Write(data, 0, data.Length);
         }
 
-        public void put(ByteBuffer buffer)
+        public void put(Buffer buffer)
         {
-            byte[] data = buffer.ToArray();
+            byte[] data = buffer.toByteArray();
             put(data);
         }
 
-        public void put(byte[] bytes, int v1, int v2)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void put(byte v)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void putInt(int dataType)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public int remaining()
-        {
-            return (int)(this.Length - this.Position);
-        }
-
-        public ByteBuffer reset()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public ByteBuffer slice()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void get(byte[] bytes)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public byte[] array()
-        {
-            return this.ToArray();
-        }
-
-        public void putShort(short b)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void put(int v1, byte v2)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void putLong(long value)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public long getLong()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        internal void order(object bIG_ENDIAN)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        internal char getChar()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void putChar(char v)
-        {
-            throw new NotImplementedException();
-        }
-
-        public virtual int write(ByteBuffer value)
+        public virtual int write(Buffer value)
         {
             put(value);
-            return (int)value.Length;
+            return (int)(value.toByteArray()).Length;
         }
 
         public virtual int write(byte[] value)
@@ -248,17 +146,6 @@ namespace SharpMp4Parser.Java
             putInt(value);
         }
 
-        public virtual int read(ByteBuffer bb)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public virtual int read(byte[] bb)
-        {
-            throw new System.NotImplementedException();
-        }
-
-
         public virtual int read()
         {
             return get();
@@ -266,7 +153,7 @@ namespace SharpMp4Parser.Java
 
         public byte[] toByteArray()
         {
-            return this.ToArray();
+            return _ms.ToArray();
         }
 
         public int hashCode()
@@ -274,7 +161,168 @@ namespace SharpMp4Parser.Java
             return GetHashCode();
         }
 
-        internal int arrayOffset()
+        public Buffer rewind()
+        {
+            _ms.Seek(0, SeekOrigin.Begin);
+            return this;
+        }
+
+        internal int available()
+        {
+            // https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html
+            // Returns an estimate of the number of bytes that can be read (or skipped over) from this input stream without blocking by the next invocation of a method for this input stream.
+            return remaining();
+        }
+
+        internal bool hasRemaining()
+        {
+            return remaining() > 0;
+        }
+
+        public virtual void close()
+        {
+            _ms.Close();
+        }
+
+        public virtual bool isOpen()
+        {
+            return _ms.CanRead || _ms.CanWrite;
+        }
+
+        public int arrayOffset()
+        {
+            return position();
+        }
+
+        public string readLine(string encoding)
+        {
+            if (encoding == "UTF-8")
+            {
+                // utf8
+                using (var sr = new StreamReader(_ms, Encoding.UTF8, false, 1, true))
+                {
+                    return sr.ReadLine();
+                }
+            }
+            else
+            {
+                throw new NotSupportedException(encoding);
+            }
+        }
+
+        public void writeShort(short value)
+        {
+            putShort(value);
+        }
+
+
+        public byte get()
+        {
+            return (byte)_ms.ReadByte();
+        }
+
+        public void put(byte value)
+        {
+            _ms.WriteByte(value);
+        }
+
+
+
+
+
+
+        public char getChar()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void putChar(char value)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public int getInt()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void putInt(int value)
+        {
+            throw new System.NotImplementedException();
+        }
+
+
+
+        public short getShort()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void putShort(short value)
+        {
+            throw new System.NotImplementedException();
+        }
+
+
+
+        public long getLong()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void putLong(long value)
+        {
+            throw new System.NotImplementedException();
+        }
+
+
+
+
+
+        public int limit()
+        {
+            return this.capacity();
+        }
+
+        public Buffer limit(int limit)
+        {
+            this._ms.Capacity = limit;
+            return this;
+        }
+
+
+        public byte get(int i)
+        {
+            throw new System.NotImplementedException();
+        }
+
+
+
+        public void put(byte[] bytes, int v1, int v2)
+        {
+            throw new System.NotImplementedException();
+        }
+
+
+        public void get(byte[] bytes)
+        {
+            throw new System.NotImplementedException();
+        }
+
+
+        public void put(int v1, byte v2)
+        {
+            throw new System.NotImplementedException();
+        }
+
+
+        internal void order(ByteOrder endian)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public virtual int read(byte[] bb)
         {
             throw new NotImplementedException();
         }
@@ -284,19 +332,65 @@ namespace SharpMp4Parser.Java
             throw new NotImplementedException();
         }
 
-        internal static ByteBuffer wrap(byte[] bytes, int v1, int v2)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal bool hasRemaining()
-        {
-            throw new NotImplementedException();
-        }
-
         internal void get(byte[] b, int v, int length)
         {
             throw new NotImplementedException();
+        }
+
+    }
+
+    public class ByteBuffer : Buffer
+    {
+        public ByteBuffer()
+        { }
+
+        public ByteBuffer(int capacity) : base(capacity)
+        {  }
+
+        public ByteBuffer(Java.Buffer input): base(input)
+        {  }
+
+        public ByteBuffer(MemoryStream input) : base(input)
+        { }
+
+        public override Buffer duplicate()
+        {
+            return new ByteBuffer(new MemoryStream(_ms.ToArray()));
+        }
+
+        public ByteBuffer slice()
+        {
+            return new ByteBuffer(this._ms);
+        }
+
+        public static ByteBuffer wrap(byte[] bytes)
+        {
+            return wrap(bytes, 0, bytes.Length);
+        }
+
+        public static ByteBuffer wrap(byte[] bytes, int offset, int length)
+        {
+            return new ByteBuffer(new MemoryStream(bytes, offset, length));
+        }
+
+        public static ByteBuffer allocate(int bufferCapacity)
+        {
+            return new ByteBuffer(bufferCapacity);
+        }
+
+        public virtual int read(ByteBuffer bb)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public ByteBuffer reset()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public ByteBuffer position(int nextBufferWritePosition)
+        {
+            throw new System.NotImplementedException();
         }
     }
 
@@ -321,14 +415,14 @@ namespace SharpMp4Parser.Java
 
     public class ReadableByteChannel : InputStream
     {
-        public virtual void close()
+        public ReadableByteChannel()
         {
-            throw new NotImplementedException();
+            
         }
 
-        public virtual bool isOpen()
+        public ReadableByteChannel(Java.Buffer input) : base(input)
         {
-            throw new NotImplementedException();
+            
         }
     }
 
@@ -344,30 +438,17 @@ namespace SharpMp4Parser.Java
         {
             this.baos = baos;
         }
-
-        internal void close()
-        {
-            throw new NotImplementedException();
-        }
-
-        internal void writeShort(short length)
-        {
-            throw new NotImplementedException();
-        }
     }
 
     public class ByteArrayInputStream : ReadableByteChannel
     {
-        private Stream input;
-
         public ByteArrayInputStream(byte[] input)
         {
             throw new NotImplementedException();
         }
 
-        public ByteArrayInputStream(Stream input)
+        public ByteArrayInputStream(Java.Buffer input) : base(input)
         {
-            this.input = input;
         }
     }
 }

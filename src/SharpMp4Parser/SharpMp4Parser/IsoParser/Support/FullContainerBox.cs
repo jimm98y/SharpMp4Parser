@@ -63,7 +63,7 @@ namespace SharpMp4Parser.IsoParser.Support
         {
             ByteBuffer versionAndFlags = ByteBuffer.allocate(4);
             dataSource.read(versionAndFlags);
-            parseVersionAndFlags(versionAndFlags.rewind());
+            parseVersionAndFlags((ByteBuffer)versionAndFlags.rewind());
             base.parse(dataSource, header, contentSize, boxParser);
         }
 

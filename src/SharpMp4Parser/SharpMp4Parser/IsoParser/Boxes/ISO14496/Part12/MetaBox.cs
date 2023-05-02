@@ -101,7 +101,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
             {
                 bb = ByteBuffer.allocate(4);
                 rewindableDataSource.read(bb);
-                parseVersionAndFlags(bb.rewind());
+                parseVersionAndFlags((ByteBuffer)bb.rewind());
             }
 
             int bytesUsed = quickTimeFormat ? 0 : 4;

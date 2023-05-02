@@ -35,7 +35,7 @@ namespace SharpMp4Parser.IsoParser.Tools
 
         public static string encodeHex(ByteBuffer data)
         {
-            ByteBuffer byteBuffer = data.duplicate();
+            ByteBuffer byteBuffer = (ByteBuffer)data.duplicate();
             StringBuilder sb = new StringBuilder();
             while (byteBuffer.remaining() > 0)
             {

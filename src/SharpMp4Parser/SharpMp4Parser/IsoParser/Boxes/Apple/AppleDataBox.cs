@@ -196,7 +196,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.Apple
             {
                 dataLanguage += 1 << 16;
             }
-            ByteBuffer data = content.duplicate().slice().limit(dataLength - 16) as ByteBuffer;
+            ByteBuffer data = ((ByteBuffer)content.duplicate()).slice().limit(dataLength - 16) as ByteBuffer;
             ((Buffer)content).position(dataLength - 16 + content.position());
             return data;
         }

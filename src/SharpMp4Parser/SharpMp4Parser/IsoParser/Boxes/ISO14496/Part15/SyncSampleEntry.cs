@@ -25,7 +25,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part15
         {
             ByteBuffer b = ByteBuffer.allocate(1);
             IsoTypeWriter.writeUInt8(b, nalUnitType + (reserved << 6));
-            return b.rewind();
+            return (ByteBuffer)b.rewind();
         }
 
         public override bool Equals(object o)

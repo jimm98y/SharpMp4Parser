@@ -140,7 +140,7 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
                                 int nalLength = CastUtils.l2i(IsoTypeReaderVariable.read(sample, nalLengthSize));
                                 int clearBytes;
                                 int nalGrossSize = nalLength + nalLengthSize;
-                                if (nalGrossSize < 112 || isClearNal(sample.duplicate()))
+                                if (nalGrossSize < 112 || isClearNal((ByteBuffer)sample.duplicate()))
                                 {
                                     clearBytes = nalGrossSize;
                                 }
