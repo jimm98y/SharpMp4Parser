@@ -80,7 +80,7 @@ namespace SharpMp4Parser.Muxer.Tracks
         }
 
 
-        public List<Sample> getSamples()
+        public IList<Sample> getSamples()
         {
             return samples;
         }

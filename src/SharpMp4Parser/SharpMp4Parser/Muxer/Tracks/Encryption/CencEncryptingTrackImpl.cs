@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using SharpMp4Parser.Muxer.Tracks.H264;
 using SharpMp4Parser.Muxer.Tracks.H265;
+using System.Linq;
 
 namespace SharpMp4Parser.Muxer.Tracks.Encryption
 {
@@ -29,7 +30,7 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
         private Dictionary<GroupEntry, long[]> groupEntries = new Dictionary<GroupEntry, long[]>();
 
         public CencEncryptingTrackImpl(Track source, Uuid defaultKeyId, SecretKey key, bool dummyIvs) :
-                this(source, new RangeStartMap<int, Uuid>(0, defaultKeyId), new Dictionary<Uuid, SecretKey>() { { defaultKeyId, key } }, "cenc", dummyIvs, false)
+                this(source, new RangeStartMap<int, Uuid>() { { 0, defaultKeyId } }, new Dictionary<Uuid, SecretKey>() { { defaultKeyId, key } }, "cenc", dummyIvs, false)
         { }
 
 
@@ -54,10 +55,11 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
 
             if (!dummyIvs)
             {
-                Random random = new SecureRandom();
-                random.nextBytes(init);
+#warning use secure random
+                Random random = new Random();
+                random.NextBytes(init);
             }
-            BigInteger ivInt = new BigInteger(1, init);
+            BigInteger ivInt = new BigInteger(init);
 
             CencEncryptingSampleEntryTransformer tx = new CencEncryptingSampleEntryTransformer();
 
@@ -89,7 +91,7 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
                 }
             }
 
-            List<Sample> sourceSamples = source.getSamples();
+            IList<Sample> sourceSamples = source.getSamples();
             RangeStartMap<int, SampleEntry> indexToSampleEntry = new RangeStartMap<int, SampleEntry>();
             RangeStartMap<int, KeyIdKeyPair> indexToKey = new RangeStartMap<int, KeyIdKeyPair>();
             SampleEntry previousSampleEntry = null;
@@ -153,7 +155,7 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
                         }
                     }
 
-                    ivInt = ivInt.add(one);
+                    ivInt = ivInt + one;
                 }
                 else
                 {
@@ -227,7 +229,7 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
             return source.getHandler();
         }
 
-        public List<Sample> getSamples()
+        public IList<Sample> getSamples()
         {
             return samples;
         }

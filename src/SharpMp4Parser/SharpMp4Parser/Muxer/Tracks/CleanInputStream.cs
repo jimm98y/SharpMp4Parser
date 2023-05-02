@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpMp4Parser.Java;
+using System;
 using System.IO;
 
 namespace SharpMp4Parser.Muxer.Tracks
@@ -6,7 +7,7 @@ namespace SharpMp4Parser.Muxer.Tracks
     /**
      * Removes NAL Unit emulation_prevention_three_byte.
      */
-    public class CleanInputStream : FilterInputStream
+    public class CleanInputStream : ByteArrayInputStream /* FilterInputStream */ 
     {
 
         int prevprev = -1;
@@ -20,7 +21,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             return false;
         }
 
-        public int read()
+        public override int read()
         {
             int c = base.read();
             if (c == 3 && prevprev == 0 && prev == 0)

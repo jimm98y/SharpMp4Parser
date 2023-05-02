@@ -38,7 +38,7 @@ namespace SharpMp4Parser.Muxer.Builder
         //private static Logger LOG = LoggerFactory.getLogger(DefaultMp4Builder.class);
         Dictionary<Track, StaticChunkOffsetBox> chunkOffsetBoxes = new Dictionary<Track, StaticChunkOffsetBox>();
         HashSet<SampleAuxiliaryInformationOffsetsBox> sampleAuxiliaryInformationOffsetsBoxes = new HashSet<SampleAuxiliaryInformationOffsetsBox>();
-        Dictionary<Track, List<Sample>> track2Sample = new Dictionary<Track, List<Sample>>();
+        Dictionary<Track, IList<Sample>> track2Sample = new Dictionary<Track, IList<Sample>>();
         Dictionary<Track, long[]> track2SampleSizes = new Dictionary<Track, long[]>();
 
         private Fragmenter fragmenter;
@@ -83,7 +83,7 @@ namespace SharpMp4Parser.Muxer.Builder
             foreach (Track track in movie.getTracks())
             {
                 // getting the samples may be a time consuming activity
-                List<Sample> samples = track.getSamples();
+                IList<Sample> samples = track.getSamples();
                 putSamples(track, samples);
                 long[] sizes = new long[samples.Count];
                 for (int i = 0; i < sizes.Length; i++)
@@ -157,7 +157,7 @@ namespace SharpMp4Parser.Muxer.Builder
             return isoFile;
         }
 
-        protected List<Sample> putSamples(Track track, List<Sample> samples)
+        protected IList<Sample> putSamples(Track track, IList<Sample> samples)
         {
             track2Sample.Add(track, samples);
             return samples;
@@ -602,7 +602,7 @@ namespace SharpMp4Parser.Muxer.Builder
             stsc.setEntries(new List<SampleToChunkBox.Entry>());
             long lastChunkSize = int.MinValue; // to be sure the first chunks hasn't got the same size
             long lastSampleDescriptionIndex = int.MinValue;
-            List<Sample> samples = track.getSamples();
+            IList<Sample> samples = track.getSamples();
 
             int currentSampleIndex = 0;
             List<SampleEntry> sampleEntries = track.getSampleEntries();
@@ -714,11 +714,15 @@ namespace SharpMp4Parser.Muxer.Builder
 
         public long getTimescale(Movie movie)
         {
-
-            long timescale = movie.getTracks().iterator().next().getTrackMetaData().getTimescale();
-            foreach (Track track in movie.getTracks())
+            long timescale = 0;
+            var tracks = movie.getTracks();
+            for (int i = 0; i < tracks.Count; i++)
             {
-                timescale = Mp4Math.lcm(timescale, track.getTrackMetaData().getTimescale());
+                Track track = tracks[i];
+                if (i == 0)
+                    timescale = track.getTrackMetaData().getTimescale();
+                else
+                    timescale = Mp4Math.lcm(timescale, track.getTrackMetaData().getTimescale());
             }
             return timescale;
         }
@@ -774,7 +778,7 @@ namespace SharpMp4Parser.Muxer.Builder
                     {
                         time += (double)nextChunksTrack.getSampleDurations()[j] / nextChunksTrack.getTrackMetaData().getTimescale();
                     }
-                    chunkList.Add(nextChunksTrack.getSamples().GetRange(startSample, startSample + numberOfSampleInNextChunk));
+                    chunkList.Add(nextChunksTrack.getSamples().ToList().GetRange(startSample, startSample + numberOfSampleInNextChunk));
 
                     trackToChunk.Add(nextChunksTrack, nextChunksIndex + 1);
                     trackToSample.Add(nextChunksTrack, startSample + numberOfSampleInNextChunk);

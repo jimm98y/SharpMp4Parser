@@ -58,14 +58,14 @@ namespace SharpMp4Parser.Muxer
 
         TrackMetaData getTrackMetaData();
 
-        String getHandler();
+        string getHandler();
 
         /**
          * The list of all samples.
          *
          * @return this track's samples
          */
-        List<Sample> getSamples();
+        IList<Sample> getSamples();
 
         SubSampleInformationBox getSubsampleInformationBox();
 

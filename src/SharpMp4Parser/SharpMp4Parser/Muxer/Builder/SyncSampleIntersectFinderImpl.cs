@@ -60,7 +60,7 @@ namespace SharpMp4Parser.Muxer.Builder
             {
 
                 OriginalFormatBox frma;
-                frma = Path.getPath< OriginalFormatBox>((Container)sampleEntry, "sinf/frma");
+                frma = Path.getPath< OriginalFormatBox>((IsoParser.Container)sampleEntry, "sinf/frma");
                 string _type;
                 if (frma != null)
                 {

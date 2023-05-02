@@ -14,7 +14,7 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
     {
         private Dictionary<SampleEntry, SampleEntry> cache = new Dictionary<SampleEntry, SampleEntry>();
 
-        SampleEntry transform(SampleEntry se)
+        public SampleEntry transform(SampleEntry se)
         {
             SampleEntry decSe = cache[se];
             if (decSe == null)

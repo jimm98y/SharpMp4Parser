@@ -9,17 +9,17 @@ using System.Diagnostics;
 
 namespace SharpMp4Parser.Muxer.Tracks.Encryption
 {
-    public class CencDecryptingSampleList : List<Sample>
+    public class CencDecryptingSampleList : AbstractList<Sample>
     {
         private RangeStartMap<int, SampleEntry> sampleEntries;
         private List<CencSampleAuxiliaryDataFormat> sencInfo;
         private RangeStartMap<int, SecretKey> keys = new RangeStartMap<int, SecretKey>();
-        private List<Sample> parent;
+        private IList<Sample> parent;
 
         public CencDecryptingSampleList(
                 RangeStartMap<int, SecretKey> keys,
                 RangeStartMap<int, SampleEntry> sampleEntries,
-                List<Sample> parent,
+                IList<Sample> parent,
                 List<CencSampleAuxiliaryDataFormat> sencInfo
         )
         {
@@ -87,8 +87,8 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
 
                         foreach (CencSampleAuxiliaryDataFormat.Pair pair in sencEntry.pairs)
                         {
-                            int clearBytes = pair.clear();
-                            int encrypted = CastUtils.l2i(pair.encrypted());
+                            int clearBytes = pair.Clear;
+                            int encrypted = CastUtils.l2i(pair.Encrypted);
 
                             byte[] clears = new byte[clearBytes];
                             encSampleBuffer.get(clears);
@@ -149,7 +149,7 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
 
         public override int size()
         {
-            return parent.size();
+            return parent.Count;
         }
     }
 }

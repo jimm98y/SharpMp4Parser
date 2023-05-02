@@ -104,9 +104,10 @@ namespace SharpMp4Parser.Java
             return (int)this.Position;
         }
 
-        public void position(long position)
+        public ByteBuffer position(long position)
         {
             this.Seek(position, SeekOrigin.Begin);
+            return this;
         }
 
         public void put(byte[] data)
@@ -211,6 +212,12 @@ namespace SharpMp4Parser.Java
             throw new System.NotImplementedException();
         }
 
+        public virtual int read(byte[] bb)
+        {
+            throw new System.NotImplementedException();
+        }
+
+
         public virtual int read()
         {
             return get();
@@ -245,10 +252,30 @@ namespace SharpMp4Parser.Java
         {
             throw new NotImplementedException();
         }
+
+        internal void get(byte[] b, int v, int length)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class MappedByteBuffer : ByteBuffer
+    {
+
     }
 
     public class WritableByteChannel : ByteBuffer
     {
+
+        public WritableByteChannel()
+        {
+            
+        }
+
+        public WritableByteChannel(ByteBuffer vtte)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class ReadableByteChannel : ByteBuffer
@@ -270,6 +297,18 @@ namespace SharpMp4Parser.Java
 
     public class ByteArrayInputStream : ReadableByteChannel
     {
+        private Stream input;
+
+        public ByteArrayInputStream(byte[] input)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ByteArrayInputStream(Stream input)
+        {
+            this.input = input;
+        }
+
         internal int available()
         {
             throw new NotImplementedException();

@@ -84,7 +84,7 @@ namespace SharpMp4Parser.Muxer
         public abstract long[] getSampleDurations();
         public abstract TrackMetaData getTrackMetaData();
         public abstract string getHandler();
-        public abstract List<Sample> getSamples();
+        public abstract IList<Sample> getSamples();
         public virtual void close() { }
     }
 }

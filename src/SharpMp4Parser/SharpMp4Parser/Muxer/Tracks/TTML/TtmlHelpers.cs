@@ -1,4 +1,6 @@
-﻿using SharpMp4Parser.Java;
+﻿#if REMOVED
+
+using SharpMp4Parser.Java;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -274,3 +276,5 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
         }
     }
 }
+
+#endif

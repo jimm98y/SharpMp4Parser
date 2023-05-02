@@ -178,7 +178,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
             return "vide";
         }
 
-        public override List<Sample> getSamples()
+        public override IList<Sample> getSamples()
         {
             return samples;
         }
@@ -246,7 +246,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
                 this.idr_pic_id = sh.idr_pic_id;
             }
 
-            bool isFirstInNew(FirstVclNalDetector nu)
+            public bool isFirstInNew(FirstVclNalDetector nu)
             {
                 if (nu.frame_num != frame_num)
                 {

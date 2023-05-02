@@ -21,6 +21,7 @@ using SharpMp4Parser.IsoParser.Tools;
 using SharpMp4Parser.Muxer.Container.MP4;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace SharpMp4Parser.Muxer
 {
@@ -29,7 +30,7 @@ namespace SharpMp4Parser.Muxer
      */
     public class Mp4TrackImpl : AbstractTrack
     {
-        private List<Sample> samples;
+        private Mp4SampleList samples;
         private SampleDescriptionBox sampleDescriptionBox;
         private long[] decodingTimes;
         private List<CompositionTimeToSample.Entry> compositionTimeEntries;
@@ -86,11 +87,11 @@ namespace SharpMp4Parser.Muxer
 
             // gather all movie fragment boxes from the fragments
             List<MovieFragmentBox> movieFragmentBoxes = new List<MovieFragmentBox>();
-            movieFragmentBoxes.AddRange(isofile.getBoxes(typeof(MovieFragmentBox)));
+            movieFragmentBoxes.AddRange(isofile.getBoxes< MovieFragmentBox>(typeof(MovieFragmentBox)));
 
             sampleDescriptionBox = stbl.getSampleDescriptionBox();
             int lastSubsSample = 0;
-            List<MovieExtendsBox> movieExtendsBoxes = Path.getPaths(isofile, "moov/mvex");
+            List<MovieExtendsBox> movieExtendsBoxes = Path.getPaths< MovieExtendsBox>(isofile, "moov/mvex");
             if (movieExtendsBoxes.Count > 0) {
                 foreach (MovieExtendsBox mvex in movieExtendsBoxes)
                 {
@@ -99,7 +100,7 @@ namespace SharpMp4Parser.Muxer
                     {
                         if (trex.getTrackId() == trackId)
                         {
-                            List<SubSampleInformationBox> subss = Path.getPaths(isofile, "moof/traf/subs");
+                            List<SubSampleInformationBox> subss = Path.getPaths< SubSampleInformationBox>(isofile, "moof/traf/subs");
                             if (subss.Count > 0)
                             {
                                 subSampleInformationBox = new SubSampleInformationBox();
@@ -334,9 +335,9 @@ namespace SharpMp4Parser.Muxer
 
         }
 
-        public override List<Sample> getSamples()
+        public override IList<Sample> getSamples()
         {
-            return samples;
+            return samples.ToList();
         }
 
         private readonly object _syncRoot = new object();

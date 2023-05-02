@@ -44,10 +44,10 @@ namespace SharpMp4Parser.Muxer
 
             sampleEncryptionEntries = new List<CencSampleAuxiliaryDataFormat>();
 
-            List<MovieExtendsBox> movieExtendsBoxes = Path.getPaths(isofile, "moov/mvex");
+            List<MovieExtendsBox> movieExtendsBoxes = Path.getPaths< MovieExtendsBox>(isofile, "moov/mvex");
             if (movieExtendsBoxes.Count != 0)
             {
-                foreach (MovieFragmentBox movieFragmentBox in isofile.getBoxes(typeof(MovieFragmentBox)))
+                foreach (MovieFragmentBox movieFragmentBox in isofile.getBoxes<MovieFragmentBox>(typeof(MovieFragmentBox)))
                 {
                     List<TrackFragmentBox> trafs = movieFragmentBox.getBoxes<TrackFragmentBox>(typeof(TrackFragmentBox));
                     foreach (TrackFragmentBox traf in trafs)
@@ -75,7 +75,7 @@ namespace SharpMp4Parser.Muxer
 
 
                             List<TrackRunBox> truns = traf.getBoxes<TrackRunBox>(typeof(TrackRunBox));
-                            int sampleNo = 0;
+                            //int sampleNo = 0;
                             AbstractSampleEncryptionBox senc = traf.getBoxes<AbstractSampleEncryptionBox>(typeof(AbstractSampleEncryptionBox))[0];
                             foreach (CencSampleAuxiliaryDataFormat cencSampleAuxiliaryDataFormat in senc.getEntries())
                             {

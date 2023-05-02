@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpMp4Parser.IsoParser.Boxes.ISO14496.Part15;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -32,6 +33,11 @@ namespace SharpMp4Parser.Java
             {
                 array[i] = value;
             }
+        }
+
+        internal static IEnumerable<HevcDecoderConfigurationRecord.Array> asList(HevcDecoderConfigurationRecord.Array spsArray, HevcDecoderConfigurationRecord.Array vpsArray, HevcDecoderConfigurationRecord.Array ppsArray)
+        {
+            throw new NotImplementedException();
         }
     }
 }

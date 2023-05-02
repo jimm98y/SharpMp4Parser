@@ -58,7 +58,7 @@ namespace SharpMp4Parser.Muxer
             return parent.getHandler();
         }
 
-        public virtual List<Sample> getSamples()
+        public virtual IList<Sample> getSamples()
         {
             return parent.getSamples();
         }

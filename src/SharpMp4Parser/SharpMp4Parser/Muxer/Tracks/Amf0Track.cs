@@ -49,7 +49,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             amf0.setDataReferenceIndex(1);
         }
 
-        public override List<Sample> getSamples()
+        public override IList<Sample> getSamples()
         {
             List<Sample> samples = new List<Sample>();
             foreach (byte[] bytes in rawSamples.Values)

@@ -7,25 +7,27 @@ using SharpMp4Parser.Muxer.Tracks.WebVTT.SampleBoxes;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace SharpMp4Parser.Muxer.Tracks.WebVTT
 {
     public class WebVttTrack : AbstractTrack
     {
         private const string WEBVTT_FILE_HEADER_STRING = "^\uFEFF?WEBVTT((\\u0020|\u0009).*)?$";
-        private static readonly Pattern WEBVTT_FILE_HEADER =
-                Pattern.compile(WEBVTT_FILE_HEADER_STRING);
+        private static readonly Regex WEBVTT_FILE_HEADER =
+                new Regex(WEBVTT_FILE_HEADER_STRING);
         private const string WEBVTT_METADATA_HEADER_STRING = "\\S*[:=]\\S*";
-        private static readonly Pattern WEBVTT_METADATA_HEADER =
-                Pattern.compile(WEBVTT_METADATA_HEADER_STRING);
+        private static readonly Regex WEBVTT_METADATA_HEADER =
+                new Regex(WEBVTT_METADATA_HEADER_STRING);
         private const string WEBVTT_CUE_IDENTIFIER_STRING = "^(?!.*(-->)).*$";
-        private static readonly Pattern WEBVTT_CUE_IDENTIFIER =
-                Pattern.compile(WEBVTT_CUE_IDENTIFIER_STRING);
-        private readonly string WEBVTT_TIMESTAMP_STRING = "(\\d+:)?[0-5]\\d:[0-5]\\d\\.\\d{3}";
-        private static readonly Pattern WEBVTT_TIMESTAMP = Pattern.compile(WEBVTT_TIMESTAMP_STRING);
-        private readonly string WEBVTT_CUE_SETTING_STRING = "\\S*:\\S*";
-        private static readonly Pattern WEBVTT_CUE_SETTING = Pattern.compile(WEBVTT_CUE_SETTING_STRING);
+        private static readonly Regex WEBVTT_CUE_IDENTIFIER =
+                new Regex(WEBVTT_CUE_IDENTIFIER_STRING);
+        private const string WEBVTT_TIMESTAMP_STRING = "(\\d+:)?[0-5]\\d:[0-5]\\d\\.\\d{3}";
+        private static readonly Regex WEBVTT_TIMESTAMP = new Regex(WEBVTT_TIMESTAMP_STRING);
+        private const string WEBVTT_CUE_SETTING_STRING = "\\S*:\\S*";
+        private static readonly Regex WEBVTT_CUE_SETTING = new Regex(WEBVTT_CUE_SETTING_STRING);
 
         public class EmptySample : Sample
         {
@@ -37,7 +39,7 @@ namespace SharpMp4Parser.Muxer.Tracks.WebVTT
                 vtte = ByteBuffer.allocate(CastUtils.l2i(vttEmptyCueBox.getSize()));
                 try
                 {
-                    vttEmptyCueBox.getBox(new ByteBufferByteChannel(vtte));
+                    vttEmptyCueBox.getBox(new WritableByteChannel(vtte)); // originally bytebufferchannel
                 }
                 catch (Exception)
                 {
@@ -77,7 +79,7 @@ namespace SharpMp4Parser.Muxer.Tracks.WebVTT
         public WebVttTrack(ByteArrayInputStream input, string trackName, CultureInfo locale) : base(trackName)
         {
             trackMetaData.setTimescale(1000);
-            trackMetaData.setLanguage(locale.getISO3Language());
+            trackMetaData.setLanguage(locale.ThreeLetterISOLanguageName);
             long mediaTimestampUs = 0;
 
 
@@ -91,7 +93,7 @@ namespace SharpMp4Parser.Muxer.Tracks.WebVTT
 
             // file should start with "WEBVTT"
             line = webvttData.readLine();
-            if (line == null || !WEBVTT_FILE_HEADER.matcher(line).matches())
+            if (line == null || !WEBVTT_FILE_HEADER.Match(line).Success)
             {
                 throw new Exception("Expected WEBVTT. Got " + line);
             }
@@ -110,8 +112,8 @@ namespace SharpMp4Parser.Muxer.Tracks.WebVTT
                     break;
                 }
 
-                Matcher matcher = WEBVTT_METADATA_HEADER.matcher(line);
-                if (!matcher.find())
+                Match matcher = WEBVTT_METADATA_HEADER.Match(line);
+                if (!matcher.Success)
                 {
                     throw new Exception("Expected WebVTT metadata header. Got " + line);
                 }
@@ -127,8 +129,8 @@ namespace SharpMp4Parser.Muxer.Tracks.WebVTT
                     continue;
                 }
                 // parse the cue identifier (if present) {
-                Matcher matcher = WEBVTT_CUE_IDENTIFIER.matcher(line);
-                if (matcher.find())
+                Match matcher = WEBVTT_CUE_IDENTIFIER.Match(line);
+                if (matcher.Success)
                 {
                     // ignore the identifier (we currently don't use it) and read the next line
                     line = webvttData.readLine();
@@ -138,37 +140,37 @@ namespace SharpMp4Parser.Muxer.Tracks.WebVTT
                 long endTime;
 
                 // parse the cue timestamps
-                matcher = WEBVTT_TIMESTAMP.matcher(line);
+                matcher = WEBVTT_TIMESTAMP.Match(line);
 
                 // parse start timestamp
-                if (!matcher.find())
+                if (!matcher.Success)
                 {
                     throw new Exception("Expected cue start time: " + line);
                 }
                 else
                 {
-                    startTime = parseTimestampUs(matcher.group());
+                    startTime = parseTimestampUs(matcher.Groups[0].Value);
                 }
 
                 // parse end timestamp
                 string endTimeString;
-                if (!matcher.find())
+                if (!matcher.NextMatch().Success)
                 {
                     throw new Exception("Expected cue end time: " + line);
                 }
                 else
                 {
-                    endTimeString = matcher.group();
+                    endTimeString = matcher.Groups[0].Value;
                     endTime = parseTimestampUs(endTimeString);
                 }
 
                 // parse the (optional) cue setting list
                 line = line.Substring(line.IndexOf(endTimeString) + endTimeString.Length);
-                matcher = WEBVTT_CUE_SETTING.matcher(line);
-                String settings = null;
-                while (matcher.find())
+                matcher = WEBVTT_CUE_SETTING.Match(line);
+                string settings = null;
+                while (matcher.Success)
                 {
-                    settings = matcher.group();
+                    settings = matcher.Groups[0].Value;
                 }
                 StringBuilder payload = new StringBuilder();
                 while (((line = webvttData.readLine()) != null) && (!string.IsNullOrEmpty(line)))
@@ -204,19 +206,18 @@ namespace SharpMp4Parser.Muxer.Tracks.WebVTT
                 mediaTimestampUs = endTime;
                 // samples.add();
             }
-
-
         }
 
         private static long parseTimestampUs(string s)
         {
-            if (!s.matches(WEBVTT_TIMESTAMP_STRING))
+            Regex regex = new Regex(WEBVTT_TIMESTAMP_STRING);
+            if (!regex.Match(s).Success)
             {
                 throw new FormatException("has invalid format");
             }
 
-            string[]
-            parts = s.Split("\\.", 2);
+            Regex r = new Regex("\\.");
+            string[] parts = r.Split(s, 2);
             long value = 0;
             foreach (string group in parts[0].Split(':'))
             {
@@ -238,7 +239,6 @@ namespace SharpMp4Parser.Muxer.Tracks.WebVTT
                 adoptedSampleDuration[i] = sampleDurations[i] * trackMetaData.getTimescale() / 1000;
             }
             return adoptedSampleDuration;
-
         }
 
         public override TrackMetaData getTrackMetaData()
@@ -251,7 +251,7 @@ namespace SharpMp4Parser.Muxer.Tracks.WebVTT
             return "text";
         }
 
-        public override List<Sample> getSamples()
+        public override IList<Sample> getSamples()
         {
             return samples;
         }

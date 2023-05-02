@@ -113,7 +113,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
                     }
                 }
             }
-            catch (IOException e)
+            catch (IOException)
             {
                 throw;
             }

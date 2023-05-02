@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if REMOVED
+
+using System;
 using System.Collections.Generic;
 using System.Xml.XPath;
 
@@ -189,3 +191,5 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
         }
     }
 }
+
+#endif

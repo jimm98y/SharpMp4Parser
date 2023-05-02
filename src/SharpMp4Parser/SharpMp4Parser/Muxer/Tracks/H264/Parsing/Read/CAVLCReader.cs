@@ -36,7 +36,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Read
         {
             long val = readNBit(n);
 
-            trace(message, String.valueOf(val));
+            trace(message, val.ToString());
 
             return val;
         }
@@ -75,7 +75,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Read
         {
             int res = readUE();
 
-            trace(message, string.valueOf(res));
+            trace(message, res.ToString());
 
             return res;
         }
@@ -87,7 +87,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Read
             int sign = ((val & 0x1) << 1) - 1;
             val = ((val >> 1) + (val & 0x1)) * sign;
 
-            trace(message, string.valueOf(val));
+            trace(message, val.ToString());
 
             return val;
         }
@@ -167,7 +167,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Read
             while (read1Bit() == 0)
                 count++;
 
-            trace(message, string.valueOf(count));
+            trace(message, count.ToString());
 
             return count;
         }
@@ -182,7 +182,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Read
         {
             StringBuilder traceBuilder = new StringBuilder();
             int spaces;
-            string pos = string.valueOf(bitsRead - debugBits.length());
+            string pos = (bitsRead - debugBits.length()).ToString();
             spaces = 8 - pos.Length;
 
             traceBuilder.Append("@" + pos);
@@ -191,7 +191,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Read
                 traceBuilder.Append(' ');
 
             traceBuilder.Append(message);
-            spaces = 100 - traceBuilder.Length - debugBits.Length;
+            spaces = 100 - traceBuilder.Length - debugBits.length();
             for (int i = 0; i < spaces; i++)
                 traceBuilder.Append(' ');
             traceBuilder.Append(debugBits);

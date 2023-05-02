@@ -154,7 +154,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             return source.getHandler();
         }
 
-        public List<Sample> getSamples()
+        public IList<Sample> getSamples()
         {
             return source.getSamples();
         }

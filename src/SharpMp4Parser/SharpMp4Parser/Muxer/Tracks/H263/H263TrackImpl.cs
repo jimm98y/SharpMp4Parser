@@ -393,7 +393,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H263
             return "vide";
         }
 
-        public override List<Sample> getSamples()
+        public override IList<Sample> getSamples()
         {
             return samples;
         }

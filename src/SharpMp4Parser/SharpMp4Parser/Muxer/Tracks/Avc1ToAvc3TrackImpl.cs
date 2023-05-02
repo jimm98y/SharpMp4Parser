@@ -15,7 +15,7 @@ namespace SharpMp4Parser.Muxer.Tracks
     public class Avc1ToAvc3TrackImpl : WrappingTrack
     {
 
-        List<Sample> samples;
+        IList<Sample> samples;
         private Dictionary<SampleEntry, SampleEntry> avc1toavc3 = new Dictionary<SampleEntry, SampleEntry>();
 
         public Avc1ToAvc3TrackImpl(Track parent) : base(parent)
@@ -52,7 +52,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             return new List<SampleEntry>(avc1toavc3.Values);
         }
 
-        public override List<Sample> getSamples()
+        public override IList<Sample> getSamples()
         {
             return samples;
         }
@@ -161,12 +161,12 @@ namespace SharpMp4Parser.Muxer.Tracks
             }
         }
 
-        private class ReplaceSyncSamplesList : List<Sample>
+        private class ReplaceSyncSamplesList : AbstractList<Sample>
         {
-            List<Sample> parentSamples;
+            IList<Sample> parentSamples;
             Avc1ToAvc3TrackImpl that;
 
-            public ReplaceSyncSamplesList(List<Sample> parentSamples, Avc1ToAvc3TrackImpl that)
+            public ReplaceSyncSamplesList(IList<Sample> parentSamples, Avc1ToAvc3TrackImpl that)
             {
                 this.that = that;
                 this.parentSamples = parentSamples;

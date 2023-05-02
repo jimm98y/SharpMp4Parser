@@ -9,18 +9,18 @@ using System.Diagnostics;
 
 namespace SharpMp4Parser.Muxer.Tracks.Encryption
 {
-    public class CencEncryptingSampleList : List<Sample>
+    public class CencEncryptingSampleList : AbstractList<Sample>
     {
         private readonly RangeStartMap<int, SampleEntry> sampleEntries;
         private List<CencSampleAuxiliaryDataFormat> auxiliaryDataFormats;
         private RangeStartMap<int, KeyIdKeyPair> keys = new RangeStartMap<int, KeyIdKeyPair>();
-        private List<Sample> parent;
+        private IList<Sample> parent;
         private Dictionary<string, Cipher> ciphers = new Dictionary<string, Cipher>();
 
         public CencEncryptingSampleList(
                 RangeStartMap<int, KeyIdKeyPair> keys,
                 RangeStartMap<int, SampleEntry> sampleEntries,
-                List<Sample> parent,
+                IList<Sample> parent,
                 List<CencSampleAuxiliaryDataFormat> auxiliaryDataFormats)
         {
             this.sampleEntries = sampleEntries;
@@ -44,7 +44,7 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
             Sample clearSample = parent[index];
             if (keys[index] != null && keys[index].getKeyId() != null)
             {
-                return new EncryptedSampleImpl(clearSample, index);
+                return new EncryptedSampleImpl(clearSample, index, this);
             }
             else
             {
@@ -69,20 +69,18 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
 
         public override int size()
         {
-            return parent.size();
+            return parent.Count;
         }
 
         private class EncryptedSampleImpl : Sample
         {
             private readonly Sample clearSample;
             private int index;
+            private CencEncryptingSampleList that;
 
-            private EncryptedSampleImpl(
-                    Sample clearSample,
-            int index
-            )
+            public EncryptedSampleImpl(Sample clearSample, int index, CencEncryptingSampleList cencEncryptingSampleList)
             {
-
+                this.that = cencEncryptingSampleList;
                 this.clearSample = clearSample;
                 this.index = index;
             }
@@ -91,14 +89,14 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
             {
 
                 ByteBuffer sample = (ByteBuffer)((Java.Buffer)clearSample.asByteBuffer()).rewind();
-                SampleEntry se = sampleEntries[index];
-                var keyIdKeyPair = keys[index];
-                CencSampleAuxiliaryDataFormat entry = auxiliaryDataFormats.get(index);
-                SchemeTypeBox schm = Path.getPath((Container)se, "sinf[0]/schm[0]");
+                SampleEntry se = that.sampleEntries[index];
+                var keyIdKeyPair = that.keys[index];
+                CencSampleAuxiliaryDataFormat entry = that.auxiliaryDataFormats[index];
+                SchemeTypeBox schm = Path.getPath<SchemeTypeBox>((IsoParser.Container)se, "sinf[0]/schm[0]");
                 Debug.Assert(schm != null);
                 string encryptionAlgo = schm.getSchemeType();
-                Cipher cipher = ciphers.get(encryptionAlgo);
-                initCipher(cipher, entry.iv, keyIdKeyPair.getKey());
+                Cipher cipher = that.ciphers[encryptionAlgo];
+                that.initCipher(cipher, entry.iv, keyIdKeyPair.getKey());
                 try
                 {
                     if (entry.pairs != null && entry.pairs.Length > 0)
@@ -109,15 +107,15 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
 
                         foreach (CencSampleAuxiliaryDataFormat.Pair pair in entry.pairs)
                         {
-                            offset += pair.clear();
-                            if (pair.encrypted() > 0)
+                            offset += pair.Clear;
+                            if (pair.Encrypted > 0)
                             {
                                 cipher.update(fullSample,
                                         offset,
-                                        CastUtils.l2i(pair.encrypted()),
+                                        CastUtils.l2i(pair.Encrypted),
                                         fullSample,
                                         offset);
-                                offset += pair.encrypted();
+                                offset += (int)pair.Encrypted;
                             }
                         }
                         channel.write(ByteBuffer.wrap(fullSample));
@@ -155,33 +153,32 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
                 ByteBuffer sample = (ByteBuffer)((Java.Buffer)clearSample.asByteBuffer()).rewind();
                 ByteBuffer encSample = ByteBuffer.allocate(sample.limit());
 
-                SampleEntry se = sampleEntries[index];
-                KeyIdKeyPair keyIdKeyPair = keys[index];
-                CencSampleAuxiliaryDataFormat entry = auxiliaryDataFormats[index];
-                SchemeTypeBox schm = Path.getPath((Container)se, "sinf[0]/schm[0]");
+                SampleEntry se = that.sampleEntries[index];
+                KeyIdKeyPair keyIdKeyPair = that.keys[index];
+                CencSampleAuxiliaryDataFormat entry = that.auxiliaryDataFormats[index];
+                SchemeTypeBox schm = Path.getPath<SchemeTypeBox>((IsoParser.Container)se, "sinf[0]/schm[0]");
                 Debug.Assert(schm != null);
-                String encryptionAlgo = schm.getSchemeType();
-                Cipher cipher = ciphers.get(encryptionAlgo);
-                initCipher(cipher, entry.iv, keyIdKeyPair.getKey());
+                string encryptionAlgo = schm.getSchemeType();
+                Cipher cipher = that.ciphers[encryptionAlgo];
+                that.initCipher(cipher, entry.iv, keyIdKeyPair.getKey());
                 try
                 {
                     if (entry.pairs != null)
                     {
                         foreach (CencSampleAuxiliaryDataFormat.Pair pair in entry.pairs)
                         {
-                            byte[] clears = new byte[pair.clear()];
+                            byte[] clears = new byte[pair.Clear];
                             sample.get(clears);
                             encSample.put(clears);
-                            if (pair.encrypted() > 0)
+                            if (pair.Encrypted > 0)
                             {
-                                byte[] toBeEncrypted = new byte[CastUtils.l2i(pair.encrypted())];
+                                byte[] toBeEncrypted = new byte[CastUtils.l2i(pair.Encrypted)];
                                 sample.get(toBeEncrypted);
                                 Debug.Assert((toBeEncrypted.Length % 16) == 0);
                                 byte[] encrypted = cipher.update(toBeEncrypted);
                                 Debug.Assert(encrypted.Length == toBeEncrypted.Length);
                                 encSample.put(encrypted);
                             }
-
                         }
                     }
                     else
@@ -210,9 +207,9 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
                 return encSample;
             }
 
-            public override SampleEntry getSampleEntry()
+            public SampleEntry getSampleEntry()
             {
-                return sampleEntries.get(index);
+                return that.sampleEntries[index];
             }
         }
     }

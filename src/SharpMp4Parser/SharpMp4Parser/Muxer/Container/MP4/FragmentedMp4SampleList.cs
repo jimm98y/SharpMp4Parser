@@ -9,7 +9,7 @@ using SharpMp4Parser.IsoParser;
 
 namespace SharpMp4Parser.Muxer.Container.MP4
 {
-    public class FragmentedMp4SampleList : List<Sample>
+    public class FragmentedMp4SampleList : AbstractList<Sample>
     {
         private IsoParser.Container isofile;
         private TrackBox trackBox = null;
@@ -60,7 +60,7 @@ namespace SharpMp4Parser.Muxer.Container.MP4
         private void initAllFragments()
         {
             List<TrackFragmentBox> trafs = new List<TrackFragmentBox>();
-            foreach (MovieFragmentBox moof in isofile.getBoxes(typeof(MovieFragmentBox)))
+            foreach (MovieFragmentBox moof in isofile.getBoxes< MovieFragmentBox>(typeof(MovieFragmentBox)))
             {
                 foreach (TrackFragmentBox trackFragmentBox in moof.getBoxes<TrackFragmentBox>(typeof(TrackFragmentBox)))
                 {
@@ -101,14 +101,16 @@ namespace SharpMp4Parser.Muxer.Container.MP4
             private long sampleSize;
             private Java.Buffer finalTrunData;
             private long finalOffset;
+            private readonly TrackFragmentHeaderBox tfhd;
             private readonly List<SampleEntry> sampleEntries;
 
-            public CustomSample(List<SampleEntry> sampleEntries, long sampleSize, Java.Buffer finalTrunData, long finalOffset)
+            public CustomSample(List<SampleEntry> sampleEntries, long sampleSize, Java.Buffer finalTrunData, long finalOffset, TrackFragmentHeaderBox tfhd)
             {
                 this.sampleEntries = sampleEntries;
                 this.sampleSize = sampleSize;
                 this.finalTrunData = finalTrunData;
                 this.finalOffset = finalOffset;
+                this.tfhd = tfhd;
             }
 
             public void writeTo(WritableByteChannel channel)
@@ -259,7 +261,7 @@ namespace SharpMp4Parser.Muxer.Container.MP4
                         ByteBuffer finalTrunData = trunData;
                         long finalOffset = off;
                         // System.err.println("sNo. " + index + " offset: " + finalOffset + " size: " + sampleSize);
-                        Sample sample = new CustomSample(sampleEntries, sampleSize, finalTrunData, finalOffset);
+                        Sample sample = new CustomSample(sampleEntries, sampleSize, finalTrunData, finalOffset, tfhd);
 
                         sampleCache[index] = new WeakReference<Sample>(sample);
                         return sample;

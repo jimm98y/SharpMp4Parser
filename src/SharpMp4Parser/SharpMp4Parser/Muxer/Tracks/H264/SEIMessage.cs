@@ -9,27 +9,27 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
      */
     public class SEIMessage
     {
-        int payloadType = 0;
-        int payloadSize = 0;
+        public int payloadType = 0;
+        public int payloadSize = 0;
 
-        bool removal_delay_flag;
-        int cpb_removal_delay;
-        int dpb_removal_delay;
+        public bool removal_delay_flag;
+        public int cpb_removal_delay;
+        public int dpb_removal_delay;
 
-        bool clock_timestamp_flag;
-        int pic_struct;
-        int ct_type;
-        int nuit_field_based_flag;
-        int counting_type;
-        int full_timestamp_flag;
-        int discontinuity_flag;
-        int cnt_dropped_flag;
-        int n_frames;
-        int seconds_value;
-        int minutes_value;
-        int hours_value;
-        int time_offset_length;
-        int time_offset;
+        public bool clock_timestamp_flag;
+        public int pic_struct;
+        public int ct_type;
+        public int nuit_field_based_flag;
+        public int counting_type;
+        public int full_timestamp_flag;
+        public int discontinuity_flag;
+        public int cnt_dropped_flag;
+        public int n_frames;
+        public int seconds_value;
+        public int minutes_value;
+        public int hours_value;
+        public int time_offset_length;
+        public int time_offset;
 
         SeqParameterSet sps;
 

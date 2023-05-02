@@ -21,7 +21,7 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
             Dictionary<Uuid, SecretKey> keys = new Dictionary<Uuid, SecretKey>();
             foreach (SampleEntry sampleEntry in original.getSampleEntries())
             {
-                TrackEncryptionBox tenc = Path.getPath((IsoParser.Container)sampleEntry, "sinf[0]/schi[0]/tenc[0]");
+                TrackEncryptionBox tenc = Path.getPath< TrackEncryptionBox>((IsoParser.Container)sampleEntry, "sinf[0]/schi[0]/tenc[0]");
                 Debug.Assert(tenc != null);
                 keys.Add(tenc.getDefault_KID(), sk);
             }
@@ -37,7 +37,7 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
         private void init(Dictionary<Uuid, SecretKey> keys)
         {
             CencDecryptingSampleEntryTransformer tx = new CencDecryptingSampleEntryTransformer();
-            List<Sample> encSamples = original.getSamples();
+            IList<Sample> encSamples = original.getSamples();
 
             RangeStartMap<int, SecretKey> indexToKey = new RangeStartMap<int, SecretKey>();
             RangeStartMap<int, SampleEntry> indexToSampleEntry = new RangeStartMap<int, SampleEntry>();
@@ -51,7 +51,7 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
                 if (previousSampleEntry != current)
                 {
                     indexToSampleEntry.Add(i, current);
-                    TrackEncryptionBox tenc = Path.getPath((IsoParser.Container)encSample.getSampleEntry(), "sinf[0]/schi[0]/tenc[0]");
+                    TrackEncryptionBox tenc = Path.getPath< TrackEncryptionBox>((IsoParser.Container)encSample.getSampleEntry(), "sinf[0]/schi[0]/tenc[0]");
                     if (tenc != null)
                     {
                         indexToKey.Add(i, keys[tenc.getDefault_KID()]);
@@ -97,7 +97,7 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
             return original.getHandler();
         }
 
-        public override List<Sample> getSamples()
+        public override IList<Sample> getSamples()
         {
             return samples;
         }

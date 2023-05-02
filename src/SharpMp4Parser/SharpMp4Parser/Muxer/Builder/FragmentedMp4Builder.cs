@@ -92,7 +92,7 @@ namespace SharpMp4Parser.Muxer.Builder
 
                 long[] startSamples = intersectionMap[earliestTrack];
                 long startSample = startSamples[0];
-                long endSample = startSamples.Length > 1 ? startSamples[1] : earliestTrack.getSamples().size() + 1;
+                long endSample = startSamples.Length > 1 ? startSamples[1] : earliestTrack.getSamples().Count + 1;
 
                 long[] times = earliestTrack.getSampleDurations();
                 long timscale = earliestTrack.getTrackMetaData().getTimescale();
@@ -180,12 +180,26 @@ namespace SharpMp4Parser.Muxer.Builder
         public class Mdat : Box
         {
             long size_ = -1;
+            private FragmentedMp4Builder that;
+            private long startSample;
+            private long endSample;
+            private Track track;
+            private int i;
+
+            public Mdat(long startSample, long endSample, Track track, int i, FragmentedMp4Builder that)
+            {
+                this.that = that;
+                this.startSample = startSample;
+                this.endSample = endSample;
+                this.track = track;
+                this.i = i;
+            }
 
             public long getSize()
             {
                 if (size_ != -1) return size_;
                 long size = 8; // I don't expect 2gig fragments
-                foreach (Sample sample in getSamples(startSample, endSample, track))
+                foreach (Sample sample in that.getSamples(startSample, endSample, track))
                 {
                     size += sample.getSize();
                 }
@@ -206,7 +220,7 @@ namespace SharpMp4Parser.Muxer.Builder
                 ((Java.Buffer)header).rewind();
                 writableByteChannel.write(header);
 
-                List<Sample> samples = getSamples(startSample, endSample, track);
+                List<Sample> samples = that.getSamples(startSample, endSample, track);
                 foreach (Sample sample in samples)
                 {
                     sample.writeTo(writableByteChannel);
@@ -216,7 +230,7 @@ namespace SharpMp4Parser.Muxer.Builder
 
         protected Box createMdat(long startSample, long endSample, Track track, int i)
         {
-            return new Mdat();
+            return new Mdat(startSample, endSample, track, i, this);
         }
 
         protected void createTfhd(long startSample, long endSample, Track track, int sequenceNumber, TrackFragmentBox parent)
@@ -394,7 +408,7 @@ namespace SharpMp4Parser.Muxer.Builder
         protected List<Sample> getSamples(long startSample, long endSample, Track track)
         {
             // since startSample and endSample are one-based substract 1 before addressing list elements
-            return track.getSamples().GetRange(CastUtils.l2i(startSample) - 1, CastUtils.l2i(endSample) - 1);
+            return track.getSamples().ToList().GetRange(CastUtils.l2i(startSample) - 1, CastUtils.l2i(endSample) - 1);
         }
 
         /**

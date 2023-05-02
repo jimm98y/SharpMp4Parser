@@ -1,4 +1,6 @@
-﻿using SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12;
+﻿#if REMOVED
+
+using SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12;
 using SharpMp4Parser.IsoParser.Boxes.ISO14496.Part30;
 using SharpMp4Parser.IsoParser.Boxes.SampleEntry;
 using SharpMp4Parser.Java;
@@ -329,7 +331,7 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
             return "subt";
         }
 
-        public override List<Sample> getSamples()
+        public override IList<Sample> getSamples()
         {
             return samples;
         }
@@ -346,3 +348,5 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
         }
     }
 }
+
+#endif

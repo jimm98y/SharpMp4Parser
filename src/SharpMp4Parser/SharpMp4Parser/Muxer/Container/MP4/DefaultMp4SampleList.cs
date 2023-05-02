@@ -8,7 +8,7 @@ using System.IO;
 
 namespace SharpMp4Parser.Muxer.Container.MP4
 {
-    public class DefaultMp4SampleList : List<Sample>
+    public class DefaultMp4SampleList : AbstractList<Sample>
     {
         private readonly object _syncRoot = new object();
         //private static final Logger LOG = LoggerFactory.getLogger(DefaultMp4SampleList.class);
@@ -28,7 +28,7 @@ namespace SharpMp4Parser.Muxer.Container.MP4
         public DefaultMp4SampleList(long track, IsoParser.Container topLevel, RandomAccessSource randomAccessFile)
         {
             this.randomAccess = randomAccessFile;
-            MovieBox movieBox = topLevel.getBoxes(typeof(MovieBox))[0];
+            MovieBox movieBox = topLevel.getBoxes< MovieBox>(typeof(MovieBox))[0];
             List<TrackBox> trackBoxes = movieBox.getBoxes< TrackBox>(typeof(TrackBox));
 
             foreach (TrackBox tb in trackBoxes)
@@ -42,7 +42,7 @@ namespace SharpMp4Parser.Muxer.Container.MP4
             {
                 throw new Exception("This MP4 does not contain track " + track);
             }
-            sampleEntries = new List<SampleEntry>(trackBox.getSampleTableBox().getSampleDescriptionBox().getBoxes(typeof(SampleEntry)));
+            sampleEntries = new List<SampleEntry>(trackBox.getSampleTableBox().getSampleDescriptionBox().getBoxes< SampleEntry>(typeof(SampleEntry)));
 
             if (sampleEntries.Count != trackBox.getSampleTableBox().getSampleDescriptionBox().getBoxes().Count)
                 throw new Exception("stsd contains not only sample entries. Something's wrong here! Bailing out");
@@ -195,7 +195,7 @@ namespace SharpMp4Parser.Muxer.Container.MP4
             {
                 throw new IndexOutOfRangeException();
             }
-            return new SampleImpl(index);
+            return new SampleImpl(index, this);
         }
 
         public override int size()
@@ -208,10 +208,12 @@ namespace SharpMp4Parser.Muxer.Container.MP4
             private readonly object _syncRoot = new object();
 
             private int index;
+            private DefaultMp4SampleList that;
 
-            public SampleImpl(int index)
+            public SampleImpl(int index, DefaultMp4SampleList that) 
             {
                 this.index = index;
+                this.that = that;
             }
 
             public void writeTo(WritableByteChannel channel)
@@ -221,7 +223,7 @@ namespace SharpMp4Parser.Muxer.Container.MP4
 
             public long getSize()
             {
-                return ssb.getSampleSizeAtIndex(index);
+                return that.ssb.getSampleSizeAtIndex(index);
             }
 
             public ByteBuffer asByteBuffer()
@@ -230,13 +232,13 @@ namespace SharpMp4Parser.Muxer.Container.MP4
                 {
                     ByteBuffer b;
 
-                    int chunkNumber = getChunkForSample(index);
-                    WeakReference<ByteBuffer> chunkBufferSr = cache[chunkNumber];
+                    int chunkNumber = that.getChunkForSample(index);
+                    WeakReference<ByteBuffer> chunkBufferSr = that.cache[chunkNumber];
 
-                    int chunkStartSample = chunkNumsStartSampleNum[chunkNumber] - 1;
+                    int chunkStartSample = that.chunkNumsStartSampleNum[chunkNumber] - 1;
 
                     int sampleInChunk = index - chunkStartSample;
-                    long[] sampleOffsetsWithinChunk = sampleOffsetsWithinChunks[CastUtils.l2i(chunkNumber)];
+                    long[] sampleOffsetsWithinChunk = that.sampleOffsetsWithinChunks[CastUtils.l2i(chunkNumber)];
                     long offsetWithInChunk = sampleOffsetsWithinChunk[sampleInChunk];
 
                     ByteBuffer chunkBuffer;
@@ -244,10 +246,10 @@ namespace SharpMp4Parser.Muxer.Container.MP4
                     {
                         try
                         {
-                            chunkBuffer = randomAccess.get(
-                                    chunkOffsets[CastUtils.l2i(chunkNumber)],
-                                    sampleOffsetsWithinChunk[sampleOffsetsWithinChunk.Length - 1] + ssb.getSampleSizeAtIndex(chunkStartSample + sampleOffsetsWithinChunk.Length - 1));
-                            cache[chunkNumber] = new WeakReference<ByteBuffer>(chunkBuffer);
+                            chunkBuffer = that.randomAccess.get(
+                                    that.chunkOffsets[CastUtils.l2i(chunkNumber)],
+                                    sampleOffsetsWithinChunk[sampleOffsetsWithinChunk.Length - 1] + that.ssb.getSampleSizeAtIndex(chunkStartSample + sampleOffsetsWithinChunk.Length - 1));
+                            that.cache[chunkNumber] = new WeakReference<ByteBuffer>(chunkBuffer);
                         }
                         catch (IOException e)
                         {
@@ -255,19 +257,19 @@ namespace SharpMp4Parser.Muxer.Container.MP4
                             throw new IndexOutOfRangeException(e.Message);
                         }
                     }
-                    b = (ByteBuffer)((ByteBuffer)chunkBuffer.duplicate().position(CastUtils.l2i(offsetWithInChunk))).slice().limit(CastUtils.l2i(ssb.getSampleSizeAtIndex(index)));
+                    b = (ByteBuffer)((ByteBuffer)chunkBuffer.duplicate().position(CastUtils.l2i(offsetWithInChunk))).slice().limit(CastUtils.l2i(that.ssb.getSampleSizeAtIndex(index)));
                     return b;
                 }
             }
 
             public override string ToString()
             {
-                return "Sample(index: " + index + " size: " + ssb.getSampleSizeAtIndex(index) + ")";
+                return "Sample(index: " + index + " size: " + that.ssb.getSampleSizeAtIndex(index) + ")";
             }
 
-            public override SampleEntry getSampleEntry()
+            public SampleEntry getSampleEntry()
             {
-                return sampleEntries[chunkNumsToSampleDescriptionIndex[getChunkForSample(this.index)] - 1];
+                return that.sampleEntries[that.chunkNumsToSampleDescriptionIndex[that.getChunkForSample(this.index)] - 1];
             }
         }
     }

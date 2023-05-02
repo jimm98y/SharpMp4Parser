@@ -46,7 +46,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             origTrack.close();
         }
 
-        public override List<Sample> getSamples()
+        public override IList<Sample> getSamples()
         {
             return samples;
         }
@@ -100,7 +100,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             return origTrack.getSubsampleInformationBox();
         }
 
-        private class ReplaceASingleEntryList : List<Sample>
+        private class ReplaceASingleEntryList : AbstractList<Sample>
         {
             private long sampleNumber;
             private Sample sampleContent;

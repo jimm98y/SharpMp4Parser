@@ -66,7 +66,7 @@ namespace SharpMp4Parser.Muxer.Tracks
 
         private readonly object _syncRoot = new object();
 
-        public override List<Sample> getSamples()
+        public override IList<Sample> getSamples()
         {
             lock (_syncRoot)
             {

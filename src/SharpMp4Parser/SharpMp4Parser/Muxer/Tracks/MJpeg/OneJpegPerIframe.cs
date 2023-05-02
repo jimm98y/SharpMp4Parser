@@ -1,4 +1,6 @@
-﻿using SharpMp4Parser.IsoParser.Boxes.ISO14496.Part1.ObjectDescriptors;
+﻿#if REMOVED
+
+using SharpMp4Parser.IsoParser.Boxes.ISO14496.Part1.ObjectDescriptors;
 using SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12;
 using SharpMp4Parser.IsoParser.Boxes.ISO14496.Part14;
 using SharpMp4Parser.IsoParser.Boxes.SampleEntry;
@@ -28,6 +30,7 @@ namespace SharpMp4Parser.Muxer.Tracks.MJpeg
             {
                 throw new Exception("Number of sync samples doesn't match the number of stills (" + alignTo.getSyncSamples().Length + " vs. " + jpegs.Length + ")");
             }
+            
             BufferedImage a = ImageIO.read(jpegs[0]);
             trackMetaData.setWidth(a.getWidth());
             trackMetaData.setHeight(a.getHeight());
@@ -112,7 +115,6 @@ namespace SharpMp4Parser.Muxer.Tracks.MJpeg
                 getEdits().Add(new Edit(-1, getTrackMetaData().getTimescale(), 1.0, earliestTrackPresentationTime));
                 getEdits().Add(new Edit(0, getTrackMetaData().getTimescale(), 1.0, (double)getDuration() / getTrackMetaData().getTimescale()));
             }
-
         }
 
         public override List<SampleEntry> getSampleEntries()
@@ -145,11 +147,13 @@ namespace SharpMp4Parser.Muxer.Tracks.MJpeg
             ByteBuffer sample = null;
             File[] jpegs;
             int index;
+            VisualSampleEntry mp4v;
 
-            public JpegSample(File[] jpegs, int index)
+            public JpegSample(File[] jpegs, int index, VisualSampleEntry mp4v)
             {
                 this.jpegs = jpegs;
                 this.index = index;
+                this.mp4v = mp4v;
             }
 
             public void writeTo(WritableByteChannel channel)
@@ -187,7 +191,7 @@ namespace SharpMp4Parser.Muxer.Tracks.MJpeg
             }
         }
 
-        public class JpegSampleList : List<Sample>
+        public class JpegSampleList : AbstractList<Sample>
         {
             File[] jpegs;
             VisualSampleEntry mp4v;
@@ -198,20 +202,20 @@ namespace SharpMp4Parser.Muxer.Tracks.MJpeg
                 this.jpegs = jpegs;
             }
 
-            public int size()
+            public override int size()
             {
                 return jpegs.Length;
             }
 
-            public Sample get(int index)
+            public override Sample get(int index)
             {
-                return new JpegSample(jpegs, index);
+                return new JpegSample(jpegs, index, mp4v);
             }
         }
 
-        public override List<Sample> getSamples()
+        public override IList<Sample> getSamples()
         {
-            return new JpegSampleList(jpegs, mp4v);
+            return new JpegSampleList(jpegs, mp4v).ToList();
         }
 
         public override void close()
@@ -220,3 +224,5 @@ namespace SharpMp4Parser.Muxer.Tracks.MJpeg
         }
     }
 }
+
+#endif

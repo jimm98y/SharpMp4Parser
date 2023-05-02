@@ -25,7 +25,7 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
                     se.getBox(Channels.newChannel(baos));
                     encSampleEntry = (SampleEntry)new IsoFile(new ByteBufferByteChannel(ByteBuffer.wrap(baos.toByteArray()))).getBoxes()[0];
                 }
-                catch (IOException e)
+                catch (IOException)
                 {
                     throw new Exception("Dumping stsd to memory failed");
                 }

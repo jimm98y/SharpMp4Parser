@@ -89,7 +89,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Read
             for (int i = 0; i < n; i++)
             {
                 val <<= 1;
-                val |= read1Bit();
+                val |= (long)read1Bit();
             }
 
             return val;

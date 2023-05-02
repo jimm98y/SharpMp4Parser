@@ -90,7 +90,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             trackMetaData.setTimescale(samplerate); // Audio tracks always use samplerate as timescale
         }
 
-        public override List<Sample> getSamples()
+        public override IList<Sample> getSamples()
         {
 
             return samples;

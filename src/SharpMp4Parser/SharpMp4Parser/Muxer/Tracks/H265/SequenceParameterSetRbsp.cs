@@ -214,7 +214,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
             int[] sub_layer_profile_space = new int[maxNumSubLayersMinus1];
             bool[] sub_layer_tier_flag = new bool[maxNumSubLayersMinus1];
             int[] sub_layer_profile_idc = new int[maxNumSubLayersMinus1];
-            bool[][] sub_layer_profile_compatibility_flag = new bool[maxNumSubLayersMinus1][32];
+            bool[,] sub_layer_profile_compatibility_flag = new bool[maxNumSubLayersMinus1,32];
             bool[] sub_layer_progressive_source_flag = new bool[maxNumSubLayersMinus1];
             bool[] sub_layer_interlaced_source_flag = new bool[maxNumSubLayersMinus1];
             bool[] sub_layer_non_packed_constraint_flag = new bool[maxNumSubLayersMinus1];
@@ -232,7 +232,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
                     sub_layer_profile_idc[i] = bsr.readU(5, "sub_layer_profile_idc[" + i + "]");
                     for (int j = 0; j < 32; j++)
                     {
-                        sub_layer_profile_compatibility_flag[i][j] = bsr.readBool("sub_layer_profile_compatibility_flag[" + i + "][" + j + "]");
+                        sub_layer_profile_compatibility_flag[i,j] = bsr.readBool("sub_layer_profile_compatibility_flag[" + i + "][" + j + "]");
                     }
                     sub_layer_progressive_source_flag[i] = bsr.readBool("sub_layer_progressive_source_flag[" + i + "]");
                     sub_layer_interlaced_source_flag[i] = bsr.readBool("sub_layer_interlaced_source_flag[" + i + "]");

@@ -249,7 +249,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             return "soun";
         }
 
-        public override List<Sample> getSamples()
+        public override IList<Sample> getSamples()
         {
             return samples;
         }

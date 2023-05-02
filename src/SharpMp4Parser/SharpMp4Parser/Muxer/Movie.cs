@@ -15,6 +15,7 @@
  */
 
 using SharpMp4Parser.IsoParser.Support;
+using SharpMp4Parser.IsoParser.Tools;
 using System.Collections.Generic;
 
 namespace SharpMp4Parser.Muxer
@@ -102,7 +103,7 @@ namespace SharpMp4Parser.Muxer
             long timescale = enumerator.Current.getTrackMetaData().getTimescale();
             foreach (Track track in this.getTracks())
             {
-                timescale = gcd(track.getTrackMetaData().getTimescale(), timescale);
+                timescale = Mp4Math.gcd(track.getTrackMetaData().getTimescale(), timescale);
             }
             return timescale;
         }

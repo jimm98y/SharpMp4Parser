@@ -22,7 +22,7 @@ namespace SharpMp4Parser.Muxer
     /**
      *
      */
-    public class TrackMetaData /*: Cloneable */
+    public class TrackMetaData : ICloneable
     {
         /**
          * specifies the front-to-back ordering of video tracks; tracks with lower
@@ -149,6 +149,11 @@ namespace SharpMp4Parser.Muxer
         public void setMatrix(Matrix matrix)
         {
             this.matrix = matrix;
+        }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
         }
     }
 }

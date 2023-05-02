@@ -286,7 +286,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             dataSource.close();
         }
 
-        public override List<Sample> getSamples()
+        public override IList<Sample> getSamples()
         {
 
             return samples;
