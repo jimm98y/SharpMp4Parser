@@ -89,7 +89,7 @@ namespace SharpMp4Parser.Muxer.Tracks
                         DataOutputStream dos = new DataOutputStream(baos);
                         try
                         {
-                            dos.writeShort(Encoding.UTF8.GetBytes(sub.text).Length);
+                            dos.writeShort((short)Encoding.UTF8.GetBytes(sub.text).Length);
                             dos.write(Encoding.UTF8.GetBytes(sub.text));
                             dos.close();
                         }

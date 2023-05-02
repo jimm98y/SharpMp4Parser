@@ -1035,12 +1035,12 @@ namespace SharpMp4Parser.Muxer.Tracks
 
             private bool nextFourEquals0x64582025()
             {
-                return nextFourEquals((byte)100, (byte)88, (byte)32, (byte)37);
+                return nextFourEquals((byte)0x64, (byte)0x58, (byte)0x20, (byte)0x25);
             }
 
             private bool nextFourEquals0x7FFE8001()
             {
-                return nextFourEquals((byte)127, (byte)-2, (byte)-128, (byte)1);
+                return nextFourEquals((byte)0x7f, (byte)0xFE, (byte)0x80, (byte)0x01);
             }
 
             private bool nextFourEquals(byte a, byte b, byte c, byte d)
@@ -1061,13 +1061,13 @@ namespace SharpMp4Parser.Muxer.Tracks
 
             private bool nextFourEquals0x64582025orEof()
             {
-                return nextFourEqualsOrEof((byte)100, (byte)88, (byte)32, (byte)37);
+                return nextFourEqualsOrEof((byte)0x64, (byte)0x58, (byte)0x20, (byte)0x25);
             }
 
 
             private bool nextFourEquals0x7FFE8001orEof()
             {
-                return nextFourEqualsOrEof((byte)127, (byte)-2, (byte)-128, (byte)1);
+                return nextFourEqualsOrEof((byte)0x7F, (byte)0xFE, (byte)0x80, (byte)0x01);
             }
 
             private bool nextFourEqualsOrEof(byte a, byte b, byte c, byte d)

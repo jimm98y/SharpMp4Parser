@@ -54,7 +54,7 @@ namespace SharpMp4Parser.Muxer
             List<MovieExtendsBox> movieExtendsBoxes = Path.getPaths<MovieExtendsBox>(isofile, "moov/mvex");
             if (movieExtendsBoxes.Count != 0)
             {
-                foreach (MovieFragmentBox movieFragmentBox in isofile.getBoxes(typeof(MovieFragmentBox)))
+                foreach (MovieFragmentBox movieFragmentBox in isofile.getBoxes< MovieFragmentBox>(typeof(MovieFragmentBox)))
                 {
                     List<TrackFragmentBox> trafs = movieFragmentBox.getBoxes<TrackFragmentBox>(typeof(TrackFragmentBox));
                     foreach (TrackFragmentBox traf in trafs)
@@ -68,11 +68,12 @@ namespace SharpMp4Parser.Muxer
                             }
                             else
                             {
-                                Iterator<Box> it = isofile.getBoxes().iterator();
+                                List<Box>.Enumerator it = isofile.getBoxes().GetEnumerator();
                                 baseOffset = 0;
-                                for (Box b = it.next(); b != movieFragmentBox; b = it.next())
+                                for (Box b = it.Current; b != movieFragmentBox; b = it.Current)
                                 {
                                     baseOffset += b.getSize();
+                                    it.MoveNext();
                                 }
                             }
                             TrackEncryptionBox tenc = Path.getPath<TrackEncryptionBox>((IsoParser.Container)sampleEntries[CastUtils.l2i(traf.getTrackFragmentHeaderBox().getSampleDescriptionIndex() - 1)], "sinf[0]/schi[0]/tenc[0]");
@@ -140,7 +141,7 @@ namespace SharpMp4Parser.Muxer
                 SampleAuxiliaryInformationSizesBox saiz = saizSaioPair.saiz;
                 SampleEntry se = null;
                 TrackEncryptionBox tenc = null;
-                List<Sample> samples = this.getSamples();
+                IList<Sample> samples = this.getSamples();
 
                 if (saio.getOffsets().Length == 1)
                 {
@@ -302,8 +303,8 @@ namespace SharpMp4Parser.Muxer
 
             public FindSaioSaizPair invoke()
             {
-                List<SampleAuxiliaryInformationSizesBox> saizs = container.getBoxes(typeof(SampleAuxiliaryInformationSizesBox));
-                List<SampleAuxiliaryInformationOffsetsBox> saios = container.getBoxes(typeof(SampleAuxiliaryInformationOffsetsBox));
+                List<SampleAuxiliaryInformationSizesBox> saizs = container.getBoxes< SampleAuxiliaryInformationSizesBox>(typeof(SampleAuxiliaryInformationSizesBox));
+                List<SampleAuxiliaryInformationOffsetsBox> saios = container.getBoxes< SampleAuxiliaryInformationOffsetsBox>(typeof(SampleAuxiliaryInformationOffsetsBox));
                 Debug.Assert(saizs.Count == saios.Count);
                 saiz = null;
                 saio = null;

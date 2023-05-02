@@ -200,12 +200,12 @@ namespace SharpMp4Parser.Muxer.Tracks
 
             if (vse1.getBoxes().Count == vse2.getBoxes().Count)
             {
-                Iterator<Box> bxs1 = vse1.getBoxes().iterator();
-                Iterator<Box> bxs2 = vse2.getBoxes().iterator();
-                while (bxs1.hasNext())
+                List<Box>.Enumerator bxs1 = vse1.getBoxes().GetEnumerator();
+                List<Box>.Enumerator bxs2 = vse2.getBoxes().GetEnumerator();
+                do
                 {
-                    Box cur1 = bxs1.next();
-                    Box cur2 = bxs2.next();
+                    Box cur1 = bxs1.Current;
+                    Box cur2 = bxs2.Current;
                     ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
                     ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
                     try
@@ -232,6 +232,7 @@ namespace SharpMp4Parser.Muxer.Tracks
                         }
                     }
                 }
+                while (bxs1.MoveNext());
             }
             return vse;
         }
@@ -332,12 +333,12 @@ namespace SharpMp4Parser.Muxer.Tracks
             }
             if (ase1.getBoxes().Count == ase2.getBoxes().Count)
             {
-                Iterator<Box> bxs1 = ase1.getBoxes().iterator();
-                Iterator<Box> bxs2 = ase2.getBoxes().iterator();
-                while (bxs1.hasNext())
+                List<Box>.Enumerator bxs1 = ase1.getBoxes().GetEnumerator();
+                List<Box>.Enumerator bxs2 = ase2.getBoxes().GetEnumerator();
+                do
                 {
-                    Box cur1 = bxs1.next();
-                    Box cur2 = bxs2.next();
+                    Box cur1 = bxs1.Current;
+                    Box cur2 = bxs2.Current;
                     ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
                     ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
                     try
@@ -366,6 +367,7 @@ namespace SharpMp4Parser.Muxer.Tracks
                         }
                     }
                 }
+                while (bxs1.MoveNext());
             }
             return ase;
 

@@ -33,7 +33,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
 
         SeqParameterSet sps;
 
-        public SEIMessage(ByteArrayInputStream input, SeqParameterSet sps)
+        public SEIMessage(InputStream input, SeqParameterSet sps)
         {
             this.sps = sps;
             input.read();

@@ -276,7 +276,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part1.ObjectDescriptors
         public int hilnEnhaQuantMode;
         public bool parametricSpecificConfig;
         byte[] configBytes;
-        bool parsed = false;
+        public bool parsed = false;
 
         public AudioSpecificConfig()
         {

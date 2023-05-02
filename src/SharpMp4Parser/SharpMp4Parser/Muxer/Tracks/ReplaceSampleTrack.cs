@@ -23,15 +23,15 @@ using SharpMp4Parser.IsoParser.Tools;
 namespace SharpMp4Parser.Muxer.Tracks
 {
     /**
- * Generates a Track where a single sample has been replaced by a given <code>ByteBuffer</code>.
- */
+     * Generates a Track where a single sample has been replaced by a given <code>ByteBuffer</code>.
+     */
 
     public class ReplaceSampleTrack : AbstractTrack
     {
         Track origTrack;
         private long sampleNumber;
         private Sample sampleContent;
-        private List<Sample> samples;
+        private IList<Sample> samples;
 
         public ReplaceSampleTrack(Track origTrack, long sampleNumber, ByteBuffer content) : base("replace(" + origTrack.getName() + ")")
         {

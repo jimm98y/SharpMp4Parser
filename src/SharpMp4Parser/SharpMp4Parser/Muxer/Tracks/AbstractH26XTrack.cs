@@ -32,7 +32,7 @@ namespace SharpMp4Parser.Muxer.Tracks
         public AbstractH26XTrack(DataSource dataSource) : this(dataSource, true)
         { }
 
-        protected static Stream cleanBuffer(Stream input)
+        protected static InputStream cleanBuffer(Stream input)
         {
             return new CleanInputStream(input);
         }

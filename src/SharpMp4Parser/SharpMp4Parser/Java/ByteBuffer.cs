@@ -3,7 +3,33 @@ using System.IO;
 
 namespace SharpMp4Parser.Java
 {
-    
+    internal class BufferedReader
+    {
+        private InputStreamReader inputStreamReader;
+
+        public BufferedReader(InputStreamReader inputStreamReader)
+        {
+            this.inputStreamReader = inputStreamReader;
+        }
+
+        internal string readLine()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    internal class InputStreamReader
+    {
+        private ByteArrayInputStream input;
+        private string v;
+
+        public InputStreamReader(ByteArrayInputStream input, string v)
+        {
+            this.input = input;
+            this.v = v;
+        }
+    }
+
     public static class Channels
     {
         public static WritableByteChannel newChannel(ByteArrayOutputStream outputStream)
@@ -20,6 +46,15 @@ namespace SharpMp4Parser.Java
         {
             throw new NotImplementedException();
         }
+    }
+
+    public class InputStream : ByteBuffer
+    {
+        internal int available()
+        {
+            throw new NotImplementedException();
+        }
+
     }
 
     public class Buffer : MemoryStream
@@ -202,6 +237,12 @@ namespace SharpMp4Parser.Java
             return (int)value.Length;
         }
 
+        public virtual int write(byte[] value)
+        {
+            put(value);
+            return (int)value.Length;
+        }
+
         public void write(int value)
         {
             putInt(value);
@@ -278,7 +319,7 @@ namespace SharpMp4Parser.Java
         }
     }
 
-    public class ReadableByteChannel : ByteBuffer
+    public class ReadableByteChannel : InputStream
     {
         public virtual void close()
         {
@@ -295,6 +336,26 @@ namespace SharpMp4Parser.Java
     {
     }
 
+    public class DataOutputStream : ByteArrayOutputStream
+    {
+        private ByteArrayOutputStream baos;
+
+        public DataOutputStream(ByteArrayOutputStream baos)
+        {
+            this.baos = baos;
+        }
+
+        internal void close()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void writeShort(short length)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class ByteArrayInputStream : ReadableByteChannel
     {
         private Stream input;
@@ -307,11 +368,6 @@ namespace SharpMp4Parser.Java
         public ByteArrayInputStream(Stream input)
         {
             this.input = input;
-        }
-
-        internal int available()
-        {
-            throw new NotImplementedException();
         }
     }
 }

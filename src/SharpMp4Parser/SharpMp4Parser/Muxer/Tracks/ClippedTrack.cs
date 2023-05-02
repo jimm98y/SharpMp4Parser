@@ -18,6 +18,7 @@ using SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12;
 using SharpMp4Parser.IsoParser.Boxes.SampleEntry;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace SharpMp4Parser.Muxer.Tracks
 {
@@ -57,14 +58,15 @@ namespace SharpMp4Parser.Muxer.Tracks
             if (origSamples != null && origSamples.Count != 0)
             {
                 long current = 0;
-                ListIterator<TimeToSampleBox.Entry> e = origSamples.listIterator();
+                List<TimeToSampleBox.Entry>.Enumerator e = origSamples.GetEnumerator();
                 List<TimeToSampleBox.Entry> nuList = new List<TimeToSampleBox.Entry>();
 
                 // Skip while not yet reached:
                 TimeToSampleBox.Entry currentEntry;
-                while ((currentEntry = e.next()).getCount() + current <= fromSample)
+                while ((currentEntry = e.Current).getCount() + current <= fromSample)
                 {
                     current += currentEntry.getCount();
+                    e.MoveNext();
                 }
                 // Take just a bit from the next
                 if (currentEntry.getCount() + current >= toSample)
@@ -78,7 +80,7 @@ namespace SharpMp4Parser.Muxer.Tracks
                 }
                 current += currentEntry.getCount();
 
-                while (e.hasNext() && (currentEntry = e.next()).getCount() + current < toSample)
+                while (e.MoveNext() && (currentEntry = e.Current).getCount() + current < toSample)
                 {
                     nuList.Add(currentEntry);
                     current += currentEntry.getCount();
@@ -99,14 +101,15 @@ namespace SharpMp4Parser.Muxer.Tracks
             if (origSamples != null && origSamples.Count != 0)
             {
                 long current = 0;
-                ListIterator<CompositionTimeToSample.Entry> e = origSamples.listIterator();
+                List<CompositionTimeToSample.Entry>.Enumerator e = origSamples.GetEnumerator();
                 List<CompositionTimeToSample.Entry> nuList = new List<CompositionTimeToSample.Entry>();
 
                 // Skip while not yet reached:
                 CompositionTimeToSample.Entry currentEntry;
-                while ((currentEntry = e.next()).getCount() + current <= fromSample)
+                while ((currentEntry = e.Current).getCount() + current <= fromSample)
                 {
                     current += currentEntry.getCount();
+                    e.MoveNext();
                 }
                 // Take just a bit from the next
                 if (currentEntry.getCount() + current >= toSample)
@@ -120,7 +123,7 @@ namespace SharpMp4Parser.Muxer.Tracks
                 }
                 current += currentEntry.getCount();
 
-                while (e.hasNext() && (currentEntry = e.next()).getCount() + current < toSample)
+                while (e.MoveNext() && (currentEntry = e.Current).getCount() + current < toSample)
                 {
                     nuList.Add(currentEntry);
                     current += currentEntry.getCount();
@@ -143,7 +146,7 @@ namespace SharpMp4Parser.Muxer.Tracks
 
         public override IList<Sample> getSamples()
         {
-            return origTrack.getSamples().GetRange(fromSample, toSample);
+            return origTrack.getSamples().ToList().GetRange(fromSample, toSample);
         }
 
         public override List<SampleEntry> getSampleEntries()

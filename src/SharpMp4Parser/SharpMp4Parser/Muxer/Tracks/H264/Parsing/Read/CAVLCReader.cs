@@ -29,7 +29,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Read
     public class CAVLCReader : BitstreamReader
     {
 
-        public CAVLCReader(ByteArrayInputStream input) : base(input)
+        public CAVLCReader(InputStream input) : base(input)
         { }
 
         public long readNBit(int n, string message)

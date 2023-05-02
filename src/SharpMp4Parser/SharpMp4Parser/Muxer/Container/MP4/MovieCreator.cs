@@ -28,14 +28,14 @@ namespace SharpMp4Parser.Muxer.Container.MP4
     public class MovieCreator
     {
 
-        public static Movie build(string file)
-        {
-            File f = new File(file);
-            FileInputStream fis = new FileInputStream(f);
-            Movie m = build(fis.getChannel(), new FileRandomAccessSourceImpl(new RandomAccessFile(f, "r")), file);
-            fis.close();
-            return m;
-        }
+        //public static Movie build(string file)
+        //{
+        //    File f = new File(file);
+        //    FileInputStream fis = new FileInputStream(f);
+        //    Movie m = build(fis.getChannel(), new FileRandomAccessSourceImpl(new RandomAccessFile(f, "r")), file);
+        //    fis.close();
+        //    return m;
+        //}
 
         /**
          * Creates <code>Movie</code> object from a <code>ReadableByteChannel</code>.

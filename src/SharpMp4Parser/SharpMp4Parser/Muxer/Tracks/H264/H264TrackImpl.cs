@@ -221,6 +221,8 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
             bool field_pic_flag;
             bool bottom_field_flag;
             int nal_ref_idc;
+            private readonly Dictionary<int, SeqParameterSet> spsIdToSps;
+            private readonly Dictionary<int, PictureParameterSet> ppsIdToPps;
             int pic_order_cnt_type;
             int delta_pic_order_cnt_bottom;
             int pic_order_cnt_lsb;
@@ -229,7 +231,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
             bool idrPicFlag;
             int idr_pic_id;
 
-            public FirstVclNalDetector(ByteBuffer nal, int nal_ref_idc, int nal_unit_type)
+            public FirstVclNalDetector(ByteBuffer nal, int nal_ref_idc, int nal_unit_type, Dictionary<int, SeqParameterSet> spsIdToSps, Dictionary<int, PictureParameterSet> ppsIdToPps)
             {
                 InputStream bs = cleanBuffer(new ByteBufferBackedInputStream(nal));
                 SliceHeader sh = new SliceHeader(bs, spsIdToSps, ppsIdToPps, nal_unit_type == 5);
@@ -238,7 +240,9 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
                 this.field_pic_flag = sh.field_pic_flag;
                 this.bottom_field_flag = sh.bottom_field_flag;
                 this.nal_ref_idc = nal_ref_idc;
-                this.pic_order_cnt_type = spsIdToSps.get(ppsIdToPps.get(sh.pic_parameter_set_id).seq_parameter_set_id).pic_order_cnt_type;
+                this.spsIdToSps = spsIdToSps;
+                this.ppsIdToPps = ppsIdToPps;
+                this.pic_order_cnt_type = spsIdToSps[ppsIdToPps[sh.pic_parameter_set_id].seq_parameter_set_id].pic_order_cnt_type;
                 this.delta_pic_order_cnt_bottom = sh.delta_pic_order_cnt_bottom;
                 this.pic_order_cnt_lsb = sh.pic_order_cnt_lsb;
                 this.delta_pic_order_cnt_0 = sh.delta_pic_order_cnt_0;
@@ -329,7 +333,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
                     case H264NalUnitTypes.CODED_SLICE_DATA_PART_C:
                     case H264NalUnitTypes.CODED_SLICE_IDR:
                         FirstVclNalDetector current = new FirstVclNalDetector(nal,
-                                nalUnitHeader.nal_ref_idc, nalUnitHeader.nal_unit_type);
+                                nalUnitHeader.nal_ref_idc, nalUnitHeader.nal_unit_type, spsIdToSps, ppsIdToPps);
                         if (fvnd != null && fvnd.isFirstInNew(current))
                         {
                             //LOG.debug("Wrapping up cause of first vcl nal is found");
@@ -432,7 +436,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
             }
             for (int i = 0; i < pictureOrderCounts.Length; i++)
             {
-                ctts.add(new CompositionTimeToSample.Entry(1, pictureOrderCounts[i] - i));
+                ctts.Add(new CompositionTimeToSample.Entry(1, pictureOrderCounts[i] - i));
             }
 
             pictureOrderCounts = new int[0];
@@ -687,7 +691,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
         {
             private readonly ByteBuffer buf;
 
-            public ByteBufferBackedInputStream(ByteBuffer buf)
+            public ByteBufferBackedInputStream(ByteBuffer buf) : base(buf)
             {
                 // make a coy of the buffer
                 this.buf = buf.duplicate();

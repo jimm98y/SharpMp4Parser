@@ -79,7 +79,7 @@ namespace SharpMp4Parser.Muxer.Tracks
 
         public TrackMetaData getTrackMetaData()
         {
-            TrackMetaData trackMetaData = (TrackMetaData)source.getTrackMetaData().clone();
+            TrackMetaData trackMetaData = (TrackMetaData)source.getTrackMetaData().Clone();
             trackMetaData.setTimescale(source.getTrackMetaData().getTimescale() * this.timeScaleFactor);
             return trackMetaData;
         }
