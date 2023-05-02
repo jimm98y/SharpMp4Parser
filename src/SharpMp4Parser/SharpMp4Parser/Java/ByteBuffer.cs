@@ -45,7 +45,7 @@ namespace SharpMp4Parser.Java
 
         public static ByteArrayInputStream newInputStream(ReadableByteChannel dataSource)
         {
-            throw new NotImplementedException();
+            return new ByteArrayInputStream(dataSource);
         }
     }
 
@@ -53,6 +53,11 @@ namespace SharpMp4Parser.Java
     {
         public InputStream()
         { }
+
+        public InputStream(byte[] input) : base(input)
+        {
+
+        }
 
         public InputStream(Java.Buffer input) : base(input)
         { }
@@ -196,7 +201,7 @@ namespace SharpMp4Parser.Java
 
         public string readLine(string encoding)
         {
-            if (encoding == "UTF-8")
+            if ("UTF-8".CompareTo(encoding) == 0)
             {
                 // utf8
                 using (var sr = new StreamReader(_ms, Encoding.UTF8, false, 1, true))
@@ -215,7 +220,6 @@ namespace SharpMp4Parser.Java
             putShort(value);
         }
 
-
         public byte get()
         {
             return (byte)_ms.ReadByte();
@@ -225,60 +229,6 @@ namespace SharpMp4Parser.Java
         {
             _ms.WriteByte(value);
         }
-
-
-
-
-
-
-        public char getChar()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void putChar(char value)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        public int getInt()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void putInt(int value)
-        {
-            throw new System.NotImplementedException();
-        }
-
-
-
-        public short getShort()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void putShort(short value)
-        {
-            throw new System.NotImplementedException();
-        }
-
-
-
-        public long getLong()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void putLong(long value)
-        {
-            throw new System.NotImplementedException();
-        }
-
-
-
-
 
         public int limit()
         {
@@ -291,57 +241,118 @@ namespace SharpMp4Parser.Java
             return this;
         }
 
-
         public byte get(int i)
         {
-            throw new System.NotImplementedException();
-        }
-
-
-
-        public void put(byte[] bytes, int v1, int v2)
-        {
-            throw new System.NotImplementedException();
-        }
-
-
-        public void get(byte[] bytes)
-        {
-            throw new System.NotImplementedException();
-        }
-
-
-        public void put(int v1, byte v2)
-        {
-            throw new System.NotImplementedException();
-        }
-
-
-        internal void order(ByteOrder endian)
-        {
-            throw new System.NotImplementedException();
+            return _ms.ToArray()[i];
         }
 
         public virtual int read(byte[] bb)
         {
-            throw new NotImplementedException();
+            return get(bb, 0, bb.Length);
+        }
+
+        public void get(byte[] bytes)
+        {
+            get(bytes, 0, bytes.Length);
+        }
+
+        internal int get(byte[] bytes, int offset, int length)
+        {
+            return _ms.Read(bytes, offset, length);
         }
 
         internal bool hasArray()
         {
-            throw new NotImplementedException();
+            return true;
         }
 
-        internal void get(byte[] b, int v, int length)
+        public void put(byte[] bytes, int offset, int length)
         {
-            throw new NotImplementedException();
+            _ms.Write(bytes, offset, length);
         }
 
+        public void put(int index, byte value)
+        {
+            _ms.Seek(index, SeekOrigin.Begin);
+            _ms.WriteByte(value);
+        }
+
+        public char getChar()
+        {
+            using (BinaryReader br = new BinaryReader(_ms))
+            {
+                return br.ReadChar();
+            }
+        }
+
+        public void putChar(char value)
+        {
+            using (BinaryWriter br = new BinaryWriter(_ms))
+            {
+                br.Write(value);
+            }
+        }
+
+        public int getInt()
+        {
+            using (BinaryReader br = new BinaryReader(_ms))
+            {
+                return br.ReadInt32();
+            }
+        }
+
+        public void putInt(int value)
+        {
+            using (BinaryWriter br = new BinaryWriter(_ms))
+            {
+                br.Write(value);
+            }
+        }
+
+        public short getShort()
+        {
+            using (BinaryReader br = new BinaryReader(_ms))
+            {
+                return br.ReadInt16();
+            }
+        }
+
+        public void putShort(short value)
+        {
+            using (BinaryWriter br = new BinaryWriter(_ms))
+            {
+                br.Write(value);
+            }
+        }
+
+        public long getLong()
+        {
+            using (BinaryReader br = new BinaryReader(_ms))
+            {
+                return br.ReadInt64();
+            }
+        }
+
+        public void putLong(long value)
+        {
+            using (BinaryWriter br = new BinaryWriter(_ms))
+            {
+                br.Write(value);
+            }
+        }
+
+        internal void order(ByteOrder endian)
+        {
+            if(endian == ByteOrder.BIG_ENDIAN)
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 
     public class ByteBuffer : Buffer
     {
-        public ByteBuffer()
+        public ByteBuffer() : base()
         { }
 
         public ByteBuffer(int capacity) : base(capacity)
@@ -352,6 +363,9 @@ namespace SharpMp4Parser.Java
 
         public ByteBuffer(MemoryStream input) : base(input)
         { }
+
+        public ByteBuffer(byte[] input) : base(input)
+        {  }
 
         public override Buffer duplicate()
         {
@@ -385,7 +399,8 @@ namespace SharpMp4Parser.Java
 
         public ByteBuffer reset()
         {
-            throw new System.NotImplementedException();
+            position(0);
+            return this;
         }
 
         public ByteBuffer position(int nextBufferWritePosition)
@@ -407,9 +422,9 @@ namespace SharpMp4Parser.Java
             
         }
 
-        public WritableByteChannel(ByteBuffer vtte)
+        public WritableByteChannel(ByteBuffer output) : base(output)
         {
-            throw new NotImplementedException();
+            
         }
     }
 
@@ -420,6 +435,11 @@ namespace SharpMp4Parser.Java
             
         }
 
+        public ReadableByteChannel(byte[] input) : base(input)
+        {
+
+        }
+
         public ReadableByteChannel(Java.Buffer input) : base(input)
         {
             
@@ -428,23 +448,30 @@ namespace SharpMp4Parser.Java
 
     public class ByteArrayOutputStream : WritableByteChannel
     {
+        public ByteArrayOutputStream()
+        {
+
+        }
+
+        public ByteArrayOutputStream(ByteArrayOutputStream output) : base(output)
+        {
+
+        }
     }
 
     public class DataOutputStream : ByteArrayOutputStream
     {
-        private ByteArrayOutputStream baos;
-
-        public DataOutputStream(ByteArrayOutputStream baos)
+        public DataOutputStream(ByteArrayOutputStream output) : base(output)
         {
-            this.baos = baos;
+
         }
     }
 
     public class ByteArrayInputStream : ReadableByteChannel
     {
-        public ByteArrayInputStream(byte[] input)
+        public ByteArrayInputStream(byte[] input) : base(input)
         {
-            throw new NotImplementedException();
+            
         }
 
         public ByteArrayInputStream(Java.Buffer input) : base(input)

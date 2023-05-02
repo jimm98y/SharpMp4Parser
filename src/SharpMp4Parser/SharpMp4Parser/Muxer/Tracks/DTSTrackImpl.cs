@@ -23,8 +23,10 @@ namespace SharpMp4Parser.Muxer.Tracks
         DTSSpecificBox ddts = new DTSSpecificBox();
         // Info from the headers
         bool isVBR = false;
+#pragma warning disable 0414
         bool coreSubStreamPresent = false;
         bool extensionSubStreamPresent = false;
+#pragma warning restore 0414
         int numExtSubStreams = 0;
         int coreMaxSampleRate = 0;
         int coreBitRate = 0;

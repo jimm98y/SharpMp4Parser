@@ -29,7 +29,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.SampleGrouping
     {
         public const string TYPE = "tele";
         private bool levelIndependentlyDecodable;
-        private short reserved;
+        private short reserved = 0;
 
         public override string getType()
         {

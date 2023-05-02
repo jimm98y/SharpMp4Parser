@@ -17,7 +17,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H263
         //private static Logger LOG = LoggerFactory.getLogger(ESDescriptor.class.getName());
 
         private int RECTANGULAR = 0;
-        private int BINARY = 1;
+        //private int BINARY = 1;
         private int BINARY_ONLY = 2;
         private int GRAYSCALE = 3;
 

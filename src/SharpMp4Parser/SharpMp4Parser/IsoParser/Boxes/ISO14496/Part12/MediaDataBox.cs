@@ -58,7 +58,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
         public long getSize()
         {
             throw new System.NotImplementedException();
-            return 0; /* header.limit() + dataFile.length(); */
+            //return 0; /* header.limit() + dataFile.length(); */
         }
 
         /**

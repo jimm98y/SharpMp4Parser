@@ -228,7 +228,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
             int pic_order_cnt_lsb;
             int delta_pic_order_cnt_0;
             int delta_pic_order_cnt_1;
-            bool idrPicFlag;
+            bool idrPicFlag = false;
             int idr_pic_id;
 
             public FirstVclNalDetector(ByteBuffer nal, int nal_ref_idc, int nal_unit_type, Dictionary<int, SeqParameterSet> spsIdToSps, Dictionary<int, PictureParameterSet> ppsIdToPps)

@@ -38,7 +38,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
     public class SampleTableBox : AbstractContainerBox
     {
         public const string TYPE = "stbl";
-        private SampleToChunkBox sampleToChunkBox;
+        //private SampleToChunkBox sampleToChunkBox;
 
         public SampleTableBox() : base(TYPE)
         { }
