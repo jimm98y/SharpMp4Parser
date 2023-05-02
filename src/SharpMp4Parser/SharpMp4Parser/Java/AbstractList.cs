@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 
 namespace SharpMp4Parser.Java
@@ -8,72 +7,70 @@ namespace SharpMp4Parser.Java
     {
         public virtual T get(int index)
         {
-            return this[index];
+            return _list[index];
         }
 
         public virtual int size()
         {
-            return this.Count;
+            return _list.Count;
         }
 
+        private List<T> _list = new List<T>();
 
+        public T this[int index] { get => _list[index]; set => _list[index] = value; }
 
+        public int Count => _list.Count;
 
-
-        public T this[int index] { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        public int Count => throw new NotImplementedException();
-
-        public bool IsReadOnly => throw new NotImplementedException();
+        public bool IsReadOnly => false;
 
         public void Add(T item)
         {
-            throw new NotImplementedException();
+            _list.Add(item);
         }
 
         public void Clear()
         {
-            throw new NotImplementedException();
+            _list.Clear();
         }
 
         public bool Contains(T item)
         {
-            throw new NotImplementedException();
+            return _list.Contains(item);
         }
 
         public void CopyTo(T[] array, int arrayIndex)
         {
-            throw new NotImplementedException();
+            _list.CopyTo(array, arrayIndex);
         }
 
         public IEnumerator<T> GetEnumerator()
         {
-            throw new NotImplementedException();
+            return _list.GetEnumerator();
         }
 
         public int IndexOf(T item)
         {
-            throw new NotImplementedException();
+            return _list.IndexOf(item);
         }
 
         public void Insert(int index, T item)
         {
-            throw new NotImplementedException();
+            _list.Insert(index, item);
         }
 
         public bool Remove(T item)
         {
-            throw new NotImplementedException();
+            return _list.Remove(item);
         }
 
         public void RemoveAt(int index)
         {
-            throw new NotImplementedException();
+            _list.RemoveAt(index);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            throw new NotImplementedException();
+            return _list.GetEnumerator();
         }
     }
 }

@@ -1,7 +1,6 @@
-﻿using SharpMp4Parser.IsoParser.Boxes.ISO14496.Part15;
-using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SharpMp4Parser.Java
 {
@@ -17,9 +16,9 @@ namespace SharpMp4Parser.Java
             return "[" + string.Join(",", list) + "]";
         }
 
-        internal static int binarySearch(long[] syncSamples, long v)
+        internal static int binarySearch(long[] syncSamples, long item)
         {
-            throw new NotImplementedException();
+            return syncSamples.ToList().BinarySearch(item);
         }
 
         public static void fill<T>(T[] array, T value)
@@ -35,9 +34,9 @@ namespace SharpMp4Parser.Java
             }
         }
 
-        internal static IEnumerable<HevcDecoderConfigurationRecord.Array> asList(HevcDecoderConfigurationRecord.Array spsArray, HevcDecoderConfigurationRecord.Array vpsArray, HevcDecoderConfigurationRecord.Array ppsArray)
+        internal static IList<T> asList<T>(params T[] items)
         {
-            throw new NotImplementedException();
+            return items.ToList();
         }
     }
 }

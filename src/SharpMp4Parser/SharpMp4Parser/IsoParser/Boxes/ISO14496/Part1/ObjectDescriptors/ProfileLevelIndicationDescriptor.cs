@@ -61,7 +61,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part1.ObjectDescriptors
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("ProfileLevelIndicationDescriptor");
-            sb.Append("{profileLevelIndicationIndex=").Append(Integer.toHexString(profileLevelIndicationIndex));
+            sb.Append("{profileLevelIndicationIndex=").Append(profileLevelIndicationIndex.ToString("X"));
             sb.Append('}');
             return sb.ToString();
         }
