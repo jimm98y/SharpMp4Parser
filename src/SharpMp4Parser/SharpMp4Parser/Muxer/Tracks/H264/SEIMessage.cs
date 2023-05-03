@@ -37,7 +37,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
         {
             this.sps = sps;
             input.read();
-            int datasize = input.available();
+            int datasize = (int)input.available();
             int read = 0;
             while (read < datasize)
             {

@@ -706,7 +706,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
                 return buf.get() & 0xFF;
             }
 
-            public int read(byte[] bytes, int off, int len)
+            public override int read(byte[] bytes, int off, int len)
             {
                 if (!buf.hasRemaining())
                 {

@@ -43,6 +43,11 @@ namespace SharpMp4Parser.Java
             return outputStream;
         }
 
+        public static ReadableByteChannel newChannel(ByteArrayInputStream inputStream)
+        {
+            return inputStream;
+        }
+
         public static ByteArrayInputStream newInputStream(ReadableByteChannel dataSource)
         {
             return new ByteArrayInputStream(dataSource);
@@ -60,6 +65,20 @@ namespace SharpMp4Parser.Java
         }
 
         public InputStream(Java.Buffer input) : base(input)
+        { }
+    }
+
+    public class OutputStream : ByteBuffer
+    {
+        public OutputStream()
+        { }
+
+        public OutputStream(byte[] input) : base(input)
+        {
+
+        }
+
+        public OutputStream(Java.Buffer input) : base(input)
         { }
     }
 
@@ -146,7 +165,12 @@ namespace SharpMp4Parser.Java
             return (int)value.Length;
         }
 
-        public void write(int value)
+        public virtual void write(byte[] value, int offset, int length)
+        {
+            put(value, offset, length);
+        }
+
+        public virtual void write(int value)
         {
             putInt(value);
         }
@@ -156,7 +180,7 @@ namespace SharpMp4Parser.Java
             return get();
         }
 
-        public byte[] toByteArray()
+        public virtual byte[] toByteArray()
         {
             return _ms.ToArray();
         }
@@ -172,7 +196,7 @@ namespace SharpMp4Parser.Java
             return this;
         }
 
-        internal int available()
+        public virtual long available()
         {
             // https://docs.oracle.com/javase/8/docs/api/java/io/InputStream.html
             // Returns an estimate of the number of bytes that can be read (or skipped over) from this input stream without blocking by the next invocation of a method for this input stream.
@@ -249,6 +273,11 @@ namespace SharpMp4Parser.Java
         public virtual int read(byte[] bb)
         {
             return get(bb, 0, bb.Length);
+        }
+
+        public virtual int read(byte[] bytes, int offset, int length)
+        {
+            return get(bytes, offset, length);
         }
 
         public void get(byte[] bytes)
@@ -405,7 +434,8 @@ namespace SharpMp4Parser.Java
 
         public ByteBuffer position(int nextBufferWritePosition)
         {
-            throw new System.NotImplementedException();
+            base.position(nextBufferWritePosition);
+            return this;
         }
     }
 
@@ -414,7 +444,7 @@ namespace SharpMp4Parser.Java
 
     }
 
-    public class WritableByteChannel : ByteBuffer
+    public class WritableByteChannel : OutputStream
     {
 
         public WritableByteChannel()
@@ -478,4 +508,17 @@ namespace SharpMp4Parser.Java
         {
         }
     }
+
+
+    public class FilterInputStream : ByteArrayInputStream
+    {
+        public FilterInputStream(byte[] input) : base(input)
+        {
+        }
+
+        public FilterInputStream(Java.Buffer input) : base(input)
+        {
+        }
+    }
+
 }
