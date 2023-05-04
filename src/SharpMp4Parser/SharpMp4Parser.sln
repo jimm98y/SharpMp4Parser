@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpMp4Parser", "SharpMp4Parser\SharpMp4Parser.csproj", "{9B26425C-3069-4A47-BF03-E0DCFEA243D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpMp4Parser", "SharpMp4Parser\SharpMp4Parser.csproj", "{9B26425C-3069-4A47-BF03-E0DCFEA243D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mp4Test", "Mp4Test\Mp4Test.csproj", "{29F88F3C-A0B0-422C-84A8-E710C5FEB37C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpMp4Parser.Tests", "SharpMp4Parser.Tests\SharpMp4Parser.Tests.csproj", "{21D0EDD7-BB64-428E-997A-B2D3C8D2668A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{9B26425C-3069-4A47-BF03-E0DCFEA243D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B26425C-3069-4A47-BF03-E0DCFEA243D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B26425C-3069-4A47-BF03-E0DCFEA243D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29F88F3C-A0B0-422C-84A8-E710C5FEB37C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29F88F3C-A0B0-422C-84A8-E710C5FEB37C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29F88F3C-A0B0-422C-84A8-E710C5FEB37C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29F88F3C-A0B0-422C-84A8-E710C5FEB37C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21D0EDD7-BB64-428E-997A-B2D3C8D2668A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21D0EDD7-BB64-428E-997A-B2D3C8D2668A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21D0EDD7-BB64-428E-997A-B2D3C8D2668A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21D0EDD7-BB64-428E-997A-B2D3C8D2668A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

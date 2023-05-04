@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-using SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12;
 using SharpMp4Parser.IsoParser;
+using SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12;
+using SharpMp4Parser.IsoParser.Tools;
 using SharpMp4Parser.Java;
 using System.Collections.Generic;
-using SharpMp4Parser.IsoParser.Tools;
+using System.IO;
 
 namespace SharpMp4Parser.Muxer.Container.MP4
 {
@@ -28,14 +29,21 @@ namespace SharpMp4Parser.Muxer.Container.MP4
     public class MovieCreator
     {
 
-        //public static Movie build(string file)
-        //{
-        //    File f = new File(file);
-        //    FileInputStream fis = new FileInputStream(f);
-        //    Movie m = build(fis.getChannel(), new FileRandomAccessSourceImpl(new RandomAccessFile(f, "r")), file);
-        //    fis.close();
-        //    return m;
-        //}
+        public static Movie build(string file)
+        {
+            FileStream fis = File.OpenRead(file);
+
+            using(MemoryStream ms = new MemoryStream())
+            {
+                fis.CopyTo(ms);
+                ms.Position = 0;
+
+                var buff = new ReadableByteChannel(new Buffer(ms));
+                Movie m = build(buff, new InMemRandomAccessSourceImpl(buff), file);
+                fis.Close();
+                return m;
+            }
+        }
 
         /**
          * Creates <code>Movie</code> object from a <code>ReadableByteChannel</code>.
@@ -53,11 +61,11 @@ namespace SharpMp4Parser.Muxer.Container.MP4
             List<TrackBox> trackBoxes = isoFile.getMovieBox().getBoxes<TrackBox>(typeof(TrackBox));
             foreach (TrackBox trackBox in trackBoxes)
             {
-                SchemeTypeBox schm = Path.getPath<SchemeTypeBox>(trackBox, "mdia[0]/minf[0]/stbl[0]/stsd[0]/enc.[0]/sinf[0]/schm[0]");
+                SchemeTypeBox schm = IsoParser.Tools.Path.getPath<SchemeTypeBox>(trackBox, "mdia[0]/minf[0]/stbl[0]/stsd[0]/enc.[0]/sinf[0]/schm[0]");
                 if (schm != null && (schm.getSchemeType().Equals("cenc") || schm.getSchemeType().Equals("cbc1")))
                 {
                     m.addTrack(new CencMp4TrackImplImpl(
-        trackBox.getTrackHeaderBox().getTrackId(), isoFile,
+                        trackBox.getTrackHeaderBox().getTrackId(), isoFile,
                             randomAccessSource, name + "[" + trackBox.getTrackHeaderBox().getTrackId() + "]"));
                 }
                 else if (schm != null && (schm.getSchemeType().Equals("piff")))

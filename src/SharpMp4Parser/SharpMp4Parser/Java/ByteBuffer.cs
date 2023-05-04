@@ -261,7 +261,10 @@ namespace SharpMp4Parser.Java
 
         public Buffer limit(int limit)
         {
-            this._ms.Capacity = limit;
+            if (this._ms.Length > limit)
+                this._ms = new MemoryStream(_ms.ToArray(), 0, limit);
+            else
+                this._ms.Capacity = limit;
             return this;
         }
 
@@ -308,7 +311,7 @@ namespace SharpMp4Parser.Java
 
         public char getChar()
         {
-            using (BinaryReader br = new BinaryReader(_ms))
+            using (BinaryReader br = new BinaryReader(_ms, Encoding.UTF8, true))
             {
                 return br.ReadChar();
             }
@@ -316,7 +319,7 @@ namespace SharpMp4Parser.Java
 
         public void putChar(char value)
         {
-            using (BinaryWriter br = new BinaryWriter(_ms))
+            using (BinaryWriter br = new BinaryWriter(_ms, Encoding.UTF8, true))
             {
                 br.Write(value);
             }
@@ -324,7 +327,7 @@ namespace SharpMp4Parser.Java
 
         public int getInt()
         {
-            using (BinaryReader br = new BinaryReader(_ms))
+            using (BinaryReader br = new BinaryReader(_ms, Encoding.UTF8, true))
             {
                 return br.ReadInt32();
             }
@@ -332,7 +335,7 @@ namespace SharpMp4Parser.Java
 
         public void putInt(int value)
         {
-            using (BinaryWriter br = new BinaryWriter(_ms))
+            using (BinaryWriter br = new BinaryWriter(_ms, Encoding.UTF8, true))
             {
                 br.Write(value);
             }
@@ -340,7 +343,7 @@ namespace SharpMp4Parser.Java
 
         public short getShort()
         {
-            using (BinaryReader br = new BinaryReader(_ms))
+            using (BinaryReader br = new BinaryReader(_ms, Encoding.UTF8, true))
             {
                 return br.ReadInt16();
             }
@@ -348,7 +351,7 @@ namespace SharpMp4Parser.Java
 
         public void putShort(short value)
         {
-            using (BinaryWriter br = new BinaryWriter(_ms))
+            using (BinaryWriter br = new BinaryWriter(_ms, Encoding.UTF8, true))
             {
                 br.Write(value);
             }
@@ -356,7 +359,7 @@ namespace SharpMp4Parser.Java
 
         public long getLong()
         {
-            using (BinaryReader br = new BinaryReader(_ms))
+            using (BinaryReader br = new BinaryReader(_ms, Encoding.UTF8, true))
             {
                 return br.ReadInt64();
             }
@@ -364,7 +367,7 @@ namespace SharpMp4Parser.Java
 
         public void putLong(long value)
         {
-            using (BinaryWriter br = new BinaryWriter(_ms))
+            using (BinaryWriter br = new BinaryWriter(_ms, Encoding.UTF8, true))
             {
                 br.Write(value);
             }
@@ -423,7 +426,13 @@ namespace SharpMp4Parser.Java
 
         public virtual int read(ByteBuffer bb)
         {
-            throw new System.NotImplementedException();
+            byte[] rm = new byte[remaining()];
+            int ret = read(rm, 0, rm.Length);
+            bb.write(rm, 0, ret);
+            if (ret == 0)
+                return -1;
+            else
+                return ret;
         }
 
         public ByteBuffer reset()

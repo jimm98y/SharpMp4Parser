@@ -48,7 +48,6 @@ namespace SharpMp4Parser.IsoParser
         public Dictionary<string, Type> mapping = new Dictionary<string, Type>
         {
             { "meta-ilst" , typeof(AppleItemListBox) },
-            { "meta-ilst", typeof(AppleItemListBox) },
             { "rmra", typeof(AppleReferenceMovieBox) },
             { "rmda", typeof(AppleReferenceMovieDescriptorBox) },
             { "rmdr", typeof(AppleDataRateBox) },
