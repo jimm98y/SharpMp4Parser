@@ -33,20 +33,23 @@ namespace SharpMp4Parser.IsoParser.Tools
 
         public static long readUInt32(ByteBuffer bb)
         {
-            long i = bb.getInt();
-            if (i < 0)
-            {
-                i += 1L << 32;
-            }
-            return i;
+            long ch1 = readUInt8(bb);
+            long ch2 = readUInt8(bb);
+            long ch3 = readUInt8(bb);
+            long ch4 = readUInt8(bb);
+            return (ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0);
         }
 
         public static int readUInt24(ByteBuffer bb)
         {
-            int result = 0;
-            result += readUInt16(bb) << 8;
-            result += byte2int(bb.get());
-            return result;
+            //int result = 0;
+            //result += readUInt16(bb) << 8;
+            //result += byte2int(bb.get());
+            //return result;
+            long ch1 = readUInt8(bb);
+            long ch2 = readUInt8(bb);
+            long ch3 = readUInt8(bb);
+            return (int)((ch1 << 16) + (ch2 << 8) + (ch3 << 0));
         }
 
         public static int readUInt16(ByteBuffer bb)
@@ -102,16 +105,17 @@ namespace SharpMp4Parser.IsoParser.Tools
 
         public static long readUInt64(ByteBuffer byteBuffer)
         {
-            long result = 0;
-            // thanks to Erik Nicolas for finding a bug! Cast to long is definitivly needed
-            result += readUInt32(byteBuffer) << 32;
-            if (result < 0)
-            {
-                throw new Exception("I don't know how to deal with UInt64! long is not sufficient and I don't want to use BigInt");
-            }
-            result += readUInt32(byteBuffer);
+            //long result = 0;
+            //// thanks to Erik Nicolas for finding a bug! Cast to long is definitivly needed
+            //result += readUInt32(byteBuffer) << 32;
+            //if (result < 0)
+            //{
+            //    throw new Exception("I don't know how to deal with UInt64! long is not sufficient and I don't want to use BigInt");
+            //}
+            //result += readUInt32(byteBuffer);
 
-            return result;
+            //return result;
+            return (long)byteBuffer.getULong();
         }
 
         public static double readFixedPoint1616(ByteBuffer bb)
@@ -181,14 +185,15 @@ namespace SharpMp4Parser.IsoParser.Tools
 
         public static long readUInt48(ByteBuffer byteBuffer)
         {
-            long result = (long)readUInt16(byteBuffer) << 32;
-            if (result < 0)
-            {
-                throw new Exception("I don't know how to deal with UInt64! long is not sufficient and I don't want to use BigInt");
-            }
-            result += readUInt32(byteBuffer);
+            //long result = (long)readUInt16(byteBuffer) << 32;
+            //if (result < 0)
+            //{
+            //    throw new Exception("I don't know how to deal with UInt64! long is not sufficient and I don't want to use BigInt");
+            //}
+            //result += readUInt32(byteBuffer);
 
-            return result;
+            //return result;
+            return (long)byteBuffer.getUInt48();
         }
     }
 }

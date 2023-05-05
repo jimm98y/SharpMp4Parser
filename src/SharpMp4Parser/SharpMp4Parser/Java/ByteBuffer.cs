@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace SharpMp4Parser.Java
@@ -264,7 +266,11 @@ namespace SharpMp4Parser.Java
             if (this._ms.Length > limit)
                 this._ms = new MemoryStream(_ms.ToArray(), 0, limit);
             else
-                this._ms.Capacity = limit;
+            {
+                var oldMs = this._ms.ToArray();
+                this._ms = new MemoryStream(limit);
+                this._ms.Write(oldMs, 0, oldMs.Length);
+            }
             return this;
         }
 
@@ -329,7 +335,24 @@ namespace SharpMp4Parser.Java
         {
             using (BinaryReader br = new BinaryReader(_ms, Encoding.UTF8, true))
             {
-                return br.ReadInt32();
+                return BitConverter.ToInt32(br.ReadBytes(sizeof(Int32)).Reverse().ToArray(), 0);
+                //return br.ReadInt32();
+            }
+        }
+
+        public uint getUInt()
+        {
+            using (BinaryReader br = new BinaryReader(_ms, Encoding.UTF8, true))
+            {
+                return BitConverter.ToUInt32(br.ReadBytes(sizeof(UInt32)).Reverse().ToArray(), 0);
+            }
+        }
+
+        public uint getUIntLE()
+        {
+            using (BinaryReader br = new BinaryReader(_ms, Encoding.UTF8, true))
+            {
+                return br.ReadUInt32();
             }
         }
 
@@ -345,7 +368,33 @@ namespace SharpMp4Parser.Java
         {
             using (BinaryReader br = new BinaryReader(_ms, Encoding.UTF8, true))
             {
+                return BitConverter.ToInt16(br.ReadBytes(sizeof(Int16)).Reverse().ToArray(), 0);
+                //return br.ReadInt16();
+            }
+        }
+
+        public short getShortLE()
+        {
+            using (BinaryReader br = new BinaryReader(_ms, Encoding.UTF8, true))
+            {
                 return br.ReadInt16();
+            }
+        }
+
+        public ushort getUShort()
+        {
+            using (BinaryReader br = new BinaryReader(_ms, Encoding.UTF8, true))
+            {
+                return BitConverter.ToUInt16(br.ReadBytes(sizeof(UInt16)).Reverse().ToArray(), 0);
+                //return br.ReadInt16();
+            }
+        }
+
+        public ushort getUShortLE()
+        {
+            using (BinaryReader br = new BinaryReader(_ms, Encoding.UTF8, true))
+            {
+                return br.ReadUInt16();
             }
         }
 
@@ -361,7 +410,25 @@ namespace SharpMp4Parser.Java
         {
             using (BinaryReader br = new BinaryReader(_ms, Encoding.UTF8, true))
             {
-                return br.ReadInt64();
+                return BitConverter.ToInt64(br.ReadBytes(sizeof(Int64)).Reverse().ToArray(), 0);
+                //return br.ReadInt64();
+            }
+        }
+
+        public ulong getULong()
+        {
+            using (BinaryReader br = new BinaryReader(_ms, Encoding.UTF8, true))
+            {
+                return BitConverter.ToUInt64(br.ReadBytes(sizeof(UInt64)).Reverse().ToArray(), 0);
+                //return br.ReadInt64();
+            }
+        }
+
+        public ulong getULongLE()
+        {
+            using (BinaryReader br = new BinaryReader(_ms, Encoding.UTF8, true))
+            {
+                return br.ReadUInt64();
             }
         }
 
@@ -370,6 +437,42 @@ namespace SharpMp4Parser.Java
             using (BinaryWriter br = new BinaryWriter(_ms, Encoding.UTF8, true))
             {
                 br.Write(value);
+            }
+        }
+
+        public uint getUInt24()
+        {
+            using (BinaryReader br = new BinaryReader(_ms, Encoding.UTF8, true))
+            {
+                return BitConverter.ToUInt32(br.ReadBytes(3).Reverse().ToArray(), 0);
+                //return br.ReadInt64();
+            }
+        }
+
+        public uint getUInt24LE()
+        {
+            using (BinaryReader br = new BinaryReader(_ms, Encoding.UTF8, true))
+            {
+                return BitConverter.ToUInt32(br.ReadBytes(3).ToArray(), 0);
+                //return br.ReadInt64();
+            }
+        }
+
+        internal ulong getUInt48()
+        {
+            using (BinaryReader br = new BinaryReader(_ms, Encoding.UTF8, true))
+            {
+                return BitConverter.ToUInt64(br.ReadBytes(8).Reverse().ToArray(), 0);
+                //return br.ReadInt64();
+            }
+        }
+
+        internal ulong getUInt48LE()
+        {
+            using (BinaryReader br = new BinaryReader(_ms, Encoding.UTF8, true))
+            {
+                return BitConverter.ToUInt64(br.ReadBytes(8).ToArray(), 0);
+                //return br.ReadInt64();
             }
         }
 
@@ -426,8 +529,9 @@ namespace SharpMp4Parser.Java
 
         public virtual int read(ByteBuffer bb)
         {
-            byte[] rm = new byte[remaining()];
+            byte[] rm = new byte[bb.capacity()];
             int ret = read(rm, 0, rm.Length);
+            bb.position(0);
             bb.write(rm, 0, ret);
             if (ret == 0)
                 return -1;

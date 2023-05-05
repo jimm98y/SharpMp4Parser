@@ -308,26 +308,27 @@ namespace SharpMp4Parser.IsoParser
                     // right now all we have to support are classes with a single param
                     Type[] constructorArgsClazz = new Type[1];
                     object[] constructorArgs = new object[1];
-                    for (int i = 0; i < param.Length; i++)
+                    //for (int i = 0; i < param.Length; i++)
+                    int i = 0;
                     {
-                        if ("userType".Equals(param[i]))
+                        if ("userType".Equals(param))
                         {
                             constructorArgs[i] = userType;
                             constructorArgsClazz[i] = typeof(byte[]);
                         }
-                        else if ("type".Equals(param[i]))
+                        else if ("type".Equals(param))
                         {
                             constructorArgs[i] = type;
                             constructorArgsClazz[i] = typeof(string);
                         }
-                        else if ("parent".Equals(param[i]))
+                        else if ("parent".Equals(param))
                         {
                             constructorArgs[i] = parent;
                             constructorArgsClazz[i] = typeof(string);
                         }
                         else
                         {
-                            throw new Exception("No such param: " + param[i]);
+                            throw new Exception("No such param: " + param);
                         }
                     }
 
@@ -367,12 +368,12 @@ namespace SharpMp4Parser.IsoParser
             }
             else
             {
-                constructor = mapping[type];
+                mapping.TryGetValue(type, out constructor);
                 if (constructor == null)
                 {
                     string lookup = buildLookupStrings.Append(parent).Append('-').Append(type).ToString();
                     buildLookupStrings.Length = 0;
-                    constructor = mapping[lookup];
+                    mapping.TryGetValue(lookup, out constructor);
                 }
             }
             if (constructor == null)
