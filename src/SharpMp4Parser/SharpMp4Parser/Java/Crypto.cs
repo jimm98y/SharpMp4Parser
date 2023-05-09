@@ -48,6 +48,18 @@ namespace SharpMp4Parser.Java
 
     }
 
+    public class SecretKeySpec : SecretKey
+    {
+        private byte[] bytes;
+        private string v;
+
+        public SecretKeySpec(byte[] bytes, string v)
+        {
+            this.bytes = bytes;
+            this.v = v;
+        }
+    }
+
     public class IvParameterSpec
     {
         private byte[] fullIv;

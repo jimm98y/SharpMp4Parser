@@ -70,8 +70,9 @@ namespace SharpMp4Parser.IsoParser.Tools
             ByteArrayOutputStream bas = new ByteArrayOutputStream();
             for (int i = 0; i < hexString.Length; i += 2)
             {
-                int b = Convert.ToInt32(hexString.Substring(i, i + 2), 16);
-                bas.write(b);
+                string subStr = hexString.Substring(i, 2);
+                int b = (int)Convert.ToInt32(subStr, 16);
+                bas.write((byte)b);
             }
             return bas.toByteArray();
         }

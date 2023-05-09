@@ -3,7 +3,7 @@ using SharpMp4Parser.Muxer.Container.MP4;
 using SharpMp4Parser.Muxer;
 using System.Diagnostics;
 
-namespace SharpMp4Parser.Tests
+namespace SharpMp4Parser.Tests.Builder
 {
     /**
      * Just check it works.

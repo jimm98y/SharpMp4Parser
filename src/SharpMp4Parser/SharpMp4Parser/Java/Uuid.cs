@@ -256,5 +256,10 @@ namespace SharpMp4Parser.Java
             long hi = 1L << (digits * 4);
             return String.Format("{0:X}", (hi | (val & (hi - 1)))).Substring(1);
         }
+
+        public static Uuid randomUUID()
+        {
+            return Guid.NewGuid();
+        }
     }
 }

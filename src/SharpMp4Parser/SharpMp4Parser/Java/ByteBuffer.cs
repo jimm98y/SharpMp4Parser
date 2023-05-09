@@ -114,6 +114,11 @@ namespace SharpMp4Parser.Java
             putInt(value);
         }
 
+        public virtual void write(byte value)
+        {
+            put(value);
+        }
+
         public virtual int read()
         {
             return get();
