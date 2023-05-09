@@ -119,7 +119,7 @@ namespace SharpMp4Parser.IsoParser.Tools
                         if (thing is Container)
                         {
                             int index = -1;
-                            if (m.Groups.Count >= 3 && m.Groups[2].Value != null)
+                            if (m.Groups.Count >= 3 && !string.IsNullOrEmpty(m.Groups[2].Value))
                             {
                                 // we have a specific index
                                 string indexString = m.Groups[3].Value;
