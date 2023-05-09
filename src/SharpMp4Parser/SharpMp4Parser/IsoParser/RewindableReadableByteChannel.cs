@@ -31,7 +31,7 @@ namespace SharpMp4Parser.IsoParser
         private int nextBufferWritePosition;
         private int nextBufferReadPosition;
 
-        public RewindableReadableByteChannel(ReadableByteChannel readableByteChannel, int bufferCapacity)
+        public RewindableReadableByteChannel(ReadableByteChannel readableByteChannel, int bufferCapacity) : base(readableByteChannel)
         {
             buffer = allocate(bufferCapacity);
             this.readableByteChannel = readableByteChannel;

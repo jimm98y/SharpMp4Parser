@@ -34,8 +34,9 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
     public sealed class MediaDataBox : ParsableBox /*, Closeable */
     {
         public const string TYPE = "mdat";
-        //ByteBuffer header;
+        ByteBuffer header;
         //File dataFile;
+        long dataFilelength = 0;
 
         public string getType()
         {
@@ -44,8 +45,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
 
         public void getBox(WritableByteChannel writableByteChannel)
         {
-            throw new System.NotImplementedException();
-            //writableByteChannel.write((ByteBuffer)((Java.Buffer)header).rewind());
+            writableByteChannel.write((ByteBuffer)((Java.Buffer)header).rewind());
             //using (FileInputStream fis = new FileInputStream(dataFile))
             //{
             //    using (FileChannel fc = fis.getChannel())
@@ -57,8 +57,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
 
         public long getSize()
         {
-            throw new System.NotImplementedException();
-            //return 0; /* header.limit() + dataFile.length(); */
+            return header.limit() + dataFilelength;
         }
 
         /**
@@ -66,18 +65,20 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
          */
         public void parse(ReadableByteChannel dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
         {
-            throw new System.NotImplementedException();
             //dataFile = File.createTempFile("MediaDataBox", base.ToString());
 
             //// make sure to clean up temp file
             //dataFile.deleteOnExit();
 
-            //this.header = ByteBuffer.allocate(header.limit());
-            //this.header.put(header);
+            this.header = ByteBuffer.allocate(header.limit());
+            this.header.put(header);
             //using (RandomAccessFile raf = new RandomAccessFile(dataFile, "rw"))
             //{
             //    raf.getChannel().transferFrom(dataSource, 0, contentSize);
             //}
+            dataFilelength = contentSize;
+            byte[] data = new byte[contentSize];
+            dataSource.read(data, 0, (int)contentSize);
         }
 
         /*

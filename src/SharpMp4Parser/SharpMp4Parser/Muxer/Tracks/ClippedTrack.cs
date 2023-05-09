@@ -59,6 +59,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             {
                 long current = 0;
                 List<TimeToSampleBox.Entry>.Enumerator e = origSamples.GetEnumerator();
+                e.MoveNext();
                 List<TimeToSampleBox.Entry> nuList = new List<TimeToSampleBox.Entry>();
 
                 // Skip while not yet reached:
@@ -102,6 +103,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             {
                 long current = 0;
                 List<CompositionTimeToSample.Entry>.Enumerator e = origSamples.GetEnumerator();
+                e.MoveNext();
                 List<CompositionTimeToSample.Entry> nuList = new List<CompositionTimeToSample.Entry>();
 
                 // Skip while not yet reached:

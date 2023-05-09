@@ -131,7 +131,7 @@ namespace SharpMp4Parser.IsoParser.Tools
                             // using the iterator instead makes sure that this doesn't happen
                             // (and yes - it could be completely useless)
                             List<Box>.Enumerator iterator = ((Container)thing).getBoxes().GetEnumerator();
-                            do
+                            while (iterator.MoveNext())
                             {
                                 Box box1 = iterator.Current;
                                 if (box1.getType().CompareTo(type) == 0)
@@ -147,7 +147,6 @@ namespace SharpMp4Parser.IsoParser.Tools
                                     return children;
                                 }
                             }
-                            while (iterator.MoveNext());
                             return children;
                         }
                         else

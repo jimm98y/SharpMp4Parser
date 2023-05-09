@@ -552,7 +552,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part15
 
                 bool m1;
                 bool m2 = false;
-                do
+                while ((m1 = e1.MoveNext()) && (m2 = e2.MoveNext()))
                 {
                     byte[] o1 = e1.Current;
                     byte[] o2 = e2.Current;
@@ -560,7 +560,6 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part15
                     if (!(o1 == null ? o2 == null : o1.SequenceEqual(o2)))
                         return false;
                 }
-                while ((m1 = e1.MoveNext()) && (m2 = e2.MoveNext()));
 
                 return !(m1 || m2);
             }

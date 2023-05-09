@@ -21,6 +21,7 @@ using System.IO;
 using SharpMp4Parser.Java;
 using SharpMp4Parser.IsoParser.Boxes;
 using SharpMp4Parser.IsoParser.Tools;
+using System.Diagnostics;
 
 namespace SharpMp4Parser.IsoParser
 {
@@ -76,6 +77,8 @@ namespace SharpMp4Parser.IsoParser
             //System.err.println(type);
             byte[] usertype = null;
             long contentSize;
+
+            Debug.WriteLine($"--- {type}");
 
             if (size == 1)
             {

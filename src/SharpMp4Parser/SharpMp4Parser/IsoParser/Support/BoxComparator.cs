@@ -76,14 +76,14 @@ namespace SharpMp4Parser.IsoParser.Support
             List<Box>.Enumerator it1 = cb1.getBoxes().GetEnumerator();
             List<Box>.Enumerator it2 = cb2.getBoxes().GetEnumerator();
 
-            do
+            while (it1.MoveNext() && it2.MoveNext())
             {
                 Box b1 = it1.Current;
                 Box b2 = it2.Current;
 
                 check(root1, b1, root2, b2, ignores);
             }
-            while (it1.MoveNext() && it2.MoveNext());
+            
             //Debug.Assert(!it1.hasNext(), "There is a box missing in the current output of the tool: " + it1.next());
             //Debug.Assert(!it2.hasNext(), "There is a box too much in the current output of the tool: " + it2.next());
         }

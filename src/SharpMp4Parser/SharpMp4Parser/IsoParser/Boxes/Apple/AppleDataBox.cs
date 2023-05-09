@@ -107,7 +107,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.Apple
             language.Add("84", "MalayArabic");
             language.Add("85", "Amharic");
             language.Add("87", "Galla");
-            language.Add("87", "Oromo");
+            //language.Add("87", "Oromo");
             language.Add("88", "Somali");
             language.Add("89", "Swahili");
             language.Add("90", "Kinyarwanda");

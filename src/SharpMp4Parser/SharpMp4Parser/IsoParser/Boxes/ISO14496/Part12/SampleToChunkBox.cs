@@ -96,6 +96,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
             List<Entry> sampleToChunkEntries = new List<Entry>(entries);
             sampleToChunkEntries.Reverse();
             List<Entry>.Enumerator iterator = sampleToChunkEntries.GetEnumerator();
+            iterator.MoveNext();
             Entry currentEntry = iterator.Current;
 
             for (int i = numberOfSamples.Length; i > 1; i--)

@@ -70,6 +70,7 @@ namespace SharpMp4Parser.Muxer
                             {
                                 List<Box>.Enumerator it = isofile.getBoxes().GetEnumerator();
                                 baseOffset = 0;
+                                it.MoveNext();
                                 for (Box b = it.Current; b != movieFragmentBox; b = it.Current)
                                 {
                                     baseOffset += b.getSize();

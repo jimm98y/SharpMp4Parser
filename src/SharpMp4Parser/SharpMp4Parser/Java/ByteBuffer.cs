@@ -6,111 +6,40 @@ using System.Text;
 
 namespace SharpMp4Parser.Java
 {
-    public class BufferedReader
-    {
-        private InputStreamReader inputStreamReader;
-
-        public BufferedReader(InputStreamReader inputStreamReader)
-        {
-            this.inputStreamReader = inputStreamReader;
-        }
-
-        internal string readLine()
-        {
-            return inputStreamReader.readLine();
-        }
-    }
-
-    public class InputStreamReader
-    {
-        private ByteArrayInputStream input;
-        private string encoding;
-
-        public InputStreamReader(ByteArrayInputStream input, string encoding)
-        {
-            this.input = input;
-            this.encoding = encoding;
-        }
-
-        internal string readLine()
-        {
-            return input.readLine(encoding);
-        }
-    }
-
-    public static class Channels
-    {
-        public static WritableByteChannel newChannel(ByteArrayOutputStream outputStream)
-        {
-            return outputStream;
-        }
-
-        public static ReadableByteChannel newChannel(ByteArrayInputStream inputStream)
-        {
-            return inputStream;
-        }
-
-        public static ByteArrayInputStream newInputStream(ReadableByteChannel dataSource)
-        {
-            return new ByteArrayInputStream(dataSource);
-        }
-    }
-
-    public class InputStream : ByteBuffer
-    {
-        public InputStream()
-        { }
-
-        public InputStream(byte[] input) : base(input)
-        {
-
-        }
-
-        public InputStream(Java.Buffer input) : base(input)
-        { }
-    }
-
-    public class OutputStream : ByteBuffer
-    {
-        public OutputStream()
-        { }
-
-        public OutputStream(byte[] input) : base(input)
-        {
-
-        }
-
-        public OutputStream(Java.Buffer input) : base(input)
-        { }
-    }
-
     public class Buffer : Closeable
     {
-        protected MemoryStream _ms = new MemoryStream();
+        protected int _capacity = -1;
+
+        protected MemoryStream _ms = null;
 
         public Buffer()
         {
             _ms = new MemoryStream();
+            _capacity = _ms.Capacity;
         }
 
         public Buffer(int capacity)
         {
             _ms = new MemoryStream(capacity);
+            _capacity = _ms.Capacity;
         }
 
         public Buffer(Buffer input)
         {
             _ms = input._ms;
+            _capacity = _ms.Capacity;
         }
 
         public Buffer(MemoryStream input)
         {
             _ms = input;
+            _capacity = _ms.Capacity;
         }
 
         public Buffer(byte[] input)
         {
             _ms = new MemoryStream(input);
+            _capacity = _ms.Capacity;
         }
 
         public virtual Buffer duplicate()
@@ -120,7 +49,7 @@ namespace SharpMp4Parser.Java
 
         public int capacity()
         {
-            return _ms.Capacity;
+            return _capacity;
         }
 
         public byte[] array()
@@ -130,7 +59,7 @@ namespace SharpMp4Parser.Java
 
         public int remaining()
         {
-            return (int)(_ms.Length - _ms.Position);
+            return (int)(_ms.Capacity - _ms.Position);
         }
 
         public int position()
@@ -140,18 +69,26 @@ namespace SharpMp4Parser.Java
 
         public Buffer position(long position)
         {
-            _ms.Seek(position, SeekOrigin.Begin);
+            _ms.Position = Math.Min(position, _ms.Capacity);
             return this;
         }
 
         public void put(byte[] data)
         {
+            int oldCapacity = _ms.Capacity;
+
             _ms.Write(data, 0, data.Length);
+
+            if (_ms.Capacity > oldCapacity)
+            {
+                limit(oldCapacity);
+            }
         }
 
         public void put(Buffer buffer)
         {
-            byte[] data = buffer.toByteArray();
+            byte[] data = new byte[buffer._ms.Capacity - buffer._ms.Position];
+            buffer.read(data, 0, data.Length);
             put(data);
         }
 
@@ -194,7 +131,7 @@ namespace SharpMp4Parser.Java
 
         public Buffer rewind()
         {
-            _ms.Seek(0, SeekOrigin.Begin);
+            _ms.Position = 0;
             return this;
         }
 
@@ -258,19 +195,31 @@ namespace SharpMp4Parser.Java
 
         public int limit()
         {
-            return this.capacity();
+            return _ms.Capacity;
         }
+
+        private byte[] _original = null;
 
         public Buffer limit(int limit)
         {
-            if (this._ms.Length > limit)
-                this._ms = new MemoryStream(_ms.ToArray(), 0, limit);
-            else
+            if (this._original == null && this._ms.Length > 0)
             {
-                var oldMs = this._ms.ToArray();
-                this._ms = new MemoryStream(limit);
-                this._ms.Write(oldMs, 0, oldMs.Length);
+                this._original = this._ms.ToArray();
             }
+
+            var oldpos = this._ms.Position;
+            var oldMs = this._ms.ToArray();
+            
+            if(limit == this._capacity && this._original != null)
+            {
+                oldMs = this._original;
+                this._original = null;
+            }
+
+            this._ms = new MemoryStream(limit);
+            this._ms.Write(oldMs, 0, Math.Min(oldMs.Length, limit));
+
+            this._ms.Position = Math.Min(oldpos, limit);
             return this;
         }
 
@@ -311,7 +260,7 @@ namespace SharpMp4Parser.Java
 
         public void put(int index, byte value)
         {
-            _ms.Seek(index, SeekOrigin.Begin);
+            _ms.Position = 0;
             _ms.WriteByte(value);
         }
 
@@ -529,9 +478,8 @@ namespace SharpMp4Parser.Java
 
         public virtual int read(ByteBuffer bb)
         {
-            byte[] rm = new byte[bb.capacity()];
+            byte[] rm = new byte[Math.Min(bb._ms.Capacity, bb._capacity) - bb.position()];
             int ret = read(rm, 0, rm.Length);
-            bb.position(0);
             bb.write(rm, 0, ret);
             if (ret == 0)
                 return -1;
@@ -550,6 +498,84 @@ namespace SharpMp4Parser.Java
             base.position(nextBufferWritePosition);
             return this;
         }
+    }
+
+    public class BufferedReader
+    {
+        private InputStreamReader inputStreamReader;
+
+        public BufferedReader(InputStreamReader inputStreamReader)
+        {
+            this.inputStreamReader = inputStreamReader;
+        }
+
+        internal string readLine()
+        {
+            return inputStreamReader.readLine();
+        }
+    }
+
+    public class InputStreamReader
+    {
+        private ByteArrayInputStream input;
+        private string encoding;
+
+        public InputStreamReader(ByteArrayInputStream input, string encoding)
+        {
+            this.input = input;
+            this.encoding = encoding;
+        }
+
+        internal string readLine()
+        {
+            return input.readLine(encoding);
+        }
+    }
+
+    public static class Channels
+    {
+        public static WritableByteChannel newChannel(ByteArrayOutputStream outputStream)
+        {
+            return outputStream;
+        }
+
+        public static ReadableByteChannel newChannel(ByteArrayInputStream inputStream)
+        {
+            return inputStream;
+        }
+
+        public static ByteArrayInputStream newInputStream(ReadableByteChannel dataSource)
+        {
+            return new ByteArrayInputStream(dataSource);
+        }
+    }
+
+    public class InputStream : ByteBuffer
+    {
+        public InputStream()
+        { }
+
+        public InputStream(byte[] input) : base(input)
+        {
+
+        }
+
+        public InputStream(Java.Buffer input) : base(input)
+        { }
+    }
+
+    public class OutputStream : ByteBuffer
+    {
+        public OutputStream()
+        { }
+
+        public OutputStream(byte[] input) : base(input)
+        {
+
+        }
+
+        public OutputStream(Java.Buffer input) : base(input)
+        { }
     }
 
     public class MappedByteBuffer : ByteBuffer

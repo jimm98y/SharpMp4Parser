@@ -202,7 +202,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             {
                 List<Box>.Enumerator bxs1 = vse1.getBoxes().GetEnumerator();
                 List<Box>.Enumerator bxs2 = vse2.getBoxes().GetEnumerator();
-                do
+                while (bxs1.MoveNext() && bxs2.MoveNext())
                 {
                     Box cur1 = bxs1.Current;
                     Box cur2 = bxs2.Current;
@@ -232,7 +232,6 @@ namespace SharpMp4Parser.Muxer.Tracks
                         }
                     }
                 }
-                while (bxs1.MoveNext());
             }
             return vse;
         }
@@ -335,7 +334,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             {
                 List<Box>.Enumerator bxs1 = ase1.getBoxes().GetEnumerator();
                 List<Box>.Enumerator bxs2 = ase2.getBoxes().GetEnumerator();
-                do
+                while (bxs1.MoveNext() && bxs2.MoveNext())
                 {
                     Box cur1 = bxs1.Current;
                     Box cur2 = bxs2.Current;
@@ -367,7 +366,6 @@ namespace SharpMp4Parser.Muxer.Tracks
                         }
                     }
                 }
-                while (bxs1.MoveNext());
             }
             return ase;
 

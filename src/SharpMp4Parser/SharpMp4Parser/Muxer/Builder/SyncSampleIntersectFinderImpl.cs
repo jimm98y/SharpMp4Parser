@@ -351,7 +351,7 @@ namespace SharpMp4Parser.Muxer.Builder
                 long lastSyncSampleTime = -1;
                 List<long>.Enumerator nuSyncSamplesIterator = nuSyncSamples.GetEnumerator();
                 List<long>.Enumerator nuSyncSampleTimesIterator = nuSyncSampleTimes.GetEnumerator();
-                do
+                while (nuSyncSamplesIterator.MoveNext() && nuSyncSampleTimesIterator.MoveNext())
                 {
                     long curSyncSample = nuSyncSamplesIterator.Current;
                     long curSyncSampleTime = nuSyncSampleTimesIterator.Current;
@@ -361,7 +361,6 @@ namespace SharpMp4Parser.Muxer.Builder
                         lastSyncSampleTime = curSyncSampleTime;
                     }
                 }
-                while (nuSyncSamplesIterator.MoveNext() && nuSyncSampleTimesIterator.MoveNext());
             }
             else
             {
