@@ -611,7 +611,8 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
             currentPictureParameterSet = _pictureParameterSet;
 
 
-            ByteBuffer oldPpsSameId = ppsIdToPpsBytes[_pictureParameterSet.pic_parameter_set_id];
+            ByteBuffer oldPpsSameId = null;
+            ppsIdToPpsBytes.TryGetValue(_pictureParameterSet.pic_parameter_set_id, out oldPpsSameId);
 
             ((Java.Buffer)data).rewind();
             if (oldPpsSameId != null && !oldPpsSameId.Equals(data))
@@ -642,7 +643,8 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
             currentSeqParameterSet = _seqParameterSet;
 
             ((Java.Buffer)data).rewind();
-            ByteBuffer oldSpsSameId = spsIdToSpsBytes[_seqParameterSet.seq_parameter_set_id];
+            ByteBuffer oldSpsSameId;
+            spsIdToSpsBytes.TryGetValue(_seqParameterSet.seq_parameter_set_id, out oldSpsSameId);
             if (oldSpsSameId != null && !oldSpsSameId.Equals(data))
             {
                 throw new Exception("OMG - I got two SPS with same ID but different settings!");
