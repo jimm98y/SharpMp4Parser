@@ -51,7 +51,10 @@ namespace SharpMp4Parser.Muxer.Container.MP4
             long[] chunkSizes = new long[chunkOffsets.Length];
 
             cache = new WeakReference<ByteBuffer>[chunkOffsets.Length];
-            Arrays.fill(cache, new WeakReference<ByteBuffer>(null));
+            for (int i = 0; i < cache.Length; i++)
+            {
+                cache[i] = new WeakReference<ByteBuffer>(null);
+            }
 
             sampleOffsetsWithinChunks = new long[chunkOffsets.Length][];
             chunkNumsToSampleDescriptionIndex = new int[chunkOffsets.Length];

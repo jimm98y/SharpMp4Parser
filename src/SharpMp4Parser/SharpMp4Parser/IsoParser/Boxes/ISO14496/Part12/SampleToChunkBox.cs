@@ -37,6 +37,11 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
 
         public List<Entry> getEntries()
         {
+            if (!isParsed)
+            {
+                parseDetails();
+            }
+
             return entries;
         }
 

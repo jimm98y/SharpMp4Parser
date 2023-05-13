@@ -17,6 +17,11 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
 
         public override long[] getChunkOffsets()
         {
+            if (!isParsed)
+            {
+                parseDetails();
+            }
+
             return chunkOffsets;
         }
 

@@ -59,7 +59,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
             lock (_syncRoot)
             {
                 WeakReference<long[]> cacheEntry;
-                if ((cacheEntry = cache[entries]) != null)
+                if (cache.ContainsKey(entries) && (cacheEntry = cache[entries]) != null)
                 {
                     long[] cacheVal;
                     if (cacheEntry.TryGetTarget(out cacheVal))
