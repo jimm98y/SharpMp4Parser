@@ -27,8 +27,7 @@ namespace SharpMp4Parser.Tests.Tracks
                 h264Fis.CopyTo(h264Ms);
                 h264Ms.Position = 0;
 
-                var h264Buff = new ReadableByteChannel(new Java.Buffer(h264Ms));
-                var h264DataSource = new MemoryDataSourceImpl(h264Buff);
+                var h264DataSource = new MemoryDataSourceImpl(h264Ms.ToArray());
 
                 H264TrackImpl.BUFFER = 65535; // make sure we are not just in one buffer
                 Track t = new H264TrackImpl(h264DataSource);
@@ -46,7 +45,7 @@ namespace SharpMp4Parser.Tests.Tracks
                     resFis.CopyTo(resMs);
                     resMs.Position = 0;
 
-                    var resBuff = new ReadableByteChannel(new Java.Buffer(resMs));
+                    var resBuff = new ReadableByteChannel(resMs.ToArray());
                     IsoFile isoFileReference = new IsoFile(resBuff);
                     BoxComparator.check(c, isoFileReference, "moov[0]/mvhd[0]", "moov[0]/trak[0]/tkhd[0]", "moov[0]/trak[0]/mdia[0]/mdhd[0]", "moov[0]/trak[0]/mdia[0]/minf[0]/stbl[0]/stco[0]");
                     resFis.Close();

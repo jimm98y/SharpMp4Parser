@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Diagnostics;
+using System.Linq;
 
 namespace SharpMp4Parser.Muxer.Tracks.H264
 {
@@ -625,8 +626,8 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
                 {
                     pictureParameterRangeMap.Add(samples.Count, data);
                 }
-                ppsIdToPpsBytes.Add(_pictureParameterSet.pic_parameter_set_id, data);
-                ppsIdToPps.Add(_pictureParameterSet.pic_parameter_set_id, _pictureParameterSet);
+                ppsIdToPpsBytes[_pictureParameterSet.pic_parameter_set_id] = data;
+                ppsIdToPps[_pictureParameterSet.pic_parameter_set_id] = _pictureParameterSet;
             }
         }
 
@@ -655,8 +656,8 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
                 {
                     seqParameterRangeMap.Add(samples.Count, data);
                 }
-                spsIdToSpsBytes.Add(_seqParameterSet.seq_parameter_set_id, data);
-                spsIdToSps.Add(_seqParameterSet.seq_parameter_set_id, _seqParameterSet);
+                spsIdToSpsBytes[_seqParameterSet.seq_parameter_set_id] = data;
+                spsIdToSps[_seqParameterSet.seq_parameter_set_id] = _seqParameterSet;
             }
         }
 
@@ -693,7 +694,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
         {
             private readonly ByteBuffer buf;
 
-            public ByteBufferBackedInputStream(ByteBuffer buf) : base(buf)
+            public ByteBufferBackedInputStream(ByteBuffer buf) : base(buf.array().Skip(buf.arrayOffset()).ToArray())
             {
                 // make a coy of the buffer
                 this.buf = (ByteBuffer)buf.duplicate();

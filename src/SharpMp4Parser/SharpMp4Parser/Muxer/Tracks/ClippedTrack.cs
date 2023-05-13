@@ -148,7 +148,7 @@ namespace SharpMp4Parser.Muxer.Tracks
 
         public override IList<Sample> getSamples()
         {
-            return origTrack.getSamples().ToList().GetRange(fromSample, toSample);
+            return origTrack.getSamples().ToList().GetRange(fromSample, toSample - fromSample);
         }
 
         public override List<SampleEntry> getSampleEntries()
@@ -205,7 +205,7 @@ namespace SharpMp4Parser.Muxer.Tracks
         {
             if (origTrack.getSampleDependencies() != null && origTrack.getSampleDependencies().Count != 0)
             {
-                return origTrack.getSampleDependencies().GetRange(fromSample, toSample);
+                return origTrack.getSampleDependencies().GetRange(fromSample, toSample - fromSample);
             }
             else
             {

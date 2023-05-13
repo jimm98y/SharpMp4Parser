@@ -65,7 +65,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
                 }
 
                 pic_parameter_set_id = reader.readUE("SliceHeader: pic_parameter_set_id");
-                pps = ppss[pic_parameter_set_id];
+                ppss.TryGetValue(pic_parameter_set_id, out pps);
                 if (pps == null)
                 {
                     string ids = "";

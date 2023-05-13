@@ -79,7 +79,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
 
         public override string ToString()
         {
-            return "SyncSampleBox[entryCount=" + sampleNumber.Length + "]";
+            return "SyncSampleBox[entryCount=" + (sampleNumber == null ? 0 : sampleNumber.Length) + "]";
         }
     }
 }

@@ -38,8 +38,9 @@ namespace SharpMp4Parser.Muxer.Container.MP4
                 fis.CopyTo(ms);
                 ms.Position = 0;
 
-                var buff = new ReadableByteChannel(new Buffer(ms));
-                Movie m = build(buff, new InMemRandomAccessSourceImpl(buff), file);
+                var array = ms.ToArray();
+                var buff = new ReadableByteChannel(array);
+                Movie m = build(buff, new InMemRandomAccessSourceImpl(array), file);
                 fis.Close();
                 return m;
             }

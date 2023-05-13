@@ -22,8 +22,7 @@ namespace SharpMp4Parser.Tests.Tracks
                 aacFis.CopyTo(aacMs);
                 aacMs.Position = 0;
 
-                var aacBuff = new ReadableByteChannel(new Java.Buffer(aacMs));
-                var aacDataSource = new MemoryDataSourceImpl(aacBuff);
+                var aacDataSource = new MemoryDataSourceImpl(aacMs.ToArray());
 
                 Track t = new AACTrackImpl(aacDataSource);
                 //Track t = new AACTrackImpl2(new FileInputStream(this.getClass().getProtectionDomain().getCodeSource().getLocation().getFile() + "/com/googlecode/mp4parser/authoring/tracks/aac-sample.aac"));
@@ -40,7 +39,7 @@ namespace SharpMp4Parser.Tests.Tracks
                     isoFis.CopyTo(isoMs);
                     isoMs.Position = 0;
 
-                    var isoBuff = new ReadableByteChannel(new Java.Buffer(isoMs));
+                    var isoBuff = new ReadableByteChannel(isoMs.ToArray());
 
                     IsoFile isoFileReference = new IsoFile(isoBuff);
                     BoxComparator.check(c, isoFileReference, "moov[0]/mvhd[0]", "moov[0]/trak[0]/tkhd[0]", "moov[0]/trak[0]/mdia[0]/mdhd[0]", "moov[0]/trak[0]/mdia[0]/minf[0]/stbl[0]/stco[0]");

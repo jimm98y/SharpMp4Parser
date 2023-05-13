@@ -453,7 +453,7 @@ namespace SharpMp4Parser.Streaming.Output.MP4
                     (byte) ((size & 0xff)),
                     109, 100, 97, 116, // mdat
 
-            }));
+                }));
                 foreach (StreamingSample sample in samples)
                 {
                     writableByteChannel.write((ByteBuffer)sample.getContent().rewind());

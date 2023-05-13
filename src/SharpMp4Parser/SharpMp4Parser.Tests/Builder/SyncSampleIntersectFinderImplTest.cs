@@ -46,7 +46,7 @@ namespace SharpMp4Parser.Tests.Builder
             //        long[] b_1 = new long[]{10, 20, 26, 30, 40, 80};
             //        long[] b_2 = new long[]{10, 20, 25, 30, 40, 80};
             //        long[] a_2 = SyncSampleIntersectFinderImpl.getCommonIndices(a_sample, a_times, 10, b_1, b_2);
-            Assert.AreEqual(new long[] { 20, 40, 60, 80 }, a_2);
+            Assert.IsTrue(Enumerable.SequenceEqual(new long[] { 20, 40, 60, 80 }, a_2));
         }
 
         [TestMethod]
@@ -58,7 +58,7 @@ namespace SharpMp4Parser.Tests.Builder
             long[] b_1 = new long[] { 10, 20, 26, 30, 40, 80, 81, 100 };
             long[] b_2 = new long[] { 10, 20, 25, 30, 40, 80, 90, 100 };
             long[] a_2 = syncSampleIntersectFinder.getCommonIndices(a_sample, a_times, 10, b_1, b_2);
-            Assert.AreEqual(new long[] { 20, 60, 90 }, a_2);
+            Assert.IsTrue(Enumerable.SequenceEqual(new long[] { 20, 60, 90 }, a_2));
         }
 
         [TestMethod]

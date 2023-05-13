@@ -37,7 +37,7 @@ namespace SharpMp4Parser.Streaming.Input.MP4
          * @param size the initial size.
          * @throws IllegalArgumentException if size is negative.
          */
-        public DiscardingByteArrayOutputStream(int size)
+        public DiscardingByteArrayOutputStream(int size) : base(new StreamBase())
         {
             if (size < 0)
             {

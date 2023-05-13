@@ -105,17 +105,16 @@ namespace SharpMp4Parser.IsoParser.Tools
 
         public static long readUInt64(ByteBuffer byteBuffer)
         {
-            //long result = 0;
-            //// thanks to Erik Nicolas for finding a bug! Cast to long is definitivly needed
-            //result += readUInt32(byteBuffer) << 32;
-            //if (result < 0)
-            //{
-            //    throw new Exception("I don't know how to deal with UInt64! long is not sufficient and I don't want to use BigInt");
-            //}
-            //result += readUInt32(byteBuffer);
+            long result = 0;
+            // thanks to Erik Nicolas for finding a bug! Cast to long is definitivly needed
+            result += readUInt32(byteBuffer) << 32;
+            if (result < 0)
+            {
+                throw new Exception("I don't know how to deal with UInt64! long is not sufficient and I don't want to use BigInt");
+            }
+            result += readUInt32(byteBuffer);
 
-            //return result;
-            return (long)byteBuffer.getULong();
+            return result;
         }
 
         public static double readFixedPoint1616(ByteBuffer bb)
@@ -185,15 +184,14 @@ namespace SharpMp4Parser.IsoParser.Tools
 
         public static long readUInt48(ByteBuffer byteBuffer)
         {
-            //long result = (long)readUInt16(byteBuffer) << 32;
-            //if (result < 0)
-            //{
-            //    throw new Exception("I don't know how to deal with UInt64! long is not sufficient and I don't want to use BigInt");
-            //}
-            //result += readUInt32(byteBuffer);
+            long result = (long)readUInt16(byteBuffer) << 32;
+            if (result < 0)
+            {
+                throw new Exception("I don't know how to deal with UInt64! long is not sufficient and I don't want to use BigInt");
+            }
+            result += readUInt32(byteBuffer);
 
-            //return result;
-            return (long)byteBuffer.getUInt48();
+            return result;
         }
     }
 }

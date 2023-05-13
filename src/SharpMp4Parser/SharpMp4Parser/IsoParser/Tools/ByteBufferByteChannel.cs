@@ -28,7 +28,7 @@ namespace SharpMp4Parser.IsoParser.Tools
         public ByteBufferByteChannel(byte[] byteArray) : this(ByteBuffer.wrap(byteArray))
         { }
 
-        public ByteBufferByteChannel(ByteBuffer byteBuffer)
+        public ByteBufferByteChannel(ByteBuffer byteBuffer) : base(byteBuffer.array())
         {
             this.byteBuffer = byteBuffer;
         }
@@ -40,7 +40,7 @@ namespace SharpMp4Parser.IsoParser.Tools
             {
                 return -1;
             }
-            dst.put(byteBuffer.duplicate().limit(byteBuffer.position() + dst.remaining()));
+            dst.put((ByteBuffer)byteBuffer.duplicate().limit(byteBuffer.position() + dst.remaining()));
             ((Buffer)byteBuffer).position(byteBuffer.position() + rem);
             return rem;
         }
@@ -55,10 +55,10 @@ namespace SharpMp4Parser.IsoParser.Tools
             base.close();
         }
 
-        public override int write(Buffer src)
+        public override int write(ByteBuffer src)
         {
             int r = src.remaining();
-            byteBuffer.put(src);
+            byteBuffer.put((ByteBuffer)src);
             return r;
         }
     }

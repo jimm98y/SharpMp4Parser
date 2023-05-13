@@ -576,9 +576,9 @@ namespace SharpMp4Parser.Muxer.Builder
                         offset += track2SampleSizes[nextChunksTrack][j];
                         time += (double)durs[j] / nextChunksTrack.getTrackMetaData().getTimescale();
                     }
-                    trackToChunk.Add(nextChunksTrack, nextChunksIndex + 1);
-                    trackToSample.Add(nextChunksTrack, startSample + numberOfSampleInNextChunk);
-                    trackToTime.Add(nextChunksTrack, time);
+                    trackToChunk[nextChunksTrack] = nextChunksIndex + 1;
+                    trackToSample[nextChunksTrack] = startSample + numberOfSampleInNextChunk;
+                    trackToTime[nextChunksTrack] = time;
                 }
 
             }
@@ -778,11 +778,11 @@ namespace SharpMp4Parser.Muxer.Builder
                     {
                         time += (double)nextChunksTrack.getSampleDurations()[j] / nextChunksTrack.getTrackMetaData().getTimescale();
                     }
-                    chunkList.Add(nextChunksTrack.getSamples().ToList().GetRange(startSample, startSample + numberOfSampleInNextChunk));
+                    chunkList.Add(nextChunksTrack.getSamples().ToList().GetRange(startSample, numberOfSampleInNextChunk));
 
-                    trackToChunk.Add(nextChunksTrack, nextChunksIndex + 1);
-                    trackToSample.Add(nextChunksTrack, startSample + numberOfSampleInNextChunk);
-                    trackToTime.Add(nextChunksTrack, time);
+                    trackToChunk[nextChunksTrack] = nextChunksIndex + 1;
+                    trackToSample[nextChunksTrack] = startSample + numberOfSampleInNextChunk;
+                    trackToTime[nextChunksTrack] = time;
                 }
             }
 

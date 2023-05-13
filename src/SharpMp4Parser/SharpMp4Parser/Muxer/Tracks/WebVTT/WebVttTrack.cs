@@ -39,7 +39,7 @@ namespace SharpMp4Parser.Muxer.Tracks.WebVTT
                 vtte = ByteBuffer.allocate(CastUtils.l2i(vttEmptyCueBox.getSize()));
                 try
                 {
-                    vttEmptyCueBox.getBox(new WritableByteChannel(vtte)); // originally bytebufferchannel
+                    vttEmptyCueBox.getBox(new WritableByteChannel(new Java.StreamBase(vtte.array()))); // originally bytebufferchannel
                 }
                 catch (Exception)
                 {

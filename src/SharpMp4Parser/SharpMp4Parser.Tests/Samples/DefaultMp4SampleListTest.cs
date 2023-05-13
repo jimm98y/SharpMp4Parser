@@ -158,10 +158,10 @@ namespace SharpMp4Parser.Tests.Samples
                 fis.CopyTo(ms);
                 ms.Position = 0;
 
-                var buff = new ReadableByteChannel(new Java.Buffer(ms));
+                var buff = new ReadableByteChannel(ms.ToArray());
 
                 IsoFile isoFile = new IsoFile(buff);
-                Mp4SampleList sl = new Mp4SampleList(1, isoFile, new InMemRandomAccessSourceImpl(buff));
+                Mp4SampleList sl = new Mp4SampleList(1, isoFile, new InMemRandomAccessSourceImpl(ms.ToArray()));
                 
                 using (MD5 md5 = MD5.Create())
                 {
