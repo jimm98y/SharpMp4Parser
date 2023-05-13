@@ -1,8 +1,23 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace SharpMp4Parser.Java
 {
+    public static class ListExtensions
+    {
+        public static List<T> GetRange<T>(this IList<T> list, int startIndex, int length)
+        {
+            List<T> ret = new List<T>();
+            for(int i = startIndex; i < Math.Min(list.Count, length); i++)
+            {
+                ret.Add(list[i]);
+            }
+
+            return ret;
+        }
+    }
+
     public class AbstractList<T> : IList<T>
     {
         public virtual T get(int index)
@@ -15,11 +30,11 @@ namespace SharpMp4Parser.Java
             return _list.Count;
         }
 
-        private List<T> _list = new List<T>();
+        protected List<T> _list = new List<T>();
 
-        public T this[int index] { get => _list[index]; set => _list[index] = value; }
+        public T this[int index] { get => get(index); set => _list[index] = value; }
 
-        public int Count => _list.Count;
+        public int Count => size();
 
         public bool IsReadOnly => false;
 

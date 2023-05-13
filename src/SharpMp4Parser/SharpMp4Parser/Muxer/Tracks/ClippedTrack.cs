@@ -16,6 +16,7 @@
 
 using SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12;
 using SharpMp4Parser.IsoParser.Boxes.SampleEntry;
+using SharpMp4Parser.Java;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -148,7 +149,7 @@ namespace SharpMp4Parser.Muxer.Tracks
 
         public override IList<Sample> getSamples()
         {
-            return origTrack.getSamples().ToList().GetRange(fromSample, toSample - fromSample);
+            return origTrack.getSamples().GetRange(fromSample, toSample - fromSample);
         }
 
         public override List<SampleEntry> getSampleEntries()

@@ -778,7 +778,7 @@ namespace SharpMp4Parser.Muxer.Builder
                     {
                         time += (double)nextChunksTrack.getSampleDurations()[j] / nextChunksTrack.getTrackMetaData().getTimescale();
                     }
-                    chunkList.Add(nextChunksTrack.getSamples().ToList().GetRange(startSample, numberOfSampleInNextChunk));
+                    chunkList.Add(nextChunksTrack.getSamples().GetRange(startSample, numberOfSampleInNextChunk));
 
                     trackToChunk[nextChunksTrack] = nextChunksIndex + 1;
                     trackToSample[nextChunksTrack] = startSample + numberOfSampleInNextChunk;

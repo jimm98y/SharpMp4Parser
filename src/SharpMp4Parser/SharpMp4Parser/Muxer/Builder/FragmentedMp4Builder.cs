@@ -112,8 +112,8 @@ namespace SharpMp4Parser.Muxer.Builder
                 {
                     long[] nuStartSamples = new long[startSamples.Length - 1];
                     System.Array.Copy(startSamples, 1, nuStartSamples, 0, nuStartSamples.Length);
-                    intersectionMap.Add(earliestTrack, nuStartSamples);
-                    track2currentTime.Add(earliestTrack, earliestTime);
+                    intersectionMap[earliestTrack] = nuStartSamples;
+                    track2currentTime[earliestTrack] = earliestTime;
                 }
 
                 sequence++;
@@ -323,7 +323,7 @@ namespace SharpMp4Parser.Muxer.Builder
         {
             SampleEncryptionBox senc = new SampleEncryptionBox();
             senc.setSubSampleEncryption(track.hasSubSampleEncryption());
-            senc.setEntries(track.getSampleEncryptionEntries().GetRange(CastUtils.l2i(startSample - 1), CastUtils.l2i(endSample - 1) - (CastUtils.l2i(startSample - 1))));
+            senc.setEntries(track.getSampleEncryptionEntries().GetRange(CastUtils.l2i(startSample - 1), CastUtils.l2i(endSample -startSample)));
             parent.addBox(senc);
         }
 
@@ -380,7 +380,7 @@ namespace SharpMp4Parser.Muxer.Builder
             {
                 short[] sizes = new short[CastUtils.l2i(endSample - startSample)];
                 List<CencSampleAuxiliaryDataFormat> auxs =
-                        track.getSampleEncryptionEntries().GetRange(CastUtils.l2i(startSample - 1), CastUtils.l2i(endSample - 1) - (CastUtils.l2i(startSample - 1)));
+                        track.getSampleEncryptionEntries().GetRange(CastUtils.l2i(startSample - 1), CastUtils.l2i(endSample - startSample));
                 for (int i = 0; i < sizes.Length; i++)
                 {
                     sizes[i] = (short)auxs[i].getSize();
@@ -408,7 +408,7 @@ namespace SharpMp4Parser.Muxer.Builder
         protected List<Sample> getSamples(long startSample, long endSample, Track track)
         {
             // since startSample and endSample are one-based substract 1 before addressing list elements
-            return track.getSamples().ToList().GetRange(CastUtils.l2i(startSample) - 1, CastUtils.l2i(endSample) - 1 - (CastUtils.l2i(startSample) - 1));
+            return track.getSamples().GetRange(CastUtils.l2i(startSample) - 1, CastUtils.l2i(endSample - startSample));
         }
 
         /**

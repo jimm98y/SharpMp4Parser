@@ -32,7 +32,7 @@ namespace SharpMp4Parser.IsoParser.Tools
          */
         static public DateTime convert(long secondsSince)
         {
-            return new DateTime((secondsSince - 2082844800) * 1000);
+            return new DateTime(1904, 1, 1).AddSeconds(secondsSince);
         }
 
         /**
@@ -43,7 +43,7 @@ namespace SharpMp4Parser.IsoParser.Tools
          */
         static public long convert(DateTime date)
         {
-            return date.getTime() / 1000 + 2082844800;
+            return (long)date.Subtract(new DateTime(1904, 1, 1)).TotalSeconds;
         }
     }
 }

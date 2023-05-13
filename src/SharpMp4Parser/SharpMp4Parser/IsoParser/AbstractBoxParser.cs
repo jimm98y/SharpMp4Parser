@@ -22,6 +22,7 @@ using SharpMp4Parser.Java;
 using SharpMp4Parser.IsoParser.Boxes;
 using SharpMp4Parser.IsoParser.Tools;
 using System.Diagnostics;
+using SharpMp4Parser.IsoParser.Support;
 
 namespace SharpMp4Parser.IsoParser
 {
@@ -124,6 +125,12 @@ namespace SharpMp4Parser.IsoParser
             header.rewind();
 
             parsableBox.parse(byteChannel, header, contentSize, this);
+
+            if (parsableBox is AbstractBox ab)
+            {
+                ab.parseDetails();
+            }
+
             return parsableBox;
         }
 

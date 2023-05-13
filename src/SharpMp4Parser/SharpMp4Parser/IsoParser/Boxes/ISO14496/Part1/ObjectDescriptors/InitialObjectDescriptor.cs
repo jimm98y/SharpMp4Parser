@@ -46,7 +46,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part1.ObjectDescriptors
     ExtensionDescriptor extDescr[0 .. 255];
     }
     */
-    //@Descriptor(tags = {0x02, 0x10})
+    [Descriptor(Tags = new int[] {0x02, 0x10})]
     public abstract class InitialObjectDescriptor : ObjectDescriptorBase
     {
         int urlFlag;

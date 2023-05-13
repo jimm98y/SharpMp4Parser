@@ -337,7 +337,7 @@ namespace SharpMp4Parser.Muxer
 
         public override IList<Sample> getSamples()
         {
-            return samples.ToList();
+            return samples;
         }
 
         private readonly object _syncRoot = new object();

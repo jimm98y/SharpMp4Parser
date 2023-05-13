@@ -58,7 +58,7 @@ namespace SharpMp4Parser.Streaming.Output.MP4
         {
             this.source = new List<StreamingTrack>(source);
             this.sink = sink;
-            this.creationTime = new DateTime();
+            this.creationTime = DateTime.UtcNow;
             List<long> trackIds = new List<long>();
             foreach (StreamingTrack streamingTrack in source)
             {

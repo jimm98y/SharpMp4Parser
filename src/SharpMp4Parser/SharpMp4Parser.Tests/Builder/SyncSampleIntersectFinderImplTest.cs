@@ -27,7 +27,7 @@ namespace SharpMp4Parser.Tests.Builder
                 }
                 else
                 {
-                    Assert.AreEqual(fragmentStartSamplesRef, fragmentStartSamples);
+                    Assert.IsTrue(Enumerable.SequenceEqual(fragmentStartSamplesRef, fragmentStartSamples));
                 }
             }
         }

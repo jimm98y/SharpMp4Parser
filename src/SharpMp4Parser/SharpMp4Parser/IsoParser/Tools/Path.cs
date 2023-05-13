@@ -82,7 +82,7 @@ namespace SharpMp4Parser.IsoParser.Tools
 
             if (path.Length == 0)
             {
-                if (thing is ParsableBox)
+                if (thing is ParsableBox p)
                 {
                     return new List<T> { (T)thing };
                 }

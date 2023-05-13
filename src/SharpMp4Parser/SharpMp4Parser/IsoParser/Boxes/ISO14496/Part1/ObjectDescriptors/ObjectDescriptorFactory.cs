@@ -134,7 +134,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part1.ObjectDescriptors
             annotated.Add(typeof(ExtensionProfileLevelDescriptor));
             annotated.Add(typeof(ESDescriptor));
             annotated.Add(typeof(DecoderConfigDescriptor));
-            //annotated.add(ObjectDescriptor.class);
+            //annotated.Add(typeof(ObjectDescriptor));
 
             foreach (Type clazz in annotated)
             {
@@ -142,16 +142,17 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part1.ObjectDescriptors
                 int[] tags = descriptor.Tags;
                 int objectTypeInd = descriptor.ObjectTypeIndication;
 
-                Dictionary<int, Type> tagMap = descriptorRegistry[objectTypeInd];
+                Dictionary<int, Type> tagMap;
+                descriptorRegistry.TryGetValue(objectTypeInd, out tagMap);
                 if (tagMap == null)
                 {
                     tagMap = new Dictionary<int, Type>();
                 }
                 foreach (int tag in tags)
                 {
-                    tagMap.Add(tag, clazz);
+                    tagMap[tag] = clazz;
                 }
-                descriptorRegistry.Add(objectTypeInd, tagMap);
+                descriptorRegistry[objectTypeInd] = tagMap;
             }
         }
 

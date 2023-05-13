@@ -72,6 +72,11 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
 
         public string getHandlerType()
         {
+            if(!isParsed)
+            {
+                parseDetails();
+            }
+
             return handlerType;
         }
 

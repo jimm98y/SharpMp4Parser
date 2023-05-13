@@ -24,7 +24,6 @@ namespace SharpMp4Parser.Muxer.Container.MP4
         private RandomAccessSource randomAccess;
         private List<SampleEntry> sampleEntries;
 
-
         public DefaultMp4SampleList(long track, IsoParser.Container topLevel, RandomAccessSource randomAccessFile)
         {
             this.randomAccess = randomAccessFile;

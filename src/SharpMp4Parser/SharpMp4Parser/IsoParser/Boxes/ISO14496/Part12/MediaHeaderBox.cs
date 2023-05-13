@@ -42,6 +42,11 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
 
         public DateTime getCreationTime()
         {
+            if(!isParsed)
+            {
+                parseDetails();
+            }
+
             return creationTime;
         }
 
@@ -52,6 +57,11 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
 
         public DateTime getModificationTime()
         {
+            if (!isParsed)
+            {
+                parseDetails();
+            }
+
             return modificationTime;
         }
 
@@ -62,6 +72,11 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
 
         public long getTimescale()
         {
+            if (!isParsed)
+            {
+                parseDetails();
+            }
+
             return timescale;
         }
 
@@ -72,6 +87,11 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
 
         public long getDuration()
         {
+            if (!isParsed)
+            {
+                parseDetails();
+            }
+
             return duration;
         }
 
@@ -82,6 +102,11 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
 
         public string getLanguage()
         {
+            if (!isParsed)
+            {
+                parseDetails();
+            }
+
             return language;
         }
 
