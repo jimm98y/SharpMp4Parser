@@ -49,7 +49,7 @@ namespace SharpMp4Parser.Muxer.Builder
 
         public DateTime getDate()
         {
-            return new DateTime();
+            return DateTime.UtcNow;
         }
 
         public ParsableBox createFtyp(Movie movie)

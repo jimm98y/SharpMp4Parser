@@ -13,7 +13,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.Apple
     {
         DateTimeFormat df;
 
-        DateTime date = new DateTime();
+        DateTime date = DateTime.UtcNow;
 
         public AppleRecordingYearBox() : base("©day", 1)
         {

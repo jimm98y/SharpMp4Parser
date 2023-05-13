@@ -273,8 +273,8 @@ namespace SharpMp4Parser.Muxer.Tracks
 
             audioSampleEntry = createAudioSampleEntry();
 
-            trackMetaData.setCreationTime(new DateTime());
-            trackMetaData.setModificationTime(new DateTime());
+            trackMetaData.setCreationTime(DateTime.UtcNow);
+            trackMetaData.setModificationTime(DateTime.UtcNow);
             trackMetaData.setLanguage(lang);
             trackMetaData.setTimescale(audioSampleEntry.getSampleRate()); // Audio tracks always use samplerate as timescale
             trackMetaData.setVolume(1);

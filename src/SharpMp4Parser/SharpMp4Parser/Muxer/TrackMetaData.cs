@@ -32,8 +32,8 @@ namespace SharpMp4Parser.Muxer
         int layer;
         private string language = "eng";
         private long timescale;
-        private DateTime modificationTime = new DateTime();
-        private DateTime creationTime = new DateTime();
+        private DateTime modificationTime = DateTime.UtcNow;
+        private DateTime creationTime = DateTime.UtcNow;
         private Matrix matrix = Matrix.ROTATE_0;
         private double width;
         private double height;

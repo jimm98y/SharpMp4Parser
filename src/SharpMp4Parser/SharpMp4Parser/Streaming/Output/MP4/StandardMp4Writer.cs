@@ -25,7 +25,7 @@ namespace SharpMp4Parser.Streaming.Output.MP4
         //private static Logger LOG = LoggerFactory.getLogger(FragmentedMp4Writer.class.getName());
         protected readonly WritableByteChannel sink;
         protected List<StreamingTrack> source;
-        protected DateTime creationTime = new DateTime();
+        protected DateTime creationTime = DateTime.UtcNow;
 
 
         protected ConcurrentDictionary<StreamingTrack, SemaphoreSlim> congestionControl = new ConcurrentDictionary<StreamingTrack, SemaphoreSlim>();

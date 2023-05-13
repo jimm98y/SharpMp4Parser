@@ -31,8 +31,8 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
     {
         public const string TYPE = "mdhd";
         //private static Logger LOG = LoggerFactory.getLogger(MediaHeaderBox.class);
-        private DateTime creationTime = new DateTime();
-        private DateTime modificationTime = new DateTime();
+        private DateTime creationTime = DateTime.UtcNow;
+        private DateTime modificationTime = DateTime.UtcNow;
         private long timescale;
         private long duration;
         private string language = "eng";

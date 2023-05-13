@@ -179,8 +179,8 @@ namespace SharpMp4Parser.Muxer.Builder
             MovieBox movieBox = new MovieBox();
             MovieHeaderBox mvhd = new MovieHeaderBox();
 
-            mvhd.setCreationTime(new DateTime());
-            mvhd.setModificationTime(new DateTime());
+            mvhd.setCreationTime(DateTime.UtcNow);
+            mvhd.setModificationTime(DateTime.UtcNow);
             mvhd.setMatrix(movie.getMatrix());
             long movieTimeScale = getTimescale(movie);
             long duration = 0;
@@ -279,7 +279,7 @@ namespace SharpMp4Parser.Muxer.Builder
             tkhd.setHeight(track.getTrackMetaData().getHeight());
             tkhd.setWidth(track.getTrackMetaData().getWidth());
             tkhd.setLayer(track.getTrackMetaData().getLayer());
-            tkhd.setModificationTime(new DateTime());
+            tkhd.setModificationTime(DateTime.UtcNow);
             tkhd.setTrackId(track.getTrackMetaData().getTrackId());
             tkhd.setVolume(track.getTrackMetaData().getVolume());
 

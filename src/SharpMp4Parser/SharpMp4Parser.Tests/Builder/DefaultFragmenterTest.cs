@@ -26,7 +26,7 @@ namespace SharpMp4Parser.Tests.Builder
                 sss += l + ", ";
             }
             Debug.WriteLine(sss);
-            Assert.AreSame(samples, s);
+            Assert.IsTrue(Enumerable.SequenceEqual(samples, s));
         }
     }
 }

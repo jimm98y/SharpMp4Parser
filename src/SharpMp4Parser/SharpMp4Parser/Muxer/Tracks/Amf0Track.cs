@@ -40,8 +40,8 @@ namespace SharpMp4Parser.Muxer.Tracks
         {
 
             this.rawSamples = new SortedDictionary<long, byte[]>(rawSamples);
-            trackMetaData.setCreationTime(new DateTime());
-            trackMetaData.setModificationTime(new DateTime());
+            trackMetaData.setCreationTime(DateTime.UtcNow);
+            trackMetaData.setModificationTime(DateTime.UtcNow);
             trackMetaData.setTimescale(1000); // Text tracks use millieseconds
             trackMetaData.setLanguage("eng");
 

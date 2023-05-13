@@ -161,8 +161,8 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
 
             visualSampleEntry.addBox(avcConfigurationBox);
 
-            trackMetaData.setCreationTime(new DateTime());
-            trackMetaData.setModificationTime(new DateTime());
+            trackMetaData.setCreationTime(DateTime.UtcNow);
+            trackMetaData.setModificationTime(DateTime.UtcNow);
             trackMetaData.setLanguage(lang);
             trackMetaData.setTimescale(timescale);
             trackMetaData.setWidth(width);

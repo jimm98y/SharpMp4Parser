@@ -49,8 +49,8 @@ namespace SharpMp4Parser.Muxer.Tracks
             tx3g.addBox(ftab);
 
 
-            trackMetaData.setCreationTime(new DateTime());
-            trackMetaData.setModificationTime(new DateTime());
+            trackMetaData.setCreationTime(DateTime.UtcNow);
+            trackMetaData.setModificationTime(DateTime.UtcNow);
             trackMetaData.setTimescale(1000); // Text tracks use millieseconds
         }
 

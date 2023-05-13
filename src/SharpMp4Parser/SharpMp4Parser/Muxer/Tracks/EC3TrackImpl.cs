@@ -96,8 +96,8 @@ namespace SharpMp4Parser.Muxer.Tracks
             ec3.setDataRate(bitrate / 1000);
             audioSampleEntry.addBox(ec3);
 
-            trackMetaData.setCreationTime(new DateTime());
-            trackMetaData.setModificationTime(new DateTime());
+            trackMetaData.setCreationTime(DateTime.UtcNow);
+            trackMetaData.setModificationTime(DateTime.UtcNow);
 
             trackMetaData.setTimescale(samplerate); // Audio tracks always use samplerate as timescale
             trackMetaData.setVolume(1);
