@@ -264,13 +264,16 @@ namespace SharpMp4Parser.Java
 
         public virtual int read(ByteBuffer bb)
         {
-            byte[] rm = new byte[Math.Min(bb.remaining(), remaining())];
-            int ret = read(rm, 0, rm.Length);
-            bb.put(rm, 0, ret);
+            int ret = read(bb.array(), bb.arrayOffset() + bb.position(), Math.Min(bb.remaining(), remaining()));
             if (ret == 0)
+            {
                 return -1;
+            }
             else
+            {
+                bb.position(bb.position() + ret);
                 return ret;
+            }
         }
 
         public ByteStreamBase reset()

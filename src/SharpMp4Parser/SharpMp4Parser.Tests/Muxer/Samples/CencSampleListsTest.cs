@@ -7,7 +7,7 @@ using SharpMp4Parser.Java;
 using SharpMp4Parser.Muxer;
 using SharpMp4Parser.Muxer.Tracks.Encryption;
 
-namespace SharpMp4Parser.Tests.Samples
+namespace SharpMp4Parser.Tests.Muxer.Samples
 {
     /**
      * Created by sannies on 1/9/14.

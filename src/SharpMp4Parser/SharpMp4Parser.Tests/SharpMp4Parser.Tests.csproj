@@ -70,4 +70,8 @@
     <ProjectReference Include="..\SharpMp4Parser\SharpMp4Parser.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="IsoParser\" />
+  </ItemGroup>
+
 </Project>

@@ -5,7 +5,7 @@ using SharpMp4Parser.Java;
 using SharpMp4Parser.Muxer.Tracks.H265;
 using SharpMp4Parser.Muxer.Tracks;
 
-namespace SharpMp4Parser.Tests.Tracks.H265
+namespace SharpMp4Parser.Tests.Muxer.Tracks.H265
 {
     [TestClass]
     public class SequenceParameterSetRbspTest

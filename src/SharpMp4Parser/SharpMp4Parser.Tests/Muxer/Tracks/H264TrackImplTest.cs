@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using SharpMp4Parser.Java;
 using SharpMp4Parser.IsoParser.Support;
 
-namespace SharpMp4Parser.Tests.Tracks
+namespace SharpMp4Parser.Tests.Muxer.Tracks
 {
     /**
      * Simple test to make sure nothing breaks.
@@ -29,7 +29,7 @@ namespace SharpMp4Parser.Tests.Tracks
 
                 var h264DataSource = new MemoryDataSourceImpl(h264Ms.ToArray());
 
-                H264TrackImpl.BUFFER = 65535; // make sure we are not just in one buffer
+                SharpMp4Parser.Muxer.Tracks.AbstractH26XTrack.BUFFER = 65535; // make sure we are not just in one buffer
                 Track t = new H264TrackImpl(h264DataSource);
                 Movie m = new Movie();
                 m.addTrack(t);

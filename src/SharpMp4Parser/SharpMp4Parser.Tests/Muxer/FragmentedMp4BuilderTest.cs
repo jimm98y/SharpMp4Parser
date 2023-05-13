@@ -4,7 +4,7 @@ using SharpMp4Parser.Muxer;
 using SharpMp4Parser.IsoParser;
 using SharpMp4Parser.Java;
 
-namespace SharpMp4Parser.Tests
+namespace SharpMp4Parser.Tests.Muxer
 {
     /**
      * Not really a test but at least makes sure muxing kind of works

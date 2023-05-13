@@ -10,11 +10,11 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SharpMp4Parser.Tests.Samples
+namespace SharpMp4Parser.Tests.Muxer.Samples
 {
     public class DefaultMp4SampleListTest
     {
-        private List<String> sampleChecksum = new List<string>() {
+        private List<string> sampleChecksum = new List<string>() {
                 "E8B264863D89C0AA9DA412F5A875E962",
                 "4E0EB2B74685E3C67FCD06C78592DE02",
                 "D8453125AD7FD1DA1A370A9F66FFEDA1",
@@ -162,7 +162,7 @@ namespace SharpMp4Parser.Tests.Samples
 
                 IsoFile isoFile = new IsoFile(buff);
                 Mp4SampleList sl = new Mp4SampleList(1, isoFile, new InMemRandomAccessSourceImpl(ms.ToArray()));
-                
+
                 using (MD5 md5 = MD5.Create())
                 {
                     for (int i = 0; i < sl.size(); i++)

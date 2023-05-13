@@ -3,7 +3,7 @@ using SharpMp4Parser.Muxer.Container.MP4;
 using SharpMp4Parser.Muxer;
 using System.Diagnostics;
 
-namespace SharpMp4Parser.Tests.Builder
+namespace SharpMp4Parser.Tests.Muxer.Builder
 {
     /**
      * Just check it works.
@@ -26,7 +26,7 @@ namespace SharpMp4Parser.Tests.Builder
                 sss += l + ", ";
             }
             Debug.WriteLine(sss);
-            Assert.IsTrue(Enumerable.SequenceEqual(samples, s));
+            Assert.IsTrue(samples.SequenceEqual(s));
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using SharpMp4Parser.Muxer.Container.MP4;
 using SharpMp4Parser.Muxer;
 
-namespace SharpMp4Parser.Tests
+namespace SharpMp4Parser.Tests.Muxer
 {
     public class InTestMovieCreator
     {
@@ -10,7 +10,7 @@ namespace SharpMp4Parser.Tests
             Movie m = new Movie();
             foreach (string name in names)
             {
-                Movie m1 = MovieCreator.build((name));
+                Movie m1 = MovieCreator.build(name);
                 foreach (Track track in m1.getTracks())
                 {
                     if ("vide".Equals(track.getHandler()))

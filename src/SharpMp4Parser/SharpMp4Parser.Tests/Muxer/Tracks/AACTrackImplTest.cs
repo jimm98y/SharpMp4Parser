@@ -5,7 +5,7 @@ using SharpMp4Parser.Muxer;
 using SharpMp4Parser.Muxer.Tracks;
 using SharpMp4Parser.IsoParser.Support;
 
-namespace SharpMp4Parser.Tests.Tracks
+namespace SharpMp4Parser.Tests.Muxer.Tracks
 {
     /**
      * Simple test to make sure nothing breaks.
