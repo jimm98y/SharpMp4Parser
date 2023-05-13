@@ -264,6 +264,9 @@ namespace SharpMp4Parser.Java
 
         public virtual int read(ByteBuffer bb)
         {
+            if (bb.remaining() == 0)
+                return 0;
+
             int ret = read(bb.array(), bb.arrayOffset() + bb.position(), bb.remaining());
             if (ret == 0)
             {
