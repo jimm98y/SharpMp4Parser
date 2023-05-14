@@ -26,6 +26,7 @@
     <None Remove="h264-sample.mp4" />
     <None Remove="multiTrack.3gp" />
     <None Remove="output_audio-2ch-20s.mp4" />
+    <None Remove="test.m4p" />
   </ItemGroup>
 
   <ItemGroup>
@@ -75,6 +76,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="output_audio-2ch-20s.mp4">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="test.m4p">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
