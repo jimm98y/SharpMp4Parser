@@ -6,13 +6,13 @@ namespace SharpMp4Parser.Muxer.Tracks
     /**
      * Removes NAL Unit emulation_prevention_three_byte.
      */
-    public class CleanInputStream : FilterInputStream
+    public class CleanByteStreamBase : ByteStream
     {
 
         int prevprev = -1;
         int prev = -1;
 
-        public CleanInputStream(InputStream input) : base(input)
+        public CleanByteStreamBase(ByteStream input) : base(input)
         { }
 
         public bool markSupported()

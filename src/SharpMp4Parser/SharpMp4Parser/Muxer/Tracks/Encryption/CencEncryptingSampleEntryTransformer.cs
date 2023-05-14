@@ -19,7 +19,7 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
             SampleEntry encSampleEntry = cache[se];
             if (encSampleEntry == null)
             {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ByteStream baos = new ByteStream();
                 try
                 {
                     se.getBox(Channels.newChannel(baos));

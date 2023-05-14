@@ -21,12 +21,12 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part30
         public WebVTTSampleEntry() : base(TYPE)
         { }
 
-        public override void parse(ReadableByteChannel dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
+        public override void parse(ByteStream dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
         {
             initContainer(dataSource, contentSize, boxParser);
         }
 
-        public override void getBox(WritableByteChannel writableByteChannel)
+        public override void getBox(ByteStream writableByteChannel)
         {
             writableByteChannel.write(getHeader());
             writeContainer(writableByteChannel);

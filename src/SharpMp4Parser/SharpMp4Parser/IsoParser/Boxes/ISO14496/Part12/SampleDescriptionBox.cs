@@ -73,7 +73,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
             this.flags = flags;
         }
 
-        public override void parse(ReadableByteChannel dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
+        public override void parse(ByteStream dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
         {
             ByteBuffer versionFlagNumOfChildBoxes = ByteBuffer.allocate(8);
             dataSource.read(versionFlagNumOfChildBoxes);
@@ -84,14 +84,14 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
             initContainer(dataSource, contentSize - 8, boxParser);
         }
 
-        public override void getBox(WritableByteChannel writableByteChannel)
+        public override void getBox(ByteStream writableByteChannel)
         {
             writableByteChannel.write(getHeader());
             ByteBuffer versionFlagNumOfChildBoxes = ByteBuffer.allocate(8);
             IsoTypeWriter.writeUInt8(versionFlagNumOfChildBoxes, version);
             IsoTypeWriter.writeUInt24(versionFlagNumOfChildBoxes, flags);
             IsoTypeWriter.writeUInt32(versionFlagNumOfChildBoxes, getBoxes().Count);
-            writableByteChannel.write(versionFlagNumOfChildBoxes.rewind());
+            writableByteChannel.write((ByteBuffer)versionFlagNumOfChildBoxes.rewind());
             writeContainer(writableByteChannel);
         }
 

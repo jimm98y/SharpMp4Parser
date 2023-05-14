@@ -42,6 +42,6 @@ namespace SharpMp4Parser.IsoParser
          */
         List<T> getBoxes<T>(Type clazz, bool recursive) where T : Box;
 
-        void writeContainer(WritableByteChannel bb);
+        void writeContainer(ByteStream bb);
     }
 }

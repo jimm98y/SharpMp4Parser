@@ -43,8 +43,8 @@ namespace SharpMp4Parser.IsoParser.Boxes.SampleEntry
             this.dataReferenceIndex = dataReferenceIndex;
         }
 
-        public override abstract void parse(ReadableByteChannel dataSource, ByteBuffer header, long contentSize, BoxParser boxParser);
+        public override abstract void parse(ByteStream dataSource, ByteBuffer header, long contentSize, BoxParser boxParser);
 
-        public override abstract void getBox(WritableByteChannel writableByteChannel);
+        public override abstract void getBox(ByteStream writableByteChannel);
     }
 }

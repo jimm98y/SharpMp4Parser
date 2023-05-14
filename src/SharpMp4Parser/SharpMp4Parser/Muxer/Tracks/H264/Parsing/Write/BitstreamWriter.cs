@@ -32,11 +32,11 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Write
     public class BitstreamWriter
     {
 
-        private readonly ByteArrayOutputStream os;
+        private readonly ByteStream os;
         private int[] curByte = new int[8];
         private int curBit;
 
-        public BitstreamWriter(ByteArrayOutputStream output)
+        public BitstreamWriter(ByteStream output)
         {
             this.os = output;
         }
@@ -44,7 +44,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Write
         /*
          * (non-Javadoc)
          * 
-         * @see ua.org.jplayer.javcodec.h264.H264BitOutputStream#flush()
+         * @see ua.org.jplayer.javcodec.h264.H264BitByteStreamBase#flush()
          */
         public void flush()
         {
@@ -67,7 +67,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Write
         /*
          * (non-Javadoc)
          * 
-         * @see ua.org.jplayer.javcodec.h264.H264BitOutputStream#write1Bit(int)
+         * @see ua.org.jplayer.javcodec.h264.H264BitByteStreamBase#write1Bit(int)
          */
         public void write1Bit(int value)
         {
@@ -83,7 +83,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Write
         /*
          * (non-Javadoc)
          * 
-         * @see ua.org.jplayer.javcodec.h264.H264BitOutputStream#writeNBit(long,
+         * @see ua.org.jplayer.javcodec.h264.H264BitByteStreamBase#writeNBit(long,
          * int)
          */
         public void writeNBit(long value, int n)
@@ -98,7 +98,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Write
          * (non-Javadoc)
          * 
          * @see
-         * ua.org.jplayer.javcodec.h264.H264BitOutputStream#writeRemainingZero()
+         * ua.org.jplayer.javcodec.h264.H264BitByteStreamBase#writeRemainingZero()
          */
         public void writeRemainingZero()
         {
@@ -108,7 +108,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Write
         /*
          * (non-Javadoc)
          * 
-         * @see ua.org.jplayer.javcodec.h264.H264BitOutputStream#writeByte(int)
+         * @see ua.org.jplayer.javcodec.h264.H264BitByteStreamBase#writeByte(int)
          */
         public void writeByte(int b)
         {

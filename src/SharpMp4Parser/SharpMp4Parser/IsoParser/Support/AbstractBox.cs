@@ -82,7 +82,7 @@ namespace SharpMp4Parser.IsoParser.Support
         /**
          * {@inheritDoc}
          */
-        public void parse(ReadableByteChannel dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
+        public void parse(ByteStream dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
         {
             content = ByteBuffer.allocate(CastUtils.l2i(contentSize));
 
@@ -99,7 +99,7 @@ namespace SharpMp4Parser.IsoParser.Support
             isParsed = false;
         }
 
-        public virtual void getBox(WritableByteChannel os)
+        public virtual void getBox(ByteStream os)
         {
             if (isParsed)
             {
@@ -114,14 +114,14 @@ namespace SharpMp4Parser.IsoParser.Support
                         bb.put(deadBytes);
                     }
                 }
-                os.write(bb.rewind());
+                os.write((ByteBuffer)bb.rewind());
             }
             else
             {
                 ByteBuffer header = ByteBuffer.allocate((isSmallBox() ? 8 : 16) + (UserBox.TYPE.Equals(getType()) ? 16 : 0));
                 getHeader(header);
-                os.write(header.rewind());
-                os.write(((Buffer)content).position(0));
+                os.write((ByteBuffer)header.rewind());
+                os.write((ByteBuffer)((Buffer)content).position(0));
             }
         }
 

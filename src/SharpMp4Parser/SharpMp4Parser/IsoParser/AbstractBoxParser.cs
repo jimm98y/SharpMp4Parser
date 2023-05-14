@@ -46,7 +46,7 @@ namespace SharpMp4Parser.IsoParser
          * @return the box just parsed
          * @throws java.io.IOException if reading from <code>in</code> fails
          */
-        public ParsableBox parseBox(ReadableByteChannel byteChannel, string parentType)
+        public ParsableBox parseBox(ByteStream byteChannel, string parentType)
         {
             header.rewind().limit(8);
 

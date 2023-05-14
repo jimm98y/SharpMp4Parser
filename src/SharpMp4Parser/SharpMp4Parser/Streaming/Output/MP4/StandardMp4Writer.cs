@@ -23,7 +23,7 @@ namespace SharpMp4Parser.Streaming.Output.MP4
 
         public static readonly object OBJ = new object();
         //private static Logger LOG = LoggerFactory.getLogger(FragmentedMp4Writer.class.getName());
-        protected readonly WritableByteChannel sink;
+        protected readonly ByteStream sink;
         protected List<StreamingTrack> source;
         protected DateTime creationTime = DateTime.UtcNow;
 
@@ -56,7 +56,7 @@ namespace SharpMp4Parser.Streaming.Output.MP4
         volatile bool headerWritten = false;
 
 
-        public StandardMp4Writer(List<StreamingTrack> source, WritableByteChannel sink)
+        public StandardMp4Writer(List<StreamingTrack> source, ByteStream sink)
         {
             this.source = new List<StreamingTrack>(source);
             this.sink = sink;
@@ -175,7 +175,7 @@ namespace SharpMp4Parser.Streaming.Output.MP4
             return mvhd;
         }
 
-        protected void write(WritableByteChannel output, params Box[] boxes)
+        protected void write(ByteStream output, params Box[] boxes)
         {
             foreach (Box box1 in boxes)
             {
@@ -444,7 +444,7 @@ namespace SharpMp4Parser.Streaming.Output.MP4
                 return size;
             }
 
-            public void getBox(WritableByteChannel writableByteChannel)
+            public void getBox(ByteStream writableByteChannel)
             {
                 writableByteChannel.write(ByteBuffer.wrap(new byte[]{
                     (byte) ((size & 0xff000000) >> 24),

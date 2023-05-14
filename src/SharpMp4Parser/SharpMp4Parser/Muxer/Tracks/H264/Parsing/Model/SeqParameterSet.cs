@@ -79,10 +79,10 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Model
 
         public static SeqParameterSet read(byte[] b)
         {
-            return read(new ByteArrayInputStream(b));
+            return read(new ByteStream(b));
         }
 
-        public static SeqParameterSet read(InputStream input)
+        public static SeqParameterSet read(ByteStream input)
         {
             CAVLCReader reader = new CAVLCReader(input);
             SeqParameterSet sps = new SeqParameterSet();
@@ -348,7 +348,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Model
             return hrd;
         }
 
-        public override void write(ByteArrayOutputStream output)
+        public override void write(ByteStream output)
         {
             CAVLCWriter writer = new CAVLCWriter(output);
 

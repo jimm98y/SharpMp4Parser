@@ -14,7 +14,7 @@ namespace SharpMp4Parser.Muxer.Tracks.WebVTT.SampleBoxes
             return 8;
         }
 
-        public void getBox(WritableByteChannel writableByteChannel)
+        public void getBox(ByteStream writableByteChannel)
         {
             ByteBuffer header = ByteBuffer.allocate(8);
             IsoTypeWriter.writeUInt32(header, getSize());

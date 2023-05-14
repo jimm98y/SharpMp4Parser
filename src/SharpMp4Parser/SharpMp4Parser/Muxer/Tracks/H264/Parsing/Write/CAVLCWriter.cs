@@ -33,7 +33,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Write
     public class CAVLCWriter : BitstreamWriter
     {
 
-        public CAVLCWriter(ByteArrayOutputStream output) : base(output)
+        public CAVLCWriter(ByteStream output) : base(output)
         { }
 
         public void writeU(int value, int n, string str)

@@ -56,7 +56,7 @@ namespace SharpMp4Parser.Tests.Muxer.Samples
 
             try
             {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ByteStream baos = new ByteStream();
                 orig.getBox(Channels.newChannel(baos));
                 SampleEntry copy = (SampleEntry)new IsoFile(new ByteBufferByteChannel(ByteBuffer.wrap(baos.toByteArray()))).getBoxes()[0];
 
@@ -128,7 +128,7 @@ namespace SharpMp4Parser.Tests.Muxer.Samples
 
             Assert.AreEqual(1, cencSamples.size());
             Sample encSample = cencSamples.get(0);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ByteStream baos = new ByteStream();
             encSample.writeTo(Channels.newChannel(baos));
             Assert.AreEqual(encryptedWorking, Hex.encodeHex(baos.toByteArray()));
             Assert.AreEqual(encryptedWorking, Hex.encodeHex(encSample.asByteBuffer().array()));
@@ -221,7 +221,7 @@ namespace SharpMp4Parser.Tests.Muxer.Samples
                         new List<Sample>() { cencSamples.get(i) },
                         new List<CencSampleAuxiliaryDataFormat>() { auxInfos[i] });
                 ses.Add(cencSamples.get(i).getSampleEntry());
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ByteStream baos = new ByteStream();
                 dec.get(0).writeTo(Channels.newChannel(baos));
                 Assert.AreEqual(new byte[1230], baos.toByteArray(), "Sample " + i + " can not be reconstructed");
             }
@@ -240,7 +240,7 @@ namespace SharpMp4Parser.Tests.Muxer.Samples
 
             for (int i = 0; i < cencSamples.size(); i++)
             {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ByteStream baos = new ByteStream();
                 decryptingSampleList.get(i).writeTo(Channels.newChannel(baos));
                 Assert.AreEqual(new byte[1230], baos.toByteArray(), "Sample " + i + " can not be reconstructed");
             }

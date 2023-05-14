@@ -152,7 +152,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.SampleEntry
             this.depth = depth;
         }
 
-        public override void parse(ReadableByteChannel dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
+        public override void parse(ByteStream dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
         {
             ByteBuffer content = ByteBuffer.allocate(78);
             dataSource.read(content);
@@ -196,7 +196,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.SampleEntry
             initContainer(dataSource, contentSize - 78, boxParser);
         }
 
-        public override void getBox(WritableByteChannel writableByteChannel)
+        public override void getBox(ByteStream writableByteChannel)
         {
             writableByteChannel.write(getHeader());
             ByteBuffer byteBuffer = ByteBuffer.allocate(78);
@@ -228,7 +228,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.SampleEntry
             IsoTypeWriter.writeUInt16(byteBuffer, getDepth());
             IsoTypeWriter.writeUInt16(byteBuffer, 0xFFFF);
 
-            writableByteChannel.write(byteBuffer.rewind());
+            writableByteChannel.write((ByteBuffer)byteBuffer.rewind());
 
             writeContainer(writableByteChannel);
         }
@@ -246,8 +246,8 @@ namespace SharpMp4Parser.IsoParser.Boxes.SampleEntry
             if (o == null || GetType() != o.GetType()) return false;
 
             VisualSampleEntry that = (VisualSampleEntry)o;
-            ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
-            ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
+            ByteStream baos1 = new ByteStream();
+            ByteStream baos2 = new ByteStream();
             try
             {
                 getBox(Channels.newChannel(baos1));
@@ -270,7 +270,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.SampleEntry
 
         public override int GetHashCode()
         {
-            ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
+            ByteStream baos1 = new ByteStream();
             try
             {
                 getBox(Channels.newChannel(baos1));

@@ -40,7 +40,7 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
         //    Movie m = new Movie();
         //    m.addTrack(t);
         //    Container c = new DefaultMp4Builder().build(m);
-        //    c.writeContainer(new FileOutputStream("output.mp4").getChannel());
+        //    c.writeContainer(new FileByteStreamBase("output.mp4").getChannel());
         //}
 
         public static string[] getAllNamespaces(Document doc)
@@ -49,7 +49,7 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
             Transformer transformer;
             try
             {
-                transformer = tf.newTransformer(new StreamSource(new ByteArrayInputStream(namespacesStyleSheet1)));
+                transformer = tf.newTransformer(new StreamSource(new ByteStreamBase(namespacesStyleSheet1)));
                 StringWriter sw = new StringWriter();
                 transformer.transform(new DOMSource(doc), new StreamResult(sw));
                 List<string> r = new List<string>(new List<string>(Arrays.asList(sw.getBuffer().ToString().Split("\n"))));
@@ -126,7 +126,7 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
             }
         }
 
-        public static void pretty(Document document, OutputStream outputStream, int indent)
+        public static void pretty(Document document, ByteStreamBase ByteStreamBase, int indent)
         {
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = null;
@@ -144,7 +144,7 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
                 transformer.setOutputProperty(OutputKeys.INDENT, "yes");
                 transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", indent.ToString());
             }
-            Result result = new StreamResult(outputStream);
+            Result result = new StreamResult(ByteStreamBase);
             Source source = new DOMSource(document);
             try
             {
@@ -219,13 +219,13 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
             }
         }
 
-        private static long copyLarge(InputStream input, File outputFile)
+        private static long copyLarge(ByteStreamBase input, File outputFile)
         {
             byte[] buffer = new byte[16384];
             long count = 0;
             int n = 0;
             outputFile.getParentFile().mkdirs();
-            FileOutputStream output = new FileOutputStream(outputFile);
+            FileByteStreamBase output = new FileByteStreamBase(outputFile);
             try
             {
                 while (-1 != (n = input.read(buffer)))

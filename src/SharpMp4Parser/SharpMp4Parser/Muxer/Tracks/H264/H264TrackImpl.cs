@@ -234,7 +234,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
 
             public FirstVclNalDetector(ByteBuffer nal, int nal_ref_idc, int nal_unit_type, Dictionary<int, SeqParameterSet> spsIdToSps, Dictionary<int, PictureParameterSet> ppsIdToPps)
             {
-                InputStream bs = cleanBuffer(new ByteBufferBackedInputStream(nal));
+                ByteStream bs = cleanBuffer(new ByteBufferBackedByteStreamBase(nal));
                 SliceHeader sh = new SliceHeader(bs, spsIdToSps, ppsIdToPps, nal_unit_type == 5);
                 this.frame_num = sh.frame_num;
                 this.pic_parameter_set_id = sh.pic_parameter_set_id;
@@ -353,7 +353,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
                             createSample(buffered);
                             fvnd = null;
                         }
-                        seiMessage = new SEIMessage(cleanBuffer(new ByteBufferBackedInputStream(nal)), currentSeqParameterSet);
+                        seiMessage = new SEIMessage(cleanBuffer(new ByteBufferBackedByteStreamBase(nal)), currentSeqParameterSet);
                         //System.err.println("" + nalUnitHeader.nal_unit_type);
                         buffered.Add(nal);
                         break;
@@ -494,7 +494,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
 
             }
             // cleans the buffer we just added
-            InputStream bs = cleanBuffer(new ByteBufferBackedInputStream(slice));
+            ByteStream bs = cleanBuffer(new ByteBufferBackedByteStreamBase(slice));
             SliceHeader sh = new SliceHeader(bs, spsIdToSps, ppsIdToPps, IdrPicFlag);
 
             if ((sh.slice_type == SliceHeader.SliceType.I) || (sh.slice_type == SliceHeader.SliceType.SI))
@@ -600,7 +600,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
 
         private void handlePPS(ByteBuffer data)
         {
-            InputStream input = new ByteBufferBackedInputStream(data);
+            ByteStream input = new ByteBufferBackedByteStreamBase(data);
             input.read();
 
             PictureParameterSet _pictureParameterSet = PictureParameterSet.read(input);
@@ -633,9 +633,9 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
 
         private void handleSPS(ByteBuffer data)
         {
-            InputStream spsInputStream = cleanBuffer(new ByteBufferBackedInputStream(data));
-            spsInputStream.read();
-            SeqParameterSet _seqParameterSet = SeqParameterSet.read(spsInputStream);
+            ByteStream spsByteStreamBase = cleanBuffer(new ByteBufferBackedByteStreamBase(data));
+            spsByteStreamBase.read();
+            SeqParameterSet _seqParameterSet = SeqParameterSet.read(spsByteStreamBase);
             if (firstSeqParameterSet == null)
             {
                 firstSeqParameterSet = _seqParameterSet;
@@ -690,11 +690,11 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
             }
         }
 
-        public class ByteBufferBackedInputStream : ByteArrayInputStream
+        public class ByteBufferBackedByteStreamBase : ByteStream
         {
             private readonly ByteBuffer buf;
 
-            public ByteBufferBackedInputStream(ByteBuffer buf) : base(buf.array().Skip(buf.arrayOffset()).ToArray())
+            public ByteBufferBackedByteStreamBase(ByteBuffer buf) : base(buf.array().Skip(buf.arrayOffset()).ToArray())
             {
                 // make a coy of the buffer
                 this.buf = (ByteBuffer)buf.duplicate();

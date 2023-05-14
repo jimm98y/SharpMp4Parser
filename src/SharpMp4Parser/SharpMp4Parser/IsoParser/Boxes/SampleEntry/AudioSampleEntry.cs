@@ -225,14 +225,14 @@ namespace SharpMp4Parser.IsoParser.Boxes.SampleEntry
                 return "----";
             }
 
-            public void getBox(WritableByteChannel writableByteChannel)
+            public void getBox(ByteStream writableByteChannel)
             {
                 ((Buffer)owmaSpecifics).rewind();
                 writableByteChannel.write(owmaSpecifics);
             }
         }
 
-        public override void parse(ReadableByteChannel dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
+        public override void parse(ByteStream dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
         {
             ByteBuffer content = ByteBuffer.allocate(28);
             dataSource.read(content);
@@ -305,7 +305,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.SampleEntry
             }
         }
 
-        public override void getBox(WritableByteChannel writableByteChannel)
+        public override void getBox(ByteStream writableByteChannel)
         {
             writableByteChannel.write(getHeader());
             ByteBuffer byteBuffer = ByteBuffer.allocate(28
@@ -346,7 +346,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.SampleEntry
                 IsoTypeWriter.writeUInt32(byteBuffer, bytesPerSample);
                 byteBuffer.put(soundVersion2Data);
             }
-            writableByteChannel.write(byteBuffer.rewind());
+            writableByteChannel.write((ByteBuffer)byteBuffer.rewind());
             writeContainer(writableByteChannel);
         }
 
@@ -383,8 +383,8 @@ namespace SharpMp4Parser.IsoParser.Boxes.SampleEntry
             if (o == null || GetType() != o.GetType()) return false;
 
             AudioSampleEntry that = (AudioSampleEntry)o;
-            ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
-            ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
+            ByteStream baos1 = new ByteStream();
+            ByteStream baos2 = new ByteStream();
             try
             {
                 getBox(Channels.newChannel(baos1));
@@ -407,7 +407,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.SampleEntry
 
         public override int GetHashCode()
         {
-            ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
+            ByteStream baos1 = new ByteStream();
             try
             {
                 getBox(Channels.newChannel(baos1));

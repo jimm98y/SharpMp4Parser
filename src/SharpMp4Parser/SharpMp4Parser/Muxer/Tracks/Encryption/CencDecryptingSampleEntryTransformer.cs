@@ -38,7 +38,7 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
                 }
 
 
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ByteStream baos = new ByteStream();
                 try
                 {
                     // This creates a copy cause I can't change the original instance

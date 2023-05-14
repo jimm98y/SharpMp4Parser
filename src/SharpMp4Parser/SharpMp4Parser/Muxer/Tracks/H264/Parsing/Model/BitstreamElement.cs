@@ -25,7 +25,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Model
 {
     public abstract class BitstreamElement
     {
-        public abstract void write(ByteArrayOutputStream output);
+        public abstract void write(ByteStream output);
     }
 
 }

@@ -18,11 +18,11 @@ namespace SharpMp4Parser.IsoParser
         long getSize();
 
         /**
-         * Writes the complete box - size | 4-cc | content - to the given <code>writableByteChannel</code>.
+         * Writes the complete box - size | 4-cc | content - to the given <code>ByteStreamBase</code>.
          *
-         * @param writableByteChannel the box's sink
+         * @param ByteStreamBase the box's sink
          * @throws IOException in case of problems with the <code>Channel</code>
          */
-        void getBox(WritableByteChannel writableByteChannel);
+        void getBox(ByteStream writableByteChannel);
     }
 }

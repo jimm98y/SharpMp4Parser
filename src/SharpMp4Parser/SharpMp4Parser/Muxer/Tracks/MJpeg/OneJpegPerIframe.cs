@@ -156,7 +156,7 @@ namespace SharpMp4Parser.Muxer.Tracks.MJpeg
                 this.mp4v = mp4v;
             }
 
-            public void writeTo(WritableByteChannel channel)
+            public void writeTo(ByteStreamBase channel)
             {
                 RandomAccessFile raf = new RandomAccessFile(jpegs[index], "r");
                 raf.getChannel().transferTo(0, raf.length(), channel);

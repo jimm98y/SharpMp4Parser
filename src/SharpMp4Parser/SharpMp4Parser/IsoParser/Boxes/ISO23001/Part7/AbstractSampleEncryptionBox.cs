@@ -192,7 +192,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO23001.Part7
             return contentSize;
         }
 
-        public override void getBox(WritableByteChannel os)
+        public override void getBox(ByteStream os)
         {
             base.getBox(os);
         }

@@ -56,7 +56,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.Apple
         public QuicktimeTextSampleEntry() : base(TYPE)
         { }
 
-        public override void parse(ReadableByteChannel dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
+        public override void parse(ByteStream dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
         {
             ByteBuffer content = ByteBuffer.allocate(CastUtils.l2i(contentSize));
             dataSource.read(content);
@@ -100,7 +100,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.Apple
             throw new Exception("QuicktimeTextSampleEntries may not have child boxes");
         }
 
-        public override void getBox(WritableByteChannel writableByteChannel)
+        public override void getBox(ByteStream writableByteChannel)
         {
             writableByteChannel.write(getHeader());
 
@@ -127,8 +127,8 @@ namespace SharpMp4Parser.IsoParser.Boxes.Apple
                 IsoTypeWriter.writeUInt8(byteBuffer, fontName.Length);
                 byteBuffer.put(Encoding.UTF8.GetBytes(fontName));
             }
-            writableByteChannel.write(byteBuffer.rewind());
-            // writeContainer(writableByteChannel); there are no child boxes!?
+            writableByteChannel.write((ByteBuffer)byteBuffer.rewind());
+            // writeContainer(ByteStreamBase); there are no child boxes!?
         }
 
         public override long getSize()

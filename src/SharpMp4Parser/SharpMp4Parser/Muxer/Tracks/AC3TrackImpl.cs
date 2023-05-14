@@ -496,7 +496,7 @@ namespace SharpMp4Parser.Muxer.Tracks
                 this.dataSource = dataSource;
             }
 
-            public void writeTo(WritableByteChannel channel)
+            public void writeTo(ByteStream channel)
             {
                 dataSource.transferTo(start, size, channel);
             }

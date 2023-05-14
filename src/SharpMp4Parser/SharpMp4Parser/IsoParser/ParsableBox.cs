@@ -26,7 +26,7 @@ namespace SharpMp4Parser.IsoParser
         /**
          * Parses the box excluding the already parsed header (size, 4cc, [long-size], [user-type]).
          * The remaining size of the box is the <code>contentSize</code>, <code>contentSize</code>
-         * number of bytes should be read from the box source (<code>readableByteChannel</code>).
+         * number of bytes should be read from the box source (<code>ByteStreamBase</code>).
          * If you need the <code>header</code> buffer at a later stage you have to create a copy.
          *
          * @param dataSource  the source for this box
@@ -36,6 +36,6 @@ namespace SharpMp4Parser.IsoParser
          * @param boxParser   use it to parse sub-boxes.
          * @throws IOException in case of an error during a read operation
          */
-        void parse(ReadableByteChannel dataSource, ByteBuffer header, long contentSize, BoxParser boxParser);
+        void parse(ByteStream dataSource, ByteBuffer header, long contentSize, BoxParser boxParser);
     }
 }

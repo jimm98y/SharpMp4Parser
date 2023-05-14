@@ -39,7 +39,7 @@ namespace SharpMp4Parser.Muxer.Tracks.WebVTT
                 vtte = ByteBuffer.allocate(CastUtils.l2i(vttEmptyCueBox.getSize()));
                 try
                 {
-                    vttEmptyCueBox.getBox(new WritableByteChannel(new Java.StreamBase(vtte.array()))); // originally bytebufferchannel
+                    vttEmptyCueBox.getBox(new ByteStream(new Java.ByteStream(vtte.array()))); // originally bytebufferchannel
                 }
                 catch (Exception)
                 {
@@ -49,7 +49,7 @@ namespace SharpMp4Parser.Muxer.Tracks.WebVTT
             }
 
 
-            public void writeTo(WritableByteChannel channel)
+            public void writeTo(ByteStream channel)
             {
                 channel.write(vtte.duplicate());
             }
@@ -76,7 +76,7 @@ namespace SharpMp4Parser.Muxer.Tracks.WebVTT
         long[] sampleDurations = new long[0];
         public static WebVTTSampleEntry sampleEntry;
 
-        public WebVttTrack(ByteArrayInputStream input, string trackName, CultureInfo locale) : base(trackName)
+        public WebVttTrack(ByteStream input, string trackName, CultureInfo locale) : base(trackName)
         {
             trackMetaData.setTimescale(1000);
             trackMetaData.setLanguage(locale.ThreeLetterISOLanguageName);
@@ -88,7 +88,7 @@ namespace SharpMp4Parser.Muxer.Tracks.WebVTT
             sampleEntry.addBox(webVttConf);
             sampleEntry.addBox(new WebVTTSourceLabelBox());
 
-            BufferedReader webvttData = new BufferedReader(new InputStreamReader(input, "UTF-8"));
+            BufferedReader webvttData = new BufferedReader(new ByteStreamBaseReader(input, "UTF-8"));
             string line;
 
             // file should start with "WEBVTT"
@@ -270,7 +270,7 @@ namespace SharpMp4Parser.Muxer.Tracks.WebVTT
                 this.boxes = boxes;
             }
 
-            public void writeTo(WritableByteChannel channel)
+            public void writeTo(ByteStream channel)
             {
                 foreach (Box box in boxes)
                 {
@@ -290,7 +290,7 @@ namespace SharpMp4Parser.Muxer.Tracks.WebVTT
 
             public ByteBuffer asByteBuffer()
             {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ByteStream baos = new ByteStream();
                 try
                 {
                     writeTo(Channels.newChannel(baos));

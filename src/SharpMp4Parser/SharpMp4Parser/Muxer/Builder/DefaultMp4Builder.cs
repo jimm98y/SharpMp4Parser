@@ -801,7 +801,7 @@ namespace SharpMp4Parser.Muxer.Builder
                 return (contentSize + 8) < 4294967296L;
             }
 
-            public void getBox(WritableByteChannel writableByteChannel)
+            public void getBox(ByteStream writableByteChannel)
             {
                 ByteBuffer bb = ByteBuffer.allocate(16);
                 long size = getSize();

@@ -67,7 +67,7 @@ namespace SharpMp4Parser.IsoParser.Tools
 
         public static byte[] decodeHex(string hexString)
         {
-            ByteArrayOutputStream bas = new ByteArrayOutputStream();
+            ByteStream bas = new ByteStream();
             for (int i = 0; i < hexString.Length; i += 2)
             {
                 string subStr = hexString.Substring(i, 2);

@@ -59,7 +59,7 @@ namespace SharpMp4Parser.IsoParser.Support
             return getBoxes<T>(clazz, false);
         }
 
-        public override void parse(ReadableByteChannel dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
+        public override void parse(ByteStream dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
         {
             ByteBuffer versionAndFlags = ByteBuffer.allocate(4);
             dataSource.read(versionAndFlags);
@@ -67,7 +67,7 @@ namespace SharpMp4Parser.IsoParser.Support
             base.parse(dataSource, header, contentSize, boxParser);
         }
 
-        public override void getBox(WritableByteChannel writableByteChannel)
+        public override void getBox(ByteStream writableByteChannel)
         {
             base.getBox(writableByteChannel);
         }

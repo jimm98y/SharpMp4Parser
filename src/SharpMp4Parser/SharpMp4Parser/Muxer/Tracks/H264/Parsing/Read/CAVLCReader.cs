@@ -29,7 +29,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Read
     public class CAVLCReader : BitstreamReader
     {
 
-        public CAVLCReader(InputStream input) : base(input)
+        public CAVLCReader(ByteStream input) : base(input)
         { }
 
         public long readNBit(int n, string message)
@@ -69,7 +69,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Read
           * (non-Javadoc)
           *
           * @see
-          * ua.org.jplayer.javcodec.h264.H264BitInputStream#readUE(java.lang.String)
+          * ua.org.jplayer.javcodec.h264.H264BitByteStreamBase#readUE(java.lang.String)
           */
         public int readUE(string message)
         {

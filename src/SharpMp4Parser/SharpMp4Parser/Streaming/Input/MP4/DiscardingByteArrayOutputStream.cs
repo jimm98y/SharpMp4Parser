@@ -7,7 +7,7 @@ using System.Text;
 
 namespace SharpMp4Parser.Streaming.Input.MP4
 {
-    public class DiscardingByteArrayOutputStream : OutputStream
+    public class DiscardingByteArrayOutputStream : ByteStream
     {
         /**
          * The buffer where data is stored.
@@ -37,7 +37,7 @@ namespace SharpMp4Parser.Streaming.Input.MP4
          * @param size the initial size.
          * @throws IllegalArgumentException if size is negative.
          */
-        public DiscardingByteArrayOutputStream(int size) : base(new StreamBase())
+        public DiscardingByteArrayOutputStream(int size) : base(new ByteStream())
         {
             if (size < 0)
             {

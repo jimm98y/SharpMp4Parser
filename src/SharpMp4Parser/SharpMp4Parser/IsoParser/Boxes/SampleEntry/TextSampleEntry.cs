@@ -60,7 +60,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.SampleEntry
             this.type = type;
         }
 
-        public override void parse(ReadableByteChannel dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
+        public override void parse(ByteStream dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
         {
             ByteBuffer content = ByteBuffer.allocate(38);
             dataSource.read(content);
@@ -82,7 +82,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.SampleEntry
             initContainer(dataSource, contentSize - 38, boxParser);
         }
 
-        public override void getBox(WritableByteChannel writableByteChannel)
+        public override void getBox(ByteStream writableByteChannel)
         {
             writableByteChannel.write(getHeader());
             ByteBuffer byteBuffer = ByteBuffer.allocate(38);
@@ -97,7 +97,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.SampleEntry
             IsoTypeWriter.writeUInt8(byteBuffer, backgroundColorRgba[3]);
             boxRecord.getContent(byteBuffer);
             styleRecord.getContent(byteBuffer);
-            writableByteChannel.write(byteBuffer.rewind());
+            writableByteChannel.write((ByteBuffer)byteBuffer.rewind());
             writeContainer(writableByteChannel);
         }
 

@@ -23,7 +23,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part30
             return s + t + (largeBox || s + t + 8 >= 1L << 32 ? 16 : 8);
         }
 
-        public override void parse(ReadableByteChannel dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
+        public override void parse(ByteStream dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
         {
             ByteBuffer byteBuffer = ByteBuffer.allocate(8);
             dataSource.read((ByteBuffer)byteBuffer.rewind());
@@ -61,7 +61,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part30
             initContainer(dataSource, contentSize - (header.remaining() + ns.Length + schemaLocation.Length + auxiliaryMimeTypes.Length + 3), boxParser);
         }
 
-        public override void getBox(WritableByteChannel writableByteChannel)
+        public override void getBox(ByteStream writableByteChannel)
         {
             writableByteChannel.write(getHeader());
             ByteBuffer byteBuffer = ByteBuffer.allocate(8 + ns.Length + schemaLocation.Length + auxiliaryMimeTypes.Length + 3);
@@ -70,7 +70,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part30
             IsoTypeWriter.writeZeroTermUtf8String(byteBuffer, ns);
             IsoTypeWriter.writeZeroTermUtf8String(byteBuffer, schemaLocation);
             IsoTypeWriter.writeZeroTermUtf8String(byteBuffer, auxiliaryMimeTypes);
-            writableByteChannel.write(byteBuffer.rewind());
+            writableByteChannel.write((ByteBuffer)byteBuffer.rewind());
             writeContainer(writableByteChannel);
         }
 

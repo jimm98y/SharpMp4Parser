@@ -5,7 +5,7 @@ namespace SharpMp4Parser.Muxer
 {
     public interface Sample
     {
-        void writeTo(WritableByteChannel channel);
+        void writeTo(ByteStream channel);
 
         long getSize();
 

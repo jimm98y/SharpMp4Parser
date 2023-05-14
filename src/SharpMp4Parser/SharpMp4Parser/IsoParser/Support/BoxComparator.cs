@@ -53,8 +53,8 @@ namespace SharpMp4Parser.IsoParser.Support
         {
             if (!isIgnore(root1, b1, ignores))
             {
-                ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
-                ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
+                ByteStream baos1 = new ByteStream();
+                ByteStream baos2 = new ByteStream();
 
                 b1.getBox(Channels.newChannel(baos1));
                 b2.getBox(Channels.newChannel(baos2));

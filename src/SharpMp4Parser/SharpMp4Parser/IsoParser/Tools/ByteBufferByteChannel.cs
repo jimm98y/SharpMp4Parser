@@ -19,9 +19,9 @@ using SharpMp4Parser.Java;
 namespace SharpMp4Parser.IsoParser.Tools
 {
     /**
-     * Creates a <code>ReadableByteChannel</code> that is backed by a <code>ByteBuffer</code>.
+     * Creates a <code>ByteStreamBase</code> that is backed by a <code>ByteBuffer</code>.
      */
-    public class ByteBufferByteChannel : ReadableByteChannel /* : ByteChannel */
+    public class ByteBufferByteChannel : ByteStream /* : ByteChannel */
     {
         ByteBuffer byteBuffer;
 

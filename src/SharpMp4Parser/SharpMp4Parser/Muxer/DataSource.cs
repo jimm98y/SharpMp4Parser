@@ -62,7 +62,7 @@ namespace SharpMp4Parser.Muxer
          * @return the actual number of bytes written
          * @throws IOException If some I/O error occurs
          */
-        long transferTo(long position, long count, WritableByteChannel target);
+        long transferTo(long position, long count, ByteStream target);
 
         /**
          * Maps a part of this <code>DataSource</code> into a <code>ByteBuffer</code>. It might utilize

@@ -33,7 +33,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
 
         SeqParameterSet sps;
 
-        public SEIMessage(InputStream input, SeqParameterSet sps)
+        public SEIMessage(ByteStream input, SeqParameterSet sps)
         {
             this.sps = sps;
             input.read();
@@ -71,7 +71,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
                             byte[] data = new byte[payloadSize];
                             input.read(data);
                             read += payloadSize;
-                            CAVLCReader reader = new CAVLCReader(new ByteArrayInputStream(data));
+                            CAVLCReader reader = new CAVLCReader(new ByteStream(data));
                             if (sps.vuiParams.nalHRDParams != null || sps.vuiParams.vclHRDParams != null)
                             {
                                 removal_delay_flag = true;

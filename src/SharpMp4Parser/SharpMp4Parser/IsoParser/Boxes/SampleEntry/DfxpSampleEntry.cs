@@ -8,7 +8,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.SampleEntry
         public DfxpSampleEntry() : base("dfxp")
         { }
 
-        public override void parse(ReadableByteChannel dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
+        public override void parse(ByteStream dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
         {
             ByteBuffer content = ByteBuffer.allocate(8);
             dataSource.read(content);
@@ -16,7 +16,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.SampleEntry
             dataReferenceIndex = IsoTypeReader.readUInt16(content);
         }
 
-        public override void getBox(WritableByteChannel writableByteChannel)
+        public override void getBox(ByteStream writableByteChannel)
         {
             writableByteChannel.write(getHeader());
             ByteBuffer byteBuffer = ByteBuffer.allocate(8);

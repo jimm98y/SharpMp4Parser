@@ -18,32 +18,32 @@ using System;
 namespace SharpMp4Parser.IsoParser
 {
     /**
-     * Provides rewind() operation to ReadableByteChannel by buffering data up to specified capacity.
+     * Provides rewind() operation to ByteStreamBase by buffering data up to specified capacity.
      */
-    public class RewindableReadableByteChannel : ReadableByteChannel
+    public class RewindableByteStreamBase : ByteStream
     {
 
-        private readonly ReadableByteChannel readableByteChannel;
+        private readonly ByteStream readableByteChannel;
         private readonly ByteBuffer buffer;
-        // If 'true', there are more bytes read from |readableByteChannel| than the allocated buffer size.
+        // If 'true', there are more bytes read from |ByteStreamBase| than the allocated buffer size.
         // The rewind is not possible in that case.
         private bool passedRewindPoint;
         private int nextBufferWritePosition;
         private int nextBufferReadPosition;
 
-        public RewindableReadableByteChannel(ReadableByteChannel readableByteChannel, int bufferCapacity) : base(readableByteChannel)
+        public RewindableByteStreamBase(ByteStream readableByteChannel, int bufferCapacity) : base(readableByteChannel)
         {
             buffer = Java.ByteBuffer.allocate(bufferCapacity);
             this.readableByteChannel = readableByteChannel;
         }
 
         /**
-         * @see ReadableByteChannel#read(ByteBuffer)
+         * @see ByteStreamBase#read(ByteBuffer)
          */
         public override int read(ByteBuffer dst)
         {
             int initialDstPosition = dst.position();
-            // Read data from |readableByteChannel| into |buffer|.
+            // Read data from |ByteStreamBase| into |buffer|.
             buffer.limit(buffer.capacity());
             ((Java.Buffer)buffer).position(nextBufferWritePosition);
             if (buffer.capacity() > 0)
@@ -62,12 +62,12 @@ namespace SharpMp4Parser.IsoParser
             dst.put(buffer);
             nextBufferReadPosition = buffer.position();
 
-            // If |dst| still has capacity then read data from |readableByteChannel|.
+            // If |dst| still has capacity then read data from |ByteStreamBase|.
             int bytesRead = readableByteChannel.read(dst);
             if (bytesRead > 0)
             {
                 // We passed the buffering capacity. It will not be possible to rewind
-                // |readableByteChannel| anymore.
+                // |ByteStreamBase| anymore.
                 passedRewindPoint = true;
             }
             else if (bytesRead == -1 && dst.position() - initialDstPosition == 0)
@@ -87,7 +87,7 @@ namespace SharpMp4Parser.IsoParser
         }
 
         /**
-         * @see ReadableByteChannel#isOpen()
+         * @see ByteStreamBase#isOpen()
          */
         public override bool isOpen()
         {
@@ -95,7 +95,7 @@ namespace SharpMp4Parser.IsoParser
         }
 
         /**
-         * @see ReadableByteChannel#close()
+         * @see ByteStreamBase#close()
          */
         public override void close()
         {

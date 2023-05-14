@@ -189,7 +189,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.Apple
             return new List<T>();
         }
 
-        public void writeContainer(WritableByteChannel bb)
+        public void writeContainer(ByteStream bb)
         {
         }
     }

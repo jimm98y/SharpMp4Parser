@@ -85,8 +85,8 @@ namespace SharpMp4Parser.Muxer.Tracks
                         {
                             throw new Exception("Subtitle display times may not intersect");
                         }
-                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        DataOutputStream dos = new DataOutputStream(baos);
+                        ByteStream baos = new ByteStream();
+                        ByteStream dos = new ByteStream(baos);
                         try
                         {
                             dos.writeShort((short)Encoding.UTF8.GetBytes(sub.text).Length);

@@ -39,9 +39,7 @@ namespace SharpMp4Parser.Muxer.Builder
                     // We need to slice here since wrap([], offset, length) just sets position and not the arrayOffset.
                     nuSamples.Add(nu);
                 }
-                else if (lastIndex >= 0 &&
-                        buffer is MappedByteBuffer && nuSamples[lastIndex] is MappedByteBuffer &&
-                        nuSamples[lastIndex].limit() == nuSamples[lastIndex].capacity() - buffer.capacity()) {
+                else if (lastIndex >= 0 && nuSamples[lastIndex].limit() == nuSamples[lastIndex].capacity() - buffer.capacity()) {
                 // This can go wrong - but will it?
                 ByteBuffer oldBuffer = nuSamples[lastIndex];
                 ((Buffer)oldBuffer).limit(buffer.limit() + oldBuffer.limit());

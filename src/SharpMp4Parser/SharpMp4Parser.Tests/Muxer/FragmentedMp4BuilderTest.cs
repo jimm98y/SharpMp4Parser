@@ -26,7 +26,7 @@ namespace SharpMp4Parser.Tests.Muxer
             fragmentedMp4Builder.setFragmenter(new DefaultFragmenterImpl(5));
 
             Container c = fragmentedMp4Builder.build(m);
-            c.writeContainer(Channels.newChannel(new ByteArrayOutputStream()));
+            c.writeContainer(Channels.newChannel(new ByteStream()));
         }
     }
 }

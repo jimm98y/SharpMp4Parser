@@ -34,11 +34,11 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Read
         protected static int bitsRead;
         protected CharCache debugBits = new CharCache(50);
         int nBit;
-        private InputStream input;
+        private ByteStream input;
         private int curByte;
         private int nextByte;
 
-        public BitstreamReader(InputStream input)
+        public BitstreamReader(ByteStream input)
         {
             this.input = input;
             curByte = input.read();

@@ -158,7 +158,7 @@ namespace SharpMp4Parser.Tests.Muxer.Samples
                 fis.CopyTo(ms);
                 ms.Position = 0;
 
-                var buff = new ReadableByteChannel(ms.ToArray());
+                var buff = new ByteStream(ms.ToArray());
 
                 IsoFile isoFile = new IsoFile(buff);
                 Mp4SampleList sl = new Mp4SampleList(1, isoFile, new InMemRandomAccessSourceImpl(ms.ToArray()));

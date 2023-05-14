@@ -30,30 +30,30 @@ namespace SharpMp4Parser.IsoParser
     [DoNotParseDetail]
     public class IsoFile : BasicContainer /*, Closeable */
     {
-        private readonly ReadableByteChannel readableByteChannel;
+        private readonly ByteStream ByteStreamBase;
 
-        //private FileInputStream fis;
+        //private FileByteStreamBase fis;
 
         //public IsoFile(string file) : this(new File(file))
         //{  }
 
         //public IsoFile(File file)
         //{
-        //    this.fis = new FileInputStream(file);
-        //    this.readableByteChannel = fis.getChannel();
-        //    initContainer(readableByteChannel, -1, new PropertyBoxParserImpl());
+        //    this.fis = new FileByteStreamBase(file);
+        //    this.ByteStreamBase = fis.getChannel();
+        //    initContainer(ByteStreamBase, -1, new PropertyBoxParserImpl());
         //}
 
         /**
-         * @param readableByteChannel the data source
+         * @param ByteStreamBase the data source
          * @throws IOException in case I/O error
          */
-        public IsoFile(ReadableByteChannel readableByteChannel) : this(readableByteChannel, new PropertyBoxParserImpl())
+        public IsoFile(ByteStream readableByteChannel) : this(readableByteChannel, new PropertyBoxParserImpl())
         { }
 
-        public IsoFile(ReadableByteChannel readableByteChannel, BoxParser boxParser)
+        public IsoFile(ByteStream readableByteChannel, BoxParser boxParser)
         {
-            this.readableByteChannel = readableByteChannel;
+            this.ByteStreamBase = readableByteChannel;
             initContainer(readableByteChannel, -1, boxParser);
         }
 
@@ -104,14 +104,14 @@ namespace SharpMp4Parser.IsoParser
             return null;
         }
 
-        public void getBox(WritableByteChannel os)
+        public void getBox(ByteStream os)
         {
             writeContainer(os);
         }
 
         public void close()
         {
-            readableByteChannel.close();
+            ByteStreamBase.close();
             /*
             if (this.fis != null)
             {
@@ -130,7 +130,7 @@ namespace SharpMp4Parser.IsoParser
 
         public override string ToString()
         {
-            return "model(" + readableByteChannel + ")";
+            return "model(" + ByteStreamBase + ")";
         }
     }
 }

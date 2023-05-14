@@ -38,7 +38,7 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
                 this.xmlSubtitleSampleEntry = xmlSubtitleSampleEntry;
             }
 
-            public void writeTo(WritableByteChannel channel)
+            public void writeTo(ByteStreamBase channel)
             {
                 channel.write(ByteBuffer.wrap(finalSample));
             }
@@ -79,7 +79,7 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
                 mimeTypes.AddRange(extractMimeTypes(ttml));
 
                 // No changes of XML after this point!
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ByteStreamBase baos = new ByteStreamBase();
                 TtmlHelpers.pretty(ttml, baos, 4);
                 SubSampleInformationBox.SubSampleEntry.SubsampleEntry xmlEntry =
                         new SubSampleInformationBox.SubSampleEntry.SubsampleEntry();
@@ -187,11 +187,11 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
             }
         }
 
-        private static byte[] streamToByteArray(InputStream input)
+        private static byte[] streamToByteArray(ByteStreamBase input)
         {
             byte[]
         buffer = new byte[8096];
-            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            ByteStreamBase output = new ByteStreamBase();
 
             int n = 0;
             while (-1 != (n = input.read(buffer)))

@@ -85,7 +85,7 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
                 this.index = index;
             }
 
-            public void writeTo(WritableByteChannel channel)
+            public void writeTo(ByteStream channel)
             {
 
                 ByteBuffer sample = (ByteBuffer)((Java.Buffer)clearSample.asByteBuffer()).rewind();

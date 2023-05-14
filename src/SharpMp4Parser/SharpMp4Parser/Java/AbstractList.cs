@@ -9,7 +9,7 @@ namespace SharpMp4Parser.Java
         public static List<T> GetRange<T>(this IList<T> list, int startIndex, int length)
         {
             List<T> ret = new List<T>();
-            for(int i = startIndex; i < Math.Min(list.Count, length); i++)
+            for(int i = startIndex; i < startIndex + Math.Min(list.Count, length); i++)
             {
                 ret.Add(list[i]);
             }

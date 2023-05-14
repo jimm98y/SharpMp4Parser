@@ -212,7 +212,7 @@ namespace SharpMp4Parser.Muxer.Builder
                 return "mdat";
             }
 
-            public void getBox(WritableByteChannel writableByteChannel)
+            public void getBox(ByteStream writableByteChannel)
             {
                 ByteBuffer header = ByteBuffer.allocate(8);
                 IsoTypeWriter.writeUInt32(header, CastUtils.l2i(getSize()));

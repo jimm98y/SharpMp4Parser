@@ -781,7 +781,7 @@ namespace SharpMp4Parser.Muxer.Tracks
                 this.audioSampleEntry = audioSampleEntry;
             }
 
-            public void writeTo(WritableByteChannel channel)
+            public void writeTo(ByteStream channel)
             {
                 channel.write((ByteBuffer)((Java.Buffer)finalSample).rewind());
             }

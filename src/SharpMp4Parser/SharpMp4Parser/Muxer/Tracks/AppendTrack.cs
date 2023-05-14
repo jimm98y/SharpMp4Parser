@@ -76,8 +76,8 @@ namespace SharpMp4Parser.Muxer.Tracks
 
         private SampleDescriptionBox mergeStsds(SampleDescriptionBox stsd1, SampleDescriptionBox stsd2)
         {
-            ByteArrayOutputStream curBaos = new ByteArrayOutputStream();
-            ByteArrayOutputStream refBaos = new ByteArrayOutputStream();
+            ByteStream curBaos = new ByteStream();
+            ByteStream refBaos = new ByteStream();
             try
             {
                 stsd1.getBox(Channels.newChannel(curBaos));
@@ -206,8 +206,8 @@ namespace SharpMp4Parser.Muxer.Tracks
                 {
                     Box cur1 = bxs1.Current;
                     Box cur2 = bxs2.Current;
-                    ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
-                    ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
+                    ByteStream baos1 = new ByteStream();
+                    ByteStream baos2 = new ByteStream();
                     try
                     {
                         cur1.getBox(Channels.newChannel(baos1));
@@ -338,8 +338,8 @@ namespace SharpMp4Parser.Muxer.Tracks
                 {
                     Box cur1 = bxs1.Current;
                     Box cur2 = bxs2.Current;
-                    ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
-                    ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
+                    ByteStream baos1 = new ByteStream();
+                    ByteStream baos2 = new ByteStream();
                     try
                     {
                         cur1.getBox(Channels.newChannel(baos1));

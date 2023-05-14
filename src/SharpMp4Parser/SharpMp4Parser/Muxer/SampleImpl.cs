@@ -41,7 +41,7 @@ namespace SharpMp4Parser.Muxer
             this.sampleEntry = sampleEntry;
         }
 
-        public void writeTo(WritableByteChannel channel)
+        public void writeTo(ByteStream channel)
         {
             foreach (ByteBuffer b in data)
             {

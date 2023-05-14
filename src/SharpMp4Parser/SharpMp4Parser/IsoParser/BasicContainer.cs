@@ -120,7 +120,7 @@ namespace SharpMp4Parser.IsoParser
             }
         }
 
-        public void initContainer(ReadableByteChannel readableByteChannel, long containerSize, BoxParser boxParser)
+        public void initContainer(ByteStream readableByteChannel, long containerSize, BoxParser boxParser)
         {
             long contentProcessed = 0;
 
@@ -163,7 +163,7 @@ namespace SharpMp4Parser.IsoParser
             return buffer.ToString();
         }
 
-        public void writeContainer(WritableByteChannel bb)
+        public void writeContainer(ByteStream bb)
         {
             foreach (Box box in getBoxes())
             {

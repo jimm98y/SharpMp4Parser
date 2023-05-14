@@ -27,7 +27,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
         public PictureParameterSet pps;
         public SeqParameterSet sps;
 
-        public SliceHeader(InputStream input, Dictionary<int, SeqParameterSet> spss, Dictionary<int, PictureParameterSet> ppss, bool IdrPicFlag)
+        public SliceHeader(ByteStream input, Dictionary<int, SeqParameterSet> spss, Dictionary<int, PictureParameterSet> ppss, bool IdrPicFlag)
         {
             try
             {

@@ -307,20 +307,20 @@ namespace SharpMp4Parser.Muxer.Tracks
 
         public class AdtsSample : Sample
         {
-            private AudioSampleEntry audioSampleEntry;
+            private readonly AACTrackImpl that;
             private DataSource dataSource;
             private long frameSize;
             private long currentPosition;
 
-            public AdtsSample(AudioSampleEntry audioSampleEntry, DataSource dataSource, long frameSize, long currentPosition)
+            public AdtsSample(AACTrackImpl that, DataSource dataSource, long frameSize, long currentPosition)
             {
-                this.audioSampleEntry = audioSampleEntry;
+                this.that = that;
                 this.dataSource = dataSource;
                 this.frameSize = frameSize;
                 this.currentPosition = currentPosition;
             }
 
-            public void writeTo(WritableByteChannel channel)
+            public void writeTo(ByteStream channel)
             {
                 dataSource.transferTo(currentPosition, frameSize, channel);
             }
@@ -344,7 +344,7 @@ namespace SharpMp4Parser.Muxer.Tracks
 
             public SampleEntry getSampleEntry()
             {
-                return audioSampleEntry;
+                return that.audioSampleEntry;
             }
         }
 
@@ -362,7 +362,7 @@ namespace SharpMp4Parser.Muxer.Tracks
 
                 long currentPosition = channel.position();
                 long frameSize = hdr.frameLength - hdr.getSize();
-                samples.Add(new AdtsSample(audioSampleEntry, dataSource, frameSize, currentPosition));
+                samples.Add(new AdtsSample(this, dataSource, frameSize, currentPosition));
 
                 channel.position(channel.position() + hdr.frameLength - hdr.getSize());
             }

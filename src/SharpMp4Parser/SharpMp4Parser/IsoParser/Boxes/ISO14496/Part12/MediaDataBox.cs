@@ -15,6 +15,7 @@
  */
 
 using SharpMp4Parser.Java;
+using System.IO;
 
 namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
 {
@@ -30,12 +31,12 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
      * so Media Data Box headers and free space may easily be skipped, and files without any box structure may
      * also be referenced and used.
      */
-#warning TODO
-    public sealed class MediaDataBox : ParsableBox /*, Closeable */
+#warning TODO refactoring of the file access
+    public sealed class MediaDataBox : ParsableBox, Closeable
     {
         public const string TYPE = "mdat";
         ByteBuffer header;
-        //File dataFile;
+        System.IO.FileStream dataFile;
         long dataFilelength = 0;
 
         public string getType()
@@ -43,16 +44,17 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
             return TYPE;
         }
 
-        public void getBox(WritableByteChannel writableByteChannel)
+        public void getBox(ByteStream writableByteChannel)
         {
             writableByteChannel.write((ByteBuffer)((Java.Buffer)header).rewind());
-            //using (FileInputStream fis = new FileInputStream(dataFile))
-            //{
-            //    using (FileChannel fc = fis.getChannel())
-            //    {
-            //        fc.transferTo(0, dataFile.lastModified(), writableByteChannel);
-            //    }
-            //}
+            
+            dataFile.Seek(0, SeekOrigin.Begin);
+
+            using(MemoryStream ms = new MemoryStream())
+            {
+                dataFile.CopyTo(ms);
+                writableByteChannel.write(ms.ToArray());
+            }            
         }
 
         public long getSize()
@@ -63,32 +65,28 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
         /**
          * {@inheritDoc}
          */
-        public void parse(ReadableByteChannel dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
+        public void parse(ByteStream dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
         {
-            //dataFile = File.createTempFile("MediaDataBox", base.ToString());
-
-            //// make sure to clean up temp file
-            //dataFile.deleteOnExit();
+            // fileName: "MediaDataBox" + base.ToString()
+            dataFile = System.IO.File.Create(System.IO.Path.GetRandomFileName(), (int)contentSize, FileOptions.DeleteOnClose);
 
             this.header = ByteBuffer.allocate(header.limit());
             this.header.put(header);
-            //using (RandomAccessFile raf = new RandomAccessFile(dataFile, "rw"))
-            //{
-            //    raf.getChannel().transferFrom(dataSource, 0, contentSize);
-            //}
+
             dataFilelength = contentSize;
             byte[] data = new byte[contentSize];
             dataSource.read(data, 0, (int)contentSize);
+
+            dataFile.Write(data, 0, (int)contentSize);
+            dataFile.Flush();
         }
 
-        /*
-        public override void close()
+        public void close()
         {
             if (dataFile != null)
             {
-                dataFile.delete();
+                dataFile.Close();
             }
         }
-        */
     }
 }

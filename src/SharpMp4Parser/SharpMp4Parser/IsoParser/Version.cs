@@ -10,7 +10,7 @@
 
         static Version()
         {
-            //LineNumberReader lnr = new LineNumberReader(new InputStreamReader(Version.class.getResourceAsStream("/version2.txt")));
+            //LineNumberReader lnr = new LineNumberReader(new ByteStreamBaseReader(Version.class.getResourceAsStream("/version2.txt")));
             //String version;
             //try {
             //    version = lnr.readLine();

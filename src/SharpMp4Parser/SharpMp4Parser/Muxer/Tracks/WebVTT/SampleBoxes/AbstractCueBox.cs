@@ -29,7 +29,7 @@ namespace SharpMp4Parser.Muxer.Tracks.WebVTT.SampleBoxes
             return 8 + Utf8.utf8StringLengthInBytes(content);
         }
 
-        public void getBox(WritableByteChannel writableByteChannel)
+        public void getBox(ByteStream writableByteChannel)
         {
             ByteBuffer header = ByteBuffer.allocate(CastUtils.l2i(getSize()));
             IsoTypeWriter.writeUInt32(header, getSize());

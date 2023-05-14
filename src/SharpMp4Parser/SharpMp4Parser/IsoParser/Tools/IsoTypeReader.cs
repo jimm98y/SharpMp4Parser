@@ -87,7 +87,7 @@ namespace SharpMp4Parser.IsoParser.Tools
          */
         public static string readString(ByteBuffer byteBuffer)
         {
-            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            ByteStream output = new ByteStream();
             int read;
             while ((read = byteBuffer.get()) != 0)
             {

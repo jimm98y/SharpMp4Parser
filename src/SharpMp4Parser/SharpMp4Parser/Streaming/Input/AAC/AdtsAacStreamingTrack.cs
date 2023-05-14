@@ -47,7 +47,7 @@ namespace SharpMp4Parser.Streaming.Input.AAC
 
         SemaphoreSlim gotFirstSample = new SemaphoreSlim(1);
         SampleDescriptionBox stsd = null;
-        private InputStream input;
+        private ByteStream input;
         private bool closed;
         private AdtsHeader firstHeader;
         private string lang = "und";
@@ -55,7 +55,7 @@ namespace SharpMp4Parser.Streaming.Input.AAC
         private long maxBitrate;
 
 
-        public AdtsAacStreamingTrack(InputStream input, long avgBitrate, long maxBitrate)
+        public AdtsAacStreamingTrack(ByteStream input, long avgBitrate, long maxBitrate)
         {
             this.avgBitrate = avgBitrate;
             this.maxBitrate = maxBitrate;
@@ -70,7 +70,7 @@ namespace SharpMp4Parser.Streaming.Input.AAC
             this.addTrackExtension(defaultSampleFlagsTrackExtension);
         }
 
-        private static AdtsHeader readADTSHeader(InputStream fis)
+        private static AdtsHeader readADTSHeader(ByteStream fis)
         {
             AdtsHeader hdr = new AdtsHeader();
             int x = fis.read(); // A

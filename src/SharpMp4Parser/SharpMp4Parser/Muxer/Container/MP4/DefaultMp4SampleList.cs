@@ -218,7 +218,7 @@ namespace SharpMp4Parser.Muxer.Container.MP4
                 this.that = that;
             }
 
-            public void writeTo(WritableByteChannel channel)
+            public void writeTo(ByteStream channel)
             {
                 channel.write(asByteBuffer());
             }

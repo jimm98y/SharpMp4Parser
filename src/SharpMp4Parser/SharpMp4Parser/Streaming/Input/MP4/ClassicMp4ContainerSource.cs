@@ -24,11 +24,11 @@ namespace SharpMp4Parser.Streaming.Input.MP4
         Dictionary<TrackBox, long> currentChunks = new Dictionary<TrackBox, long>();
         readonly Dictionary<TrackBox, long> currentSamples = new Dictionary<TrackBox, long>();
         readonly DiscardingByteArrayOutputStream baos = new DiscardingByteArrayOutputStream();
-        readonly ReadableByteChannel readableByteChannel;
+        readonly ByteStream readableByteChannel;
         private readonly ByteBuffer BUFFER = ByteBuffer.allocate(65535);
 
 
-        public ClassicMp4ContainerSource(InputStream input)
+        public ClassicMp4ContainerSource(ByteStream input)
         {
             readableByteChannel = Channels.newChannel(new TeeInputStream(input, baos));
             BasicContainer container = new BasicContainer();
@@ -309,14 +309,14 @@ namespace SharpMp4Parser.Streaming.Input.MP4
             }
         }
 
-        public sealed class TeeInputStream : FilterInputStream
+        public sealed class TeeInputStream : ByteStream
         {
 
             /**
              * The output stream that will receive a copy of all bytes read from the
              * proxied input stream.
              */
-            private readonly OutputStream branch;
+            private readonly ByteStream branch;
             long counter = 0;
 
 
@@ -328,7 +328,7 @@ namespace SharpMp4Parser.Streaming.Input.MP4
              * @param input  input stream to be proxied
              * @param branch output stream that will receive a copy of all bytes read
              */
-            public TeeInputStream(InputStream input, OutputStream branch) : base(input)
+            public TeeInputStream(ByteStream input, ByteStream branch) : base(input)
             {
                 this.branch = branch;
             }

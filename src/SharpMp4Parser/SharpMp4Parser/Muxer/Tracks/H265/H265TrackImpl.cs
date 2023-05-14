@@ -162,7 +162,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
         //    movie.addTrack(track);
         //    DefaultMp4Builder mp4Builder = new DefaultMp4Builder();
         //    Container c = mp4Builder.build(movie);
-        //    c.writeContainer(new FileOutputStream("output.mp4").getChannel());
+        //    c.writeContainer(new FileByteStreamBase("output.mp4").getChannel());
         //}
 
         private VisualSampleEntry createSampleEntry()

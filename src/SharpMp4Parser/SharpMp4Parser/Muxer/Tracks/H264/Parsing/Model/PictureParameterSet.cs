@@ -40,10 +40,10 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Model
 
         public static PictureParameterSet read(byte[] b)
         {
-            return read(new ByteArrayInputStream(b));
+            return read(new ByteStream(b));
         }
 
-        public static PictureParameterSet read(InputStream input)
+        public static PictureParameterSet read(ByteStream input)
         {
             CAVLCReader reader = new CAVLCReader(input);
             PictureParameterSet pps = new PictureParameterSet();
@@ -160,7 +160,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Model
             return pps;
         }
 
-        public override void write(ByteArrayOutputStream output)
+        public override void write(ByteStream output)
         {
             CAVLCWriter writer = new CAVLCWriter(output);
 

@@ -24,7 +24,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             {
                 if (sampleEntry.getType().Equals("avc1"))
                 {
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    ByteStream baos = new ByteStream();
                     try
                     {
                         // This creates a copy cause I can't change the original instance
@@ -79,7 +79,7 @@ namespace SharpMp4Parser.Muxer.Tracks
                 return se;
             }
 
-            public void writeTo(WritableByteChannel channel)
+            public void writeTo(ByteStream channel)
             {
 
                 foreach (ByteBuffer bytes in avcC.getSequenceParameterSets())

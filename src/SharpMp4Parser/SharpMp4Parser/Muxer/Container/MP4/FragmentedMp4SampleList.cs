@@ -113,7 +113,7 @@ namespace SharpMp4Parser.Muxer.Container.MP4
                 this.tfhd = tfhd;
             }
 
-            public void writeTo(WritableByteChannel channel)
+            public void writeTo(ByteStream channel)
             {
                 ByteBuffer bb = asByteBuffer();
                 /*int a =*/

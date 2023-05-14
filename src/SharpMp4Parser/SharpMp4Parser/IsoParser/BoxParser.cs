@@ -23,6 +23,6 @@ namespace SharpMp4Parser.IsoParser
      */
     public interface BoxParser
     {
-        ParsableBox parseBox(ReadableByteChannel input, string parentType);
+        ParsableBox parseBox(ByteStream input, string parentType);
     }
 }

@@ -39,7 +39,7 @@ namespace SharpMp4Parser.Tests.Muxer.Tracks
                     isoFis.CopyTo(isoMs);
                     isoMs.Position = 0;
 
-                    var isoBuff = new ReadableByteChannel(isoMs.ToArray());
+                    var isoBuff = new ByteStream(isoMs.ToArray());
 
                     IsoFile isoFileReference = new IsoFile(isoBuff);
                     BoxComparator.check(c, isoFileReference, "moov[0]/mvhd[0]", "moov[0]/trak[0]/tkhd[0]", "moov[0]/trak[0]/mdia[0]/mdhd[0]", "moov[0]/trak[0]/mdia[0]/minf[0]/stbl[0]/stco[0]");

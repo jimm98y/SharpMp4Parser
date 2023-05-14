@@ -38,7 +38,7 @@ namespace SharpMp4Parser.Tests.IsoParser.Boxes.ISO14496.Part12
             ilocOrig.setLengthSize(lengthSize);
             ilocOrig.setOffsetSize(offsetSize);
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ByteStream baos = new ByteStream();
 
 
             ilocOrig.getBox(Channels.newChannel(baos));
@@ -86,7 +86,7 @@ namespace SharpMp4Parser.Tests.IsoParser.Boxes.ISO14496.Part12
             ilocOrig.setOffsetSize(offsetSize);
             ItemLocationBox.Item item = ilocOrig.createItem(12, 0, 13, 123, new List<ItemLocationBox.Extent>());
             ilocOrig.setItems(new List<ItemLocationBox.Item>() { item });
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ByteStream baos = new ByteStream();
             ilocOrig.getBox(Channels.newChannel(baos));
 
             IsoFile isoFile = new IsoFile(new ByteBufferByteChannel(baos.toByteArray()));
@@ -139,12 +139,12 @@ namespace SharpMp4Parser.Tests.IsoParser.Boxes.ISO14496.Part12
             
             File f = File.createTempFile(this.getClass().getSimpleName(), "");
             f.deleteOnExit();
-            FileChannel fc = new FileOutputStream(f).getChannel();
+            FileChannel fc = new FileByteStreamBase(f).getChannel();
             ilocOrig.getBox(fc);
             fc.close();
 
 
-            IsoFile isoFile = new IsoFile(new FileInputStream(f).getChannel());
+            IsoFile isoFile = new IsoFile(new FileByteStreamBase(f).getChannel());
 
             ItemLocationBox iloc = (ItemLocationBox)isoFile.getBoxes()[0];
 

@@ -60,7 +60,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
             this.data = data;
         }
 
-        public void getBox(WritableByteChannel os)
+        public void getBox(ByteStream os)
         {
             foreach (ParsableBox replacer in replacers)
             {
@@ -93,7 +93,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
             return TYPE;
         }
 
-        public void parse(ReadableByteChannel dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
+        public void parse(ByteStream dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
         {
             data = ByteBuffer.allocate(CastUtils.l2i(contentSize));
 

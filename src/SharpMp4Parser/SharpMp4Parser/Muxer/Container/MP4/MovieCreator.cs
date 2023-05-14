@@ -39,7 +39,7 @@ namespace SharpMp4Parser.Muxer.Container.MP4
                 ms.Position = 0;
 
                 var array = ms.ToArray();
-                var buff = new ReadableByteChannel(array);
+                var buff = new ByteStream(array);
                 Movie m = build(buff, new InMemRandomAccessSourceImpl(array), file);
                 fis.Close();
                 return m;
@@ -47,15 +47,15 @@ namespace SharpMp4Parser.Muxer.Container.MP4
         }
 
         /**
-         * Creates <code>Movie</code> object from a <code>ReadableByteChannel</code>.
+         * Creates <code>Movie</code> object from a <code>ByteStreamBase</code>.
          *
          * @param name                track name to identify later
-         * @param readableByteChannel the box structure is read from this channel
+         * @param ByteStreamBase the box structure is read from this channel
          * @param randomAccessSource  the samples or read from this randomAccessSource
          * @return a representation of the movie
          * @throws IOException in case of I/O error during IsoFile creation
          */
-        public static Movie build(ReadableByteChannel readableByteChannel, RandomAccessSource randomAccessSource, string name)
+        public static Movie build(ByteStream readableByteChannel, RandomAccessSource randomAccessSource, string name)
         {
             IsoFile isoFile = new IsoFile(readableByteChannel);
             Movie m = new Movie();

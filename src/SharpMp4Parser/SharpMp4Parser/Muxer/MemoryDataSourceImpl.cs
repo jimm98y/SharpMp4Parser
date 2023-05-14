@@ -57,7 +57,7 @@ namespace SharpMp4Parser.Muxer
             ((Java.Buffer)data).position(CastUtils.l2i(nuPos));
         }
 
-        public long transferTo(long position, long count, WritableByteChannel target)
+        public long transferTo(long position, long count, ByteStream target)
         {
             return target.write((ByteBuffer)((Java.Buffer)((ByteBuffer)((Java.Buffer)data).position(CastUtils.l2i(position))).slice()).limit(CastUtils.l2i(count)));
         }

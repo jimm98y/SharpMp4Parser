@@ -12,7 +12,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
         public HintSampleEntry(string type) : base(type)
         { }
 
-        public override void parse(ReadableByteChannel dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
+        public override void parse(ByteStream dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
         {
             ByteBuffer b1 = ByteBuffer.allocate(8);
             dataSource.read(b1);
@@ -22,7 +22,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
             dataSource.read(ByteBuffer.wrap(data));
         }
 
-        public override void getBox(WritableByteChannel writableByteChannel)
+        public override void getBox(ByteStream writableByteChannel)
         {
             writableByteChannel.write(getHeader());
 

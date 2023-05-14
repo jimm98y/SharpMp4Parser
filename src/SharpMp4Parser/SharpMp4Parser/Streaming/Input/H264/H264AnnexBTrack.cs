@@ -10,12 +10,12 @@ namespace SharpMp4Parser.Streaming.Input.H264
     public class H264AnnexBTrack : H264NalConsumingTrack /*, Callable<Void> */
     {
 
-        private InputStream inputStream;
+        private ByteStream inputStream;
 
-        public H264AnnexBTrack(InputStream inputStream)
+        public H264AnnexBTrack(ByteStream inputStream)
         {
             Debug.Assert(inputStream != null);
-            this.inputStream = new ByteArrayInputStream(inputStream); // BufferedInputStream
+            this.inputStream = new ByteStream(inputStream); // BufferedInputStream
         }
 
 
@@ -51,9 +51,9 @@ namespace SharpMp4Parser.Streaming.Input.H264
             //private static Logger LOG = LoggerFactory.getLogger(typeof(NalStreamTokenizer).getName());
             MyByteArrayOutputStream next;
             int pattern = 0;
-            private InputStream inputStream;
+            private ByteStream inputStream;
 
-            public NalStreamTokenizer(InputStream inputStream)
+            public NalStreamTokenizer(ByteStream inputStream)
             {
                 this.inputStream = inputStream;
                 this.next = new MyByteArrayOutputStream();
@@ -127,7 +127,7 @@ namespace SharpMp4Parser.Streaming.Input.H264
 
         }
 
-        sealed class MyByteArrayOutputStream : ByteArrayOutputStream
+        sealed class MyByteArrayOutputStream : ByteStream
         {
             public byte[] toByteArrayLess3()
             {

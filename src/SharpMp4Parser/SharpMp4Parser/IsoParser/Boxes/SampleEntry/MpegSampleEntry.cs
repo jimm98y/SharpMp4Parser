@@ -11,7 +11,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.SampleEntry
         public MpegSampleEntry(string type) : base(type)
         { }
 
-        public override void parse(ReadableByteChannel dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
+        public override void parse(ByteStream dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
         {
             ByteBuffer bb = ByteBuffer.allocate(8);
             dataSource.read(bb);
@@ -20,13 +20,13 @@ namespace SharpMp4Parser.IsoParser.Boxes.SampleEntry
             initContainer(dataSource, contentSize - 8, boxParser);
         }
 
-        public override void getBox(WritableByteChannel writableByteChannel)
+        public override void getBox(ByteStream writableByteChannel)
         {
             writableByteChannel.write(getHeader());
             ByteBuffer bb = ByteBuffer.allocate(8);
             ((Buffer)bb).position(6);
             IsoTypeWriter.writeUInt16(bb, dataReferenceIndex);
-            writableByteChannel.write(bb.rewind());
+            writableByteChannel.write((ByteBuffer)bb.rewind());
             writeContainer(writableByteChannel);
         }
 

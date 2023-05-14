@@ -75,10 +75,10 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
             IsoTypeWriter.writeUInt24(bb, flags);
         }
 
-        public override void parse(ReadableByteChannel dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
+        public override void parse(ByteStream dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
         {
             // Read first 20 bytes to determine whether the file is formatted according to QuickTime File Format.
-            RewindableReadableByteChannel rewindableDataSource = new RewindableReadableByteChannel(dataSource, 20);
+            RewindableByteStreamBase rewindableDataSource = new RewindableByteStreamBase(dataSource, 20);
             ByteBuffer bb = ByteBuffer.allocate(20);
             int bytesRead = rewindableDataSource.read(bb);
             if (bytesRead == 20)
@@ -108,14 +108,14 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
             initContainer(rewindableDataSource, contentSize - bytesUsed, boxParser);
         }
 
-        public override void getBox(WritableByteChannel writableByteChannel)
+        public override void getBox(ByteStream writableByteChannel)
         {
             writableByteChannel.write(getHeader());
             if (!quickTimeFormat)
             {
                 ByteBuffer bb = ByteBuffer.allocate(4);
                 writeVersionAndFlags(bb);
-                writableByteChannel.write(bb.rewind());
+                writableByteChannel.write((ByteBuffer)bb.rewind());
             }
             writeContainer(writableByteChannel);
         }

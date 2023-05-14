@@ -38,19 +38,19 @@ namespace SharpMp4Parser.IsoParser
             return sourcePosition;
         }
 
-        public void getBox(WritableByteChannel writableByteChannel)
+        public void getBox(ByteStream writableByteChannel)
         {
             throw new Exception("Cannot retrieve a skipped box - type " + type);
         }
 
-        public void parse(ReadableByteChannel dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
+        public void parse(ByteStream dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
         {
             size = contentSize + 8;
 
             //if (dataSource is FileChannel)
             //{
             //FileChannel seekable = (FileChannel)dataSource;
-            ReadableByteChannel seekable = dataSource;
+            ByteStream seekable = dataSource;
             sourcePosition = seekable.position();
             long newPosition = sourcePosition + contentSize;
             seekable.position(newPosition);
