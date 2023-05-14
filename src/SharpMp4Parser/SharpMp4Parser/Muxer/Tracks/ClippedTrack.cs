@@ -54,7 +54,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             this.toSample = (int)toSample;
         }
 
-        static List<TimeToSampleBox.Entry> getDecodingTimeEntries(List<TimeToSampleBox.Entry> origSamples, long fromSample, long toSample)
+        public static List<TimeToSampleBox.Entry> getDecodingTimeEntries(List<TimeToSampleBox.Entry> origSamples, long fromSample, long toSample)
         {
             if (origSamples != null && origSamples.Count != 0)
             {
@@ -98,7 +98,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             }
         }
 
-        static List<CompositionTimeToSample.Entry> getCompositionTimeEntries(List<CompositionTimeToSample.Entry> origSamples, long fromSample, long toSample)
+        public static List<CompositionTimeToSample.Entry> getCompositionTimeEntries(List<CompositionTimeToSample.Entry> origSamples, long fromSample, long toSample)
         {
             if (origSamples != null && origSamples.Count != 0)
             {
