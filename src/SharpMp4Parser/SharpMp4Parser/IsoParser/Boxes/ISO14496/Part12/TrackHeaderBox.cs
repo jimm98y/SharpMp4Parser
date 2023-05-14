@@ -36,8 +36,8 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
     {
         public const string TYPE = "tkhd";
         //private static Logger LOG = LoggerFactory.getLogger(TrackHeaderBox.class);
-        private DateTime creationTime = new DateTime(0);
-        private DateTime modificationTime = new DateTime(0);
+        private DateTime creationTime = DateTime.UtcNow;
+        private DateTime modificationTime = DateTime.UtcNow;
         private long trackId;
         private long duration;
         private int layer;

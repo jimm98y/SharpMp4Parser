@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 
 namespace SharpMp4Parser.Streaming.Output.MP4
 {
@@ -28,7 +27,7 @@ namespace SharpMp4Parser.Streaming.Output.MP4
         protected List<StreamingTrack> source;
         protected DateTime creationTime;
         protected long sequenceNumber = 1;
-        protected ConcurrentDictionary<StreamingTrack, SemaphoreSlim> congestionControl = new ConcurrentDictionary<StreamingTrack, SemaphoreSlim>();
+        protected ConcurrentDictionary<StreamingTrack, CountDownLatch> congestionControl = new ConcurrentDictionary<StreamingTrack, CountDownLatch>();
         /**
          * Contains the start time of the next segment in line that will be created.
          */
@@ -69,7 +68,7 @@ namespace SharpMp4Parser.Streaming.Output.MP4
                 nextFragmentCreateStartTime.TryAdd(streamingTrack, 0L);
                 nextFragmentWriteStartTime.TryAdd(streamingTrack, 0L);
                 nextSampleStartTime.TryAdd(streamingTrack, 0L);
-                congestionControl.TryAdd(streamingTrack, new SemaphoreSlim(0));
+                congestionControl.TryAdd(streamingTrack, new CountDownLatch(0));
                 if (streamingTrack.getTrackExtension< TrackIdTrackExtension>(typeof(TrackIdTrackExtension)) != null)
                 {
                     TrackIdTrackExtension trackIdTrackExtension = streamingTrack.getTrackExtension< TrackIdTrackExtension>(typeof(TrackIdTrackExtension));
@@ -262,10 +261,10 @@ namespace SharpMp4Parser.Streaming.Output.MP4
 
             try
             {
-                SemaphoreSlim cdl = congestionControl[streamingTrack];
-                if (cdl.CurrentCount > 0)
+                CountDownLatch cdl = congestionControl[streamingTrack];
+                if (cdl.getCount() > 0)
                 {
-                    cdl.Wait();
+                    cdl.await();
                 }
             }
             catch (Exception)
@@ -297,7 +296,7 @@ namespace SharpMp4Parser.Streaming.Output.MP4
 
                             writeFragment(currentFragmentContainer.fragmentContent);
 
-                            congestionControl[currentStreamingTrack].Release();
+                            congestionControl[currentStreamingTrack].countDown();
                             long ts = nextFragmentWriteStartTime[currentStreamingTrack] + currentFragmentContainer.duration;
                             nextFragmentWriteStartTime.TryAdd(currentStreamingTrack, ts);
                             //if (LOG.isDebugEnabled())
@@ -312,7 +311,7 @@ namespace SharpMp4Parser.Streaming.Output.MP4
                         {
                             // if there are more than 10 fragments in the queue we don't want more samples of this track
                             // System.err.println("Stopping " + streamingTrack);
-                            congestionControl.TryAdd(streamingTrack, new SemaphoreSlim(fragmentQueue.Count));
+                            congestionControl.TryAdd(streamingTrack, new CountDownLatch(fragmentQueue.Count));
                         }
                     }
                 }

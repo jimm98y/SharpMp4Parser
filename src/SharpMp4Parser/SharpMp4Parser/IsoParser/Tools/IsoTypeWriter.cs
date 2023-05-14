@@ -32,8 +32,8 @@ namespace SharpMp4Parser.IsoParser.Tools
         public static void writeUInt32(ByteBuffer bb, long u)
         {
             Debug.Assert(u >= 0 && u <= 1L << 32, "The given long is not in the range of uint32 (" + u + ")");
+#warning review this - putUint?
             bb.putInt((int)u);
-
         }
 
         public static void writeUInt32BE(ByteBuffer bb, long u)

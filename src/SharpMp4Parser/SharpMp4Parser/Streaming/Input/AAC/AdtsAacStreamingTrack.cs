@@ -45,7 +45,7 @@ namespace SharpMp4Parser.Streaming.Input.AAC
             samplingFrequencyIndexMap.Add(0xb, 8000);
         }
 
-        SemaphoreSlim gotFirstSample = new SemaphoreSlim(1);
+        CountDownLatch gotFirstSample = new CountDownLatch(1);
         SampleDescriptionBox stsd = null;
         private ByteStream input;
         private bool closed;
@@ -200,7 +200,7 @@ namespace SharpMp4Parser.Streaming.Input.AAC
         {
             try
             {
-                gotFirstSample.Wait();
+                gotFirstSample.await();
             }
             catch (Exception)
             {
@@ -246,7 +246,7 @@ namespace SharpMp4Parser.Streaming.Input.AAC
                     if (firstHeader == null)
                     {
                         firstHeader = header;
-                        gotFirstSample.Release();
+                        gotFirstSample.countDown();
                     }
                     byte[] frame = new byte[header.frameLength - header.getSize()];
                     int n = 0;

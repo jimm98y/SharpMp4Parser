@@ -27,7 +27,7 @@ namespace SharpMp4Parser.Muxer.Container.MP4
         public DefaultMp4SampleList(long track, IsoParser.Container topLevel, RandomAccessSource randomAccessFile)
         {
             this.randomAccess = randomAccessFile;
-            MovieBox movieBox = topLevel.getBoxes< MovieBox>(typeof(MovieBox))[0];
+            MovieBox movieBox = topLevel.getBoxes<MovieBox>(typeof(MovieBox))[0];
             List<TrackBox> trackBoxes = movieBox.getBoxes< TrackBox>(typeof(TrackBox));
 
             foreach (TrackBox tb in trackBoxes)

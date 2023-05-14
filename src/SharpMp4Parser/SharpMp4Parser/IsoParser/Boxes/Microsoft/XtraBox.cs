@@ -536,7 +536,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.Microsoft
                         longValue = content.getLong();
                         break;
                     case MP4_XTRA_BT_FILETIME:
-                        fileTimeValue = new DateTime(filetimeToMillis(content.getLong()));
+                        fileTimeValue = new DateTime(1970, 1, 1, 0, 0, 0, 0).AddMilliseconds(filetimeToMillis(content.getLong()));
                         break;
                     case MP4_XTRA_BT_GUID:
                     default:

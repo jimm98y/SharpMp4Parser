@@ -28,7 +28,7 @@ namespace SharpMp4Parser.Streaming.Output.MP4
         protected DateTime creationTime = DateTime.UtcNow;
 
 
-        protected ConcurrentDictionary<StreamingTrack, SemaphoreSlim> congestionControl = new ConcurrentDictionary<StreamingTrack, SemaphoreSlim>();
+        protected ConcurrentDictionary<StreamingTrack, CountDownLatch> congestionControl = new ConcurrentDictionary<StreamingTrack, CountDownLatch>();
         /**
          * Contains the start time of the next segment in line that will be created.
          */
@@ -70,7 +70,7 @@ namespace SharpMp4Parser.Streaming.Output.MP4
                 nextSampleStartTime.TryAdd(streamingTrack, 0L);
                 nextChunkCreateStartTime.TryAdd(streamingTrack, 0L);
                 nextChunkWriteStartTime.TryAdd(streamingTrack, 0L);
-                congestionControl.TryAdd(streamingTrack, new SemaphoreSlim(0));
+                congestionControl.TryAdd(streamingTrack, new CountDownLatch(0));
                 sampleBuffers.Add(streamingTrack, new List<StreamingSample>());
                 chunkBuffers.TryAdd(streamingTrack, new Queue<ChunkContainer>());
                 if (streamingTrack.getTrackExtension< TrackIdTrackExtension>(typeof(TrackIdTrackExtension)) != null)
@@ -247,10 +247,10 @@ namespace SharpMp4Parser.Streaming.Output.MP4
 
             try
             {
-                SemaphoreSlim cdl = congestionControl[streamingTrack];
-                if (cdl.CurrentCount > 0)
+                CountDownLatch cdl = congestionControl[streamingTrack];
+                if (cdl.getCount() > 0)
                 {
-                    cdl.Wait();
+                    cdl.await();
                 }
             }
             catch (Exception)
@@ -279,7 +279,7 @@ namespace SharpMp4Parser.Streaming.Output.MP4
                         {
                             ChunkContainer currentFragmentContainer = tracksFragmentQueue.Dequeue();
                             writeChunkContainer(currentFragmentContainer);
-                            congestionControl[currentStreamingTrack].Release();
+                            congestionControl[currentStreamingTrack].countDown();
                             long ts = nextChunkWriteStartTime[currentStreamingTrack] + currentFragmentContainer.duration;
                             nextChunkWriteStartTime.TryAdd(currentStreamingTrack, ts);
                             //if (LOG.isTraceEnabled())
@@ -295,7 +295,7 @@ namespace SharpMp4Parser.Streaming.Output.MP4
                         {
                             // if there are more than 10 fragments in the queue we don't want more samples of this track
                             // System.err.println("Stopping " + streamingTrack);
-                            congestionControl.TryAdd(streamingTrack, new SemaphoreSlim(chunkQueue.Count));
+                            congestionControl.TryAdd(streamingTrack, new CountDownLatch(chunkQueue.Count));
                         }
                     }
                 }
