@@ -481,16 +481,16 @@ namespace SharpMp4Parser.Muxer.Tracks
 
         }
 
-        public class SampleImpl : Sample
+        public class AC3TrackSample : Sample
         {
             private readonly long start;
             private readonly long size;
             private readonly DataSource dataSource;
-            AudioSampleEntry audioSampleEntry;
+            private readonly AC3TrackImpl that;
 
-            public SampleImpl(long start, long size, DataSource dataSource, AudioSampleEntry audioSampleEntry)
+            public AC3TrackSample(AC3TrackImpl that, long start, long size, DataSource dataSource)
             {
-                this.audioSampleEntry = audioSampleEntry;
+                this.that = that;
                 this.start = start;
                 this.size = size;
                 this.dataSource = dataSource;
@@ -520,7 +520,7 @@ namespace SharpMp4Parser.Muxer.Tracks
 
             public SampleEntry getSampleEntry()
             {
-                return audioSampleEntry;
+                return that.audioSampleEntry;
             }
         }
 
@@ -534,7 +534,7 @@ namespace SharpMp4Parser.Muxer.Tracks
                 int frmsizecode = header.get(4) & 63;
                 int fscod = header.get(4) >> 6;
                 int frameSize = getFrameSize(frmsizecode, fscod);
-                mysamples.Add(new SampleImpl(dataSource.position() - 5, frameSize, dataSource, audioSampleEntry));
+                mysamples.Add(new AC3TrackSample(this, dataSource.position() - 5, frameSize, dataSource));
                 dataSource.position(dataSource.position() - 5 + frameSize);
                 ((Java.Buffer)header).rewind();
 

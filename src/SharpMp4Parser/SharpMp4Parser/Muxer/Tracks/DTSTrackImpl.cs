@@ -770,12 +770,12 @@ namespace SharpMp4Parser.Muxer.Tracks
             return true;
         }
 
-        public class CustomSample : Sample
+        public class DTSTrackSample : Sample
         {
             private ByteBuffer finalSample;
             private readonly DTSTrackImpl that;
 
-            public CustomSample(DTSTrackImpl that, ByteBuffer finalSample)
+            public DTSTrackSample(DTSTrackImpl that, ByteBuffer finalSample)
             {
                 this.that = that;
                 this.finalSample = finalSample;
@@ -811,7 +811,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             while ((sample = la.findNextStart()) != null)
             {
                 ByteBuffer finalSample = sample;
-                mySamples.Add(new CustomSample(this, finalSample));
+                mySamples.Add(new DTSTrackSample(this, finalSample));
                 //System.err.println(finalSample.remaining());
             }
             Debug.WriteLine("all samples found");

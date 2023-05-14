@@ -438,19 +438,19 @@ namespace SharpMp4Parser.Muxer.Tracks
         }
 
 
-        public class CustomSample : Sample
+        public class EC3TrackSample : Sample
         {
             private DataSource dataSource;
             private int start;
             private int frameSize;
-            private AudioSampleEntry audioSampleEntry;
+            private EC3TrackImpl that;
 
-            public CustomSample(DataSource dataSource, int start, int frameSize, AudioSampleEntry audioSampleEntry)
+            public EC3TrackSample(EC3TrackImpl that, DataSource dataSource, int start, int frameSize)
             {
+                this.that = that;
                 this.dataSource = dataSource;
                 this.start = start;
                 this.frameSize = frameSize;
-                this.audioSampleEntry = audioSampleEntry;
             }
 
             public void writeTo(ByteStream channel)
@@ -477,7 +477,7 @@ namespace SharpMp4Parser.Muxer.Tracks
 
             public SampleEntry getSampleEntry()
             {
-                return audioSampleEntry;
+                return that.audioSampleEntry;
             }
         }
 
@@ -489,7 +489,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             for (int i = 0; i < framesLeft; i++)
             {
                 int start = i * frameSize;
-                mySamples.Add(new CustomSample(dataSource, start, frameSize, audioSampleEntry));
+                mySamples.Add(new EC3TrackSample(this, dataSource, start, frameSize));
             }
 
             return mySamples;

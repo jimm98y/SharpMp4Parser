@@ -12,6 +12,8 @@
   <ItemGroup>
     <None Remove="aac-sample.aac" />
     <None Remove="aac-sample.mp4" />
+    <None Remove="ac3-sample.ac3" />
+    <None Remove="ac3-sample.mp4" />
     <None Remove="BBB_fixedres_B_180x320_100.mp4" />
     <None Remove="BBB_fixedres_B_180x320_120.mp4" />
     <None Remove="BBB_fixedres_B_180x320_150.mp4" />
@@ -30,6 +32,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="aac-sample.mp4">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ac3-sample.ac3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ac3-sample.mp4">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="BBB_fixedres_B_180x320_100.mp4">
