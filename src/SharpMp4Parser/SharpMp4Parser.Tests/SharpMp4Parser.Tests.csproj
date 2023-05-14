@@ -18,6 +18,8 @@
     <None Remove="BBB_fixedres_B_180x320_200.mp4" />
     <None Remove="BBB_fixedres_B_180x320_80.mp4" />
     <None Remove="Beethoven - Bagatelle op.119 no.11 i.m4a" />
+    <None Remove="dts-sample.dtshd" />
+    <None Remove="dts-sample.mp4" />
     <None Remove="h264-sample.h264" />
     <None Remove="h264-sample.mp4" />
     <None Remove="output_audio-2ch-20s.mp4" />
@@ -46,6 +48,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Beethoven - Bagatelle op.119 no.11 i.m4a">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="dts-sample.dtshd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="dts-sample.mp4">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="h264-sample.h264">

@@ -773,12 +773,12 @@ namespace SharpMp4Parser.Muxer.Tracks
         public class CustomSample : Sample
         {
             private ByteBuffer finalSample;
-            private AudioSampleEntry audioSampleEntry;
+            private readonly DTSTrackImpl that;
 
-            public CustomSample(ByteBuffer finalSample, AudioSampleEntry audioSampleEntry)
+            public CustomSample(DTSTrackImpl that, ByteBuffer finalSample)
             {
+                this.that = that;
                 this.finalSample = finalSample;
-                this.audioSampleEntry = audioSampleEntry;
             }
 
             public void writeTo(ByteStream channel)
@@ -798,7 +798,7 @@ namespace SharpMp4Parser.Muxer.Tracks
 
             public SampleEntry getSampleEntry()
             {
-                return audioSampleEntry;
+                return that.audioSampleEntry;
             }
         }
 
@@ -811,7 +811,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             while ((sample = la.findNextStart()) != null)
             {
                 ByteBuffer finalSample = sample;
-                mySamples.Add(new CustomSample(finalSample, audioSampleEntry));
+                mySamples.Add(new CustomSample(this, finalSample));
                 //System.err.println(finalSample.remaining());
             }
             Debug.WriteLine("all samples found");
