@@ -20,9 +20,9 @@ namespace SharpMp4Parser.Tests.Streaming.Input.H264
                 h264Fis.CopyTo(h264Ms);
                 h264Ms.Position = 0;
 
-                var aacStream = new ByteStream(h264Ms.ToArray());
+                var h264Stream = new ByteStream(h264Ms.ToArray());
 
-                H264AnnexBTrack b = new H264AnnexBTrack(aacStream);
+                H264AnnexBTrack b = new H264AnnexBTrack(h264Stream);
                 //H264AnnexBTrack b = new H264AnnexBTrack(new FileInputStream("C:\\dev\\mp4parser\\out.264"));
                 ByteStream baos = new ByteStream();
                 FragmentedMp4Writer writer = new FragmentedMp4Writer(new List<StreamingTrack> { b }, Channels.newChannel(baos));
