@@ -215,7 +215,8 @@ namespace SharpMp4Parser.Streaming.Output.MP4
         public void acceptSample(StreamingSample streamingSample, StreamingTrack streamingTrack)
         {
 
-            TrackBox tb = trackBoxes[streamingTrack];
+            TrackBox tb;
+            trackBoxes.TryGetValue(streamingTrack, out tb);
             if (tb == null)
             {
                 tb = new TrackBox();
@@ -313,7 +314,7 @@ namespace SharpMp4Parser.Streaming.Output.MP4
         {
             List<StreamingSample> samples = sampleBuffers[streamingTrack];
             long chunkNumber = chunkNumbers[streamingTrack];
-            chunkNumbers.Add(streamingTrack, chunkNumber + 1);
+            chunkNumbers[streamingTrack] = chunkNumber + 1;
             ChunkContainer cc = new ChunkContainer();
             cc.streamingTrack = streamingTrack;
             cc.mdat = new Mdat(samples);
@@ -402,7 +403,7 @@ namespace SharpMp4Parser.Streaming.Output.MP4
             Debug.Assert(stsz != null);
             stsz.setSampleSizes(Mp4Arrays.copyOfAndAppend(stsz.getSampleSizes(), sampleSizes));
 
-            sampleNumbers.Add(streamingTrack, sampleNumber);
+            sampleNumbers[streamingTrack] = sampleNumber;
             samples.Clear();
             //LOG.debug("CC created. mdat size: " + cc.mdat.size);
             return cc;
