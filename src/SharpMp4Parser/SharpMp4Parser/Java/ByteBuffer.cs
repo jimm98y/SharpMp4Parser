@@ -81,7 +81,10 @@ namespace SharpMp4Parser.Java
 
             if (_ms.Capacity > oldCapacity)
             {
-                limit(oldCapacity);
+                if (oldCapacity != 0)
+                {
+                    limit(oldCapacity);
+                }
             }
         }
 

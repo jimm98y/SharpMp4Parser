@@ -62,6 +62,11 @@ namespace SharpMp4Parser.IsoParser.Support
                 baos1.close();
                 baos2.close();
 
+                if(!Convert.ToBase64String(baos1.toByteArray()).Equals(Convert.ToBase64String(baos2.toByteArray())))
+                {
+                    Debug.WriteLine(Convert.ToBase64String(baos1.toByteArray()));
+                    Debug.WriteLine(Convert.ToBase64String(baos2.toByteArray()));
+                }
                 Debug.Assert(Convert.ToBase64String(baos1.toByteArray()).Equals(Convert.ToBase64String(baos2.toByteArray())), "Box at " + b1 + " differs from reference\n\n" + b1.ToString() + "\n" + b2.ToString());
             }
         }
@@ -76,16 +81,18 @@ namespace SharpMp4Parser.IsoParser.Support
             List<Box>.Enumerator it1 = cb1.getBoxes().GetEnumerator();
             List<Box>.Enumerator it2 = cb2.getBoxes().GetEnumerator();
 
-            while (it1.MoveNext() && it2.MoveNext())
+            bool it1r = false, it2r = false;
+            while ((it1r = it1.MoveNext()) && (it2r = it2.MoveNext()))
             {
                 Box b1 = it1.Current;
                 Box b2 = it2.Current;
 
                 check(root1, b1, root2, b2, ignores);
             }
-            
-            //Debug.Assert(!it1.hasNext(), "There is a box missing in the current output of the tool: " + it1.next());
-            //Debug.Assert(!it2.hasNext(), "There is a box too much in the current output of the tool: " + it2.next());
+
+            it2r = it2.MoveNext();
+            Debug.Assert(!it1r, "There is a box missing in the current output of the tool: " + (it1.MoveNext() ? it1.Current.ToString() : ""));
+            Debug.Assert(!it2r, "There is a box too much in the current output of the tool: " + (it2.MoveNext() ? it2.Current.ToString() : ""));
         }
     }
 }
