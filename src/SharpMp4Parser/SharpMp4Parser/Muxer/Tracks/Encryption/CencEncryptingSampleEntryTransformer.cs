@@ -16,7 +16,8 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
 
         public SampleEntry transform(SampleEntry se, string encryptionAlgo, Uuid defaultKeyId)
         {
-            SampleEntry encSampleEntry = cache[se];
+            SampleEntry encSampleEntry;
+            cache.TryGetValue(se, out encSampleEntry);
             if (encSampleEntry == null)
             {
                 ByteStream baos = new ByteStream();

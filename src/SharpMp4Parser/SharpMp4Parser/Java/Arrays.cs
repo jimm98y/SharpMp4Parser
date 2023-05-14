@@ -8,7 +8,7 @@ namespace SharpMp4Parser.Java
     {
         public static int hashCode<T>(T[] array)
         {
-            return ((IStructuralEquatable)array).GetHashCode(EqualityComparer<int>.Default);
+            return ((IStructuralEquatable)array).GetHashCode(EqualityComparer<T>.Default);
         }
 
         public static string toString<T>(this IEnumerable<T> list)

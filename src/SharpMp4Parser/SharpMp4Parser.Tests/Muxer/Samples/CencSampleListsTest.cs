@@ -12,6 +12,7 @@ namespace SharpMp4Parser.Tests.Muxer.Samples
     /**
      * Created by sannies on 1/9/14.
      */
+    //[TestClass]
     public class CencSampleListsTest
     {
         string encryptedWorking = "00000000000000000000000000000000000000000000000000000000000000000000000000000000" +

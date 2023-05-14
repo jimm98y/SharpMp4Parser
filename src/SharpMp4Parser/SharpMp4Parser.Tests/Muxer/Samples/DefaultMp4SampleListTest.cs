@@ -3,15 +3,11 @@ using SharpMp4Parser.IsoParser.Tools;
 using SharpMp4Parser.Java;
 using SharpMp4Parser.Muxer;
 using SharpMp4Parser.Muxer.Container.MP4;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SharpMp4Parser.Tests.Muxer.Samples
 {
+    [TestClass]
     public class DefaultMp4SampleListTest
     {
         private List<string> sampleChecksum = new List<string>() {
