@@ -456,9 +456,8 @@ namespace SharpMp4Parser.Streaming.Input.H264
                 _pictureParameterSet = PictureParameterSet.read(nal);
                 currentPictureParameterSet = _pictureParameterSet;
 
-
-                ByteBuffer oldPpsSameId = ppsIdToPpsBytes[_pictureParameterSet.pic_parameter_set_id];
-
+                ByteBuffer oldPpsSameId;
+                ppsIdToPpsBytes.TryGetValue(_pictureParameterSet.pic_parameter_set_id, out oldPpsSameId);
 
                 if (oldPpsSameId != null && !oldPpsSameId.Equals(nal))
                 {
@@ -466,8 +465,8 @@ namespace SharpMp4Parser.Streaming.Input.H264
                 }
                 else
                 {
-                    ppsIdToPpsBytes.Add(_pictureParameterSet.pic_parameter_set_id, nal);
-                    ppsIdToPps.Add(_pictureParameterSet.pic_parameter_set_id, _pictureParameterSet);
+                    ppsIdToPpsBytes[_pictureParameterSet.pic_parameter_set_id] = nal;
+                    ppsIdToPps[_pictureParameterSet.pic_parameter_set_id] = _pictureParameterSet;
                 }
             }
             catch (IOException e)
@@ -487,15 +486,16 @@ namespace SharpMp4Parser.Streaming.Input.H264
 
                 currentSeqParameterSet = _seqParameterSet;
 
-                ByteBuffer oldSpsSameId = spsIdToSpsBytes[_seqParameterSet.seq_parameter_set_id];
+                ByteBuffer oldSpsSameId;
+                spsIdToSpsBytes.TryGetValue(_seqParameterSet.seq_parameter_set_id, out oldSpsSameId);
                 if (oldSpsSameId != null && !oldSpsSameId.Equals(data))
                 {
                     throw new Exception("OMG - I got two SPS with same ID but different settings!");
                 }
                 else
                 {
-                    spsIdToSpsBytes.Add(_seqParameterSet.seq_parameter_set_id, data);
-                    spsIdToSps.Add(_seqParameterSet.seq_parameter_set_id, _seqParameterSet);
+                    spsIdToSpsBytes[_seqParameterSet.seq_parameter_set_id] = data;
+                    spsIdToSps[_seqParameterSet.seq_parameter_set_id] = _seqParameterSet;
                     spsForConfig.Add(_seqParameterSet);
                 }
             }
@@ -530,8 +530,10 @@ namespace SharpMp4Parser.Streaming.Input.H264
             private Dictionary<int, SeqParameterSet> spsIdToSps;
             private Dictionary<int, PictureParameterSet> ppsIdToPps;
 
-            public FirstVclNalDetector(ByteBuffer nal, int nal_ref_idc, int nal_unit_type)
+            public FirstVclNalDetector(ByteBuffer nal, int nal_ref_idc, int nal_unit_type, Dictionary<int, SeqParameterSet> spsIdToSps, Dictionary<int, PictureParameterSet> ppsIdToPps)
             {
+                this.spsIdToSps = spsIdToSps;
+                this.ppsIdToPps = ppsIdToPps;
 
                 SliceHeader sh = new SliceHeader(nal, spsIdToSps, ppsIdToPps, nal_unit_type == 5);
                 this.sliceHeader = sh;
@@ -546,12 +548,6 @@ namespace SharpMp4Parser.Streaming.Input.H264
                 this.delta_pic_order_cnt_0 = sh.delta_pic_order_cnt_0;
                 this.delta_pic_order_cnt_1 = sh.delta_pic_order_cnt_1;
                 this.idr_pic_id = sh.idr_pic_id;
-            }
-
-            public FirstVclNalDetector(ByteBuffer nal, int nal_ref_idc, int nal_unit_type, Dictionary<int, SeqParameterSet> spsIdToSps, Dictionary<int, PictureParameterSet> ppsIdToPps) : this(nal, nal_ref_idc, nal_unit_type)
-            {
-                this.spsIdToSps = spsIdToSps;
-                this.ppsIdToPps = ppsIdToPps;
             }
 
             public bool isFirstInNew(FirstVclNalDetector nu)

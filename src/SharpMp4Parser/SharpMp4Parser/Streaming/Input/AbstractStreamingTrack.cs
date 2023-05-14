@@ -34,7 +34,7 @@ namespace SharpMp4Parser.Streaming.Input
         public void addTrackExtension(TrackExtension trackExtension)
         {
 
-            trackExtensions.Add(trackExtension.GetType(), trackExtension);
+            trackExtensions[trackExtension.GetType()] = trackExtension;
         }
 
         public void removeTrackExtension(Type clazz)

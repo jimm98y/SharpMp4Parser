@@ -61,7 +61,7 @@ namespace SharpMp4Parser.Streaming.Input.H264.SpsPps
                 }
 
                 pic_parameter_set_id = reader.readUE();
-                pps = ppss[pic_parameter_set_id];
+                ppss.TryGetValue(pic_parameter_set_id, out pps);
                 if (pps == null)
                 {
                     string ids = "";
@@ -71,7 +71,7 @@ namespace SharpMp4Parser.Streaming.Input.H264.SpsPps
                     }
                     throw new Exception("PPS with ids " + ids + " available but not " + pic_parameter_set_id);
                 }
-                sps = spss[pps.seq_parameter_set_id];
+                spss.TryGetValue(pps.seq_parameter_set_id, out sps);
                 if (sps == null)
                 {
                     string ids = "";

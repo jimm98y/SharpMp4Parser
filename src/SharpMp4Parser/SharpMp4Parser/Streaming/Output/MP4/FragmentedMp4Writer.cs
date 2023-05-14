@@ -357,8 +357,11 @@ namespace SharpMp4Parser.Streaming.Output.MP4
         protected Box[] createFragment(StreamingTrack streamingTrack, List<StreamingSample> samples)
         {
             //nextFragmentCreateStartTime[streamingTrack];
-            tfraOffsets.TryAdd(streamingTrack, Mp4Arrays.copyOfAndAppend(tfraOffsets[streamingTrack], bytesWritten));
-            tfraTimes.TryAdd(streamingTrack, Mp4Arrays.copyOfAndAppend(tfraTimes[streamingTrack], nextFragmentCreateStartTime[streamingTrack]));
+            tfraOffsets.TryGetValue(streamingTrack, out var origTrack);
+            tfraTimes.TryGetValue(streamingTrack, out var origTimes);
+            nextFragmentCreateStartTime.TryGetValue(streamingTrack, out var nextFragment);
+            tfraOffsets.TryAdd(streamingTrack, Mp4Arrays.copyOfAndAppend(origTrack, bytesWritten));
+            tfraTimes.TryAdd(streamingTrack, Mp4Arrays.copyOfAndAppend(origTimes, nextFragment));
 
             //LOG.trace("Container created");
             Box moof = createMoof(streamingTrack, samples);

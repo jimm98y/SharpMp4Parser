@@ -91,11 +91,6 @@ namespace SharpMp4Parser.Java
 
 
 
-        public virtual void write(byte value)
-        {
-            _ms.WriteByte(value);
-        }
-
         public virtual int read()
         {
             return _ms.ReadByte();
@@ -103,10 +98,7 @@ namespace SharpMp4Parser.Java
 
         public virtual void write(int value)
         {
-            using (BinaryWriter br = new BinaryWriter(_ms, Encoding.UTF8, true))
-            {
-                br.Write(value);
-            }
+            _ms.WriteByte((byte)value);
         }
 
         public void writeShort(short value)
@@ -140,7 +132,7 @@ namespace SharpMp4Parser.Java
 
         public virtual byte[] toByteArray()
         {
-            return _ms.ToArray();
+            return _ms.ToArray().Take(position()).ToArray();
         }
 
         public virtual long available()

@@ -1,6 +1,7 @@
 ﻿using SharpMp4Parser.Java;
 using SharpMp4Parser.Streaming.Extensions;
 using System.Diagnostics;
+using System.Linq;
 
 namespace SharpMp4Parser.Streaming.Input.H264
 {
@@ -131,18 +132,16 @@ namespace SharpMp4Parser.Streaming.Input.H264
         {
             public byte[] toByteArrayLess3()
             {
-#warning TODO ANNEX-B NOT WORKING
-            /*
-                if (count > 3)
+                var data = toByteArray();
+
+                if (position() > 3)
                 {
-                    return Arrays.copyOf(buf, count - 3 > 0 ? count - 3 : 0);
+                    return data.Take(position() - 3).ToArray();
                 }
                 else
-            */
                 {
                     return null;
                 }
-
             }
         }
     }
