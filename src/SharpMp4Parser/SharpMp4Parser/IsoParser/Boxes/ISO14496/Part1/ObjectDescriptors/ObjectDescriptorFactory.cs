@@ -160,7 +160,8 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part1.ObjectDescriptors
         {
             int tag = IsoTypeReader.readUInt8(bb);
 
-            Dictionary<int, Type> tagMap = descriptorRegistry[objectTypeIndication];
+            Dictionary<int, Type> tagMap;
+            descriptorRegistry.TryGetValue(objectTypeIndication, out tagMap);
             if (tagMap == null)
             {
                 tagMap = descriptorRegistry[-1];
