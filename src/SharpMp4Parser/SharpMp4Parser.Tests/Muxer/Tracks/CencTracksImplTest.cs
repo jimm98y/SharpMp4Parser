@@ -8,13 +8,13 @@ using SharpMp4Parser.IsoParser;
 
 namespace SharpMp4Parser.Tests.Muxer.Tracks
 {
-    //[TestClass]
+    [TestClass]
     public class CencTracksImplTest
     {
         [TestMethod]
         public void testEncryptDecryptDefaultMp4()
         {
-            SecretKey sk = new SecretKeySpec(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, "AES");
+            SecretKey sk = new SecretKey(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, "AES");
             Movie m = MovieCreator.build("1365070268951.mp4");
 
             List<Track> encTracks = new List<Track>();
@@ -49,7 +49,7 @@ namespace SharpMp4Parser.Tests.Muxer.Tracks
         [TestMethod]
         public void testEncryptDecryptFragmentedMp4()
         {
-            SecretKey sk = new SecretKeySpec(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, "AES");
+            SecretKey sk = new SecretKey(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, "AES");
             Movie m = MovieCreator.build("1365070268951.mp4");
 
             List<Track> encTracks = new List<Track>();
@@ -84,7 +84,7 @@ namespace SharpMp4Parser.Tests.Muxer.Tracks
         public void testEncryptDecryptCbc1FragmentedMp4()
         {
             Uuid keyId = Uuid.randomUUID();
-            SecretKey key = new SecretKeySpec(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, "AES");
+            SecretKey key = new SecretKey(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, "AES");
             Movie m = MovieCreator.build("1365070268951.mp4");
 
             List<Track> encTracks = new List<Track>();

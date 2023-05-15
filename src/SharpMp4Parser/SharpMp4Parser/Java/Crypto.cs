@@ -1,72 +1,167 @@
-﻿using System;
+﻿using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Engines;
+using Org.BouncyCastle.Crypto.Modes;
+using Org.BouncyCastle.Crypto.Parameters;
+using System;
 
 namespace SharpMp4Parser.Java
 {
-    public class Cipher
+    public abstract class Cipher
     {
-        public static object ENCRYPT_MODE { get; internal set; }
-        public static object DECRYPT_MODE { get; internal set; }
+        public const int ENCRYPT_MODE = 0;
+        public const int DECRYPT_MODE = 1;
 
-        public static Cipher getInstance(string v)
+        protected int opmode;
+        protected byte[] key;
+        protected byte[] iv;
+
+        public static Cipher getInstance(string transformation)
         {
-            throw new NotImplementedException();
+            switch (transformation)
+            {
+                case "AES/CTR/NoPadding":
+                    return new AesCtrCipher();
+
+                case "AES/CBC/NoPadding":
+                    return new AesCbcCipher();
+
+                default:
+                    throw new NotSupportedException(transformation);
+            }
         }
 
-        public byte[] doFinal(byte[] fullyEncryptedSample, int v, int encryptedLength)
+        public virtual void init(int opmode, SecretKey key, IvParameterSpec param)
         {
-            throw new NotImplementedException();
+            this.opmode = opmode;
+            this.key = key.Key;
+            this.iv = param.IV;
         }
 
-        public byte[] doFinal(byte[] fullyEncryptedSample)
+        public abstract void update(byte[] input, int inputOffset, int inputLen, byte[] output, int outputOffset);
+
+        public abstract byte[] update(byte[] input);
+
+        public abstract byte[] doFinal(byte[] input, int inputOffset, int inputLen);
+
+        public abstract byte[] doFinal(byte[] input);
+
+        public abstract byte[] doFinal();
+    }
+
+    public class AesCbcCipher : Cipher
+    {
+        BufferedBlockCipher aes;
+        ParametersWithIV ivAndKey;
+
+        public override void init(int opmode, SecretKey key, IvParameterSpec param)
         {
-            throw new NotImplementedException();
+            base.init(opmode, key, param);
+
+            aes = new BufferedBlockCipher(new CbcBlockCipher(new AesEngine()));
+            ivAndKey = new ParametersWithIV(new KeyParameter(base.key), iv);
+            aes.Init(base.opmode == Cipher.ENCRYPT_MODE, ivAndKey);
         }
 
-        public void init(object mode, SecretKey cek, IvParameterSpec ivParameterSpec)
+        public override byte[] doFinal(byte[] input, int inputOffset, int inputLen)
         {
-            throw new NotImplementedException();
+            return aes.DoFinal(input, inputOffset, inputLen);
         }
 
-        public void update(byte[] fullSample1, int offset1, int v, byte[] fullSample2, int offset2)
+        public override byte[] doFinal()
         {
-            throw new NotImplementedException();
+            return aes.DoFinal();
         }
 
-        public byte[] update(byte[] toBeEncrypted)
+        public override void update(byte[] input, int inputOffset, int inputLen, byte[] output, int outputOffset)
         {
-            throw new NotImplementedException();
+            aes.ProcessBytes(input, inputOffset, inputLen, output, outputOffset);
         }
 
-        internal byte[] doFinal()
+        public override byte[] update(byte[] input)
         {
-            throw new NotImplementedException();
+            return aes.ProcessBytes(input);
+        }
+
+        public override byte[] doFinal(byte[] input)
+        {
+            return aes.DoFinal(input);
+        }
+    }
+
+    public class AesCtrCipher : Cipher
+    {
+        BufferedBlockCipher aes;
+        ParametersWithIV ivAndKey;
+
+        public override void init(int opmode, SecretKey key, IvParameterSpec param)
+        {
+            base.init(opmode, key, param);
+
+            aes = new BufferedBlockCipher(new SicBlockCipher(new AesEngine()));
+            ivAndKey = new ParametersWithIV(new KeyParameter(base.key), iv);
+            aes.Init(base.opmode == Cipher.ENCRYPT_MODE, ivAndKey);
+        }
+
+        public override byte[] doFinal(byte[] input, int inputOffset, int inputLen)
+        {
+            return aes.DoFinal(input, inputOffset, inputLen);
+        }
+
+        public override byte[] doFinal()
+        {
+            return aes.DoFinal();
+        }
+
+        public override void update(byte[] input, int inputOffset, int inputLen, byte[] output, int outputOffset)
+        {
+            aes.ProcessBytes(input, inputOffset, inputLen, output, outputOffset);
+        }
+
+        public override byte[] update(byte[] input)
+        {
+            return aes.ProcessBytes(input);
+        }
+
+        public override byte[] doFinal(byte[] input)
+        {
+            return aes.DoFinal(input);
         }
     }
 
     public class SecretKey
     {
+        private byte[] key;
+        private string algorithm;
 
-    }
-
-    public class SecretKeySpec : SecretKey
-    {
-        private byte[] bytes;
-        private string v;
-
-        public SecretKeySpec(byte[] bytes, string v)
+        public byte[] Key
         {
-            this.bytes = bytes;
-            this.v = v;
+            get => key;
+        }
+
+        public string Algorithm
+        {
+            get => algorithm;
+        }
+
+        public SecretKey(byte[] key, string algorithm)
+        {
+            this.key = key;
+            this.algorithm = algorithm;
         }
     }
 
     public class IvParameterSpec
     {
-        private byte[] fullIv;
+        private byte[] iv;
 
-        public IvParameterSpec(byte[] fullIv)
+        public byte[] IV
         {
-            this.fullIv = fullIv;
+            get => iv;
+        }
+
+        public IvParameterSpec(byte[] iv)
+        {
+            this.iv = iv;
         }
     }
 }

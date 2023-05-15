@@ -12,7 +12,7 @@ namespace SharpMp4Parser.Tests.Muxer.Samples
     /**
      * Created by sannies on 1/9/14.
      */
-    //[TestClass]
+    [TestClass]
     public class CencSampleListsTest
     {
         string encryptedWorking = "00000000000000000000000000000000000000000000000000000000000000000000000000000000" +
@@ -103,7 +103,7 @@ namespace SharpMp4Parser.Tests.Muxer.Samples
         [TestMethod]
         public void test()
         {
-            SecretKey key = new SecretKeySpec(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 }, "AES");
+            SecretKey key = new SecretKey(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 }, "AES");
             Uuid defaultKeyId = Uuid.randomUUID();
             SampleEntry clearSE = new VisualSampleEntry("avc1");
             CencEncryptingSampleEntryTransformer tx = new CencEncryptingSampleEntryTransformer();
@@ -166,8 +166,8 @@ namespace SharpMp4Parser.Tests.Muxer.Samples
             SampleEntry clearSE = new VisualSampleEntry("avc1");
             SampleEntry encSE = getEncSampleEntry(clearSE, encAlgo);
 
-            SecretKey cek1 = new SecretKeySpec(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 }, "AES");
-            SecretKey cek2 = new SecretKeySpec(new byte[] { 2, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 }, "AES");
+            SecretKey cek1 = new SecretKey(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 }, "AES");
+            SecretKey cek2 = new SecretKey(new byte[] { 2, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 }, "AES");
 
             RangeStartMap<int, KeyIdKeyPair> keys = new RangeStartMap<int, KeyIdKeyPair>();
             keys.Add(0, new KeyIdKeyPair(Uuid.randomUUID(), cek1));
@@ -178,17 +178,16 @@ namespace SharpMp4Parser.Tests.Muxer.Samples
 
 
             List<Sample> clearSamples = new List<Sample>() {
-        new SampleImpl(ByteBuffer.wrap(new byte[1230]), clearSE),
-        new SampleImpl(ByteBuffer.wrap(new byte[1230]), clearSE),
-        new SampleImpl(ByteBuffer.wrap(new byte[1230]), clearSE),
-        new SampleImpl(ByteBuffer.wrap(new byte[1230]), clearSE),
-        new SampleImpl(ByteBuffer.wrap(new byte[1230]), clearSE),
-        new SampleImpl(ByteBuffer.wrap(new byte[1230]), clearSE),
-        new SampleImpl(ByteBuffer.wrap(new byte[1230]), clearSE),
-        new SampleImpl(ByteBuffer.wrap(new byte[1230]), clearSE),
-        new SampleImpl(ByteBuffer.wrap(new byte[1230]), clearSE)
-};
-
+                new SampleImpl(ByteBuffer.wrap(new byte[1230]), clearSE),
+                new SampleImpl(ByteBuffer.wrap(new byte[1230]), clearSE),
+                new SampleImpl(ByteBuffer.wrap(new byte[1230]), clearSE),
+                new SampleImpl(ByteBuffer.wrap(new byte[1230]), clearSE),
+                new SampleImpl(ByteBuffer.wrap(new byte[1230]), clearSE),
+                new SampleImpl(ByteBuffer.wrap(new byte[1230]), clearSE),
+                new SampleImpl(ByteBuffer.wrap(new byte[1230]), clearSE),
+                new SampleImpl(ByteBuffer.wrap(new byte[1230]), clearSE),
+                new SampleImpl(ByteBuffer.wrap(new byte[1230]), clearSE)
+            };
 
             CencSampleAuxiliaryDataFormat cencAuxDef = new CencSampleAuxiliaryDataFormat();
 
@@ -224,7 +223,7 @@ namespace SharpMp4Parser.Tests.Muxer.Samples
                 ses.Add(cencSamples.get(i).getSampleEntry());
                 ByteStream baos = new ByteStream();
                 dec.get(0).writeTo(Channels.newChannel(baos));
-                Assert.AreEqual(new byte[1230], baos.toByteArray(), "Sample " + i + " can not be reconstructed");
+                Assert.IsTrue(Enumerable.SequenceEqual(new byte[1230], baos.toByteArray()), "Sample " + i + " can not be reconstructed");
             }
 
             RangeStartMap<int, SecretKey> keys4Decrypt = new RangeStartMap<int, SecretKey>();
