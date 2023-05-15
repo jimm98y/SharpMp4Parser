@@ -168,7 +168,7 @@ namespace SharpMp4Parser.Muxer.Tracks.WebVTT
                 line = line.Substring(line.IndexOf(endTimeString) + endTimeString.Length);
                 matcher = WEBVTT_CUE_SETTING.Match(line);
                 string settings = null;
-                while (matcher.Success)
+                while (matcher.NextMatch().Success)
                 {
                     settings = matcher.Groups[0].Value;
                 }

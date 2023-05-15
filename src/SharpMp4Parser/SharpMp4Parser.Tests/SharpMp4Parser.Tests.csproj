@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -28,6 +28,9 @@
     <None Remove="multiTrack.3gp" />
     <None Remove="output_audio-2ch-20s.mp4" />
     <None Remove="somesound.aac" />
+    <None Remove="Tears_Of_Steel_nld.vtt" />
+    <None Remove="Tears_Of_Steel_per.vtt" />
+    <None Remove="Tears_Of_Steel_rus.vtt" />
     <None Remove="test.m4p" />
     <None Remove="tos.h264" />
   </ItemGroup>
@@ -85,6 +88,15 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="somesound.aac">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Tears_Of_Steel_nld.vtt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Tears_Of_Steel_per.vtt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Tears_Of_Steel_rus.vtt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="test.m4p">

@@ -7,7 +7,7 @@ namespace SharpMp4Parser.Java
 {
     public class ByteStream : Closeable
     {
-        protected MemoryStream _ms = null;
+        internal MemoryStream _ms = null;
 
         public ByteStream()
         {
@@ -109,22 +109,6 @@ namespace SharpMp4Parser.Java
             }
         }
 
-        public string readLine(string encoding)
-        {
-            if ("UTF-8".CompareTo(encoding) == 0)
-            {
-                // utf8
-                using (var sr = new StreamReader(_ms, Encoding.UTF8, false, 1, true))
-                {
-                    return sr.ReadLine();
-                }
-            }
-            else
-            {
-                throw new NotSupportedException(encoding);
-            }
-        }
-
         public virtual bool isOpen()
         {
             return _ms.CanRead || _ms.CanWrite;
@@ -150,33 +134,68 @@ namespace SharpMp4Parser.Java
 
     public class BufferedReader
     {
-        private ByteStreamBaseReader ByteStreamBaseReader;
+        private ByteStreamBaseReader reader;
 
-        public BufferedReader(ByteStreamBaseReader ByteStreamBaseReader)
+        public BufferedReader(ByteStreamBaseReader reader)
         {
-            this.ByteStreamBaseReader = ByteStreamBaseReader;
+            this.reader = reader;
         }
 
         internal string readLine()
         {
-            return ByteStreamBaseReader.readLine();
+            return reader.readLine();
         }
     }
 
-    public class ByteStreamBaseReader
+#warning TODO dispose
+    public class ByteStreamBaseReader : IDisposable
     {
-        private ByteStream input;
-        private string encoding;
+        private readonly StreamReader sr;
 
         public ByteStreamBaseReader(ByteStream input, string encoding)
         {
-            this.input = input;
-            this.encoding = encoding;
+            if ("UTF-8".CompareTo(encoding) == 0)
+            {
+                this.sr = new StreamReader(input._ms, Encoding.UTF8, true, 1, true);
+            }
+            else
+            {
+                throw new NotSupportedException(encoding);
+            }
         }
 
-        internal string readLine()
+        public string readLine()
         {
-            return input.readLine(encoding);
+            return sr.ReadLine();
+        }
+
+        private bool disposedValue;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    sr.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+        // ~ByteStreamBaseReader()
+        // {
+        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        //     Dispose(disposing: false);
+        // }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 
