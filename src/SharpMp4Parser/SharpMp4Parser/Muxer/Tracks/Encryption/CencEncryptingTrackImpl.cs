@@ -102,14 +102,17 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
                 CencSampleAuxiliaryDataFormat e = new CencSampleAuxiliaryDataFormat();
                 this.cencSampleAuxiliaryData.Add(e);
                 Uuid keyId = indexToKeyId[i];
-                if (keyId != null)
+                if (keyId != Uuid.Empty)
                 {
                     SampleEntry correct = tx.transform(origSample.getSampleEntry(), encryptionAlgo, indexToKeyId[i]);
                     sampleEntries.Add(correct);
                     if (previousSampleEntry != correct)
                     {
                         indexToSampleEntry.Add(i, correct);
-                        indexToKey.Add(i, new KeyIdKeyPair(keyId, keys[indexToKeyId[i]]));
+
+                        SecretKey key = null;
+                        keys.TryGetValue(indexToKeyId[i], out key);
+                        indexToKey.Add(i, new KeyIdKeyPair(keyId, key));
                     }
                     previousSampleEntry = correct;
 

@@ -240,7 +240,12 @@ namespace SharpMp4Parser.Muxer.Builder
 
             tfhd.setDefaultSampleFlags(sf);
             tfhd.setBaseDataOffset(-1);
-            tfhd.setSampleDescriptionIndex(track.getSampleEntries().IndexOf(track.getSamples()[CastUtils.l2i(startSample)].getSampleEntry()) + 1);
+            var sampleEntries = track.getSampleEntries();
+            var samples = track.getSamples();
+            var sample = samples[CastUtils.l2i(startSample)];
+            var sampleEntry = sample.getSampleEntry();
+            var sampleIndex = sampleEntries.IndexOf(sampleEntry);
+            tfhd.setSampleDescriptionIndex(sampleIndex + 1);
             tfhd.setTrackId(track.getTrackMetaData().getTrackId());
             tfhd.setDefaultBaseIsMoof(true);
             parent.addBox(tfhd);
@@ -369,7 +374,8 @@ namespace SharpMp4Parser.Muxer.Builder
 
         protected void createSaiz(long startSample, long endSample, CencEncryptedTrack track, int sequenceNumber, TrackFragmentBox parent)
         {
-            SampleEntry se = track.getSampleEntries()[CastUtils.l2i(parent.getTrackFragmentHeaderBox().getSampleDescriptionIndex() - 1)];
+            int index = CastUtils.l2i(parent.getTrackFragmentHeaderBox().getSampleDescriptionIndex() - 1);
+            SampleEntry se = track.getSampleEntries()[index];
 
             TrackEncryptionBox tenc = Path.getPath< TrackEncryptionBox>((IsoParser.Container)se, "sinf[0]/schi[0]/tenc[0]");
 
