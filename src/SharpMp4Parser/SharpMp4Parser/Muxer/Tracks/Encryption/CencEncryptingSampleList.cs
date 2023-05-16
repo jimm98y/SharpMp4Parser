@@ -42,7 +42,7 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
         public override Sample get(int index)
         {
             Sample clearSample = parent[index];
-            if (keys[index] != null && keys[index].getKeyId() != null)
+            if (keys[index] != null && keys[index].getKey() != null)
             {
                 return new EncryptedSampleImpl(clearSample, index, this);
             }

@@ -33,8 +33,12 @@ namespace SharpMp4Parser.Java
         public virtual void init(int opmode, SecretKey key, IvParameterSpec param)
         {
             this.opmode = opmode;
-            this.key = key.Key;
             this.iv = param.IV;
+
+            if (key != null)
+            {
+                this.key = key.Key;
+            }
         }
 
         public abstract void update(byte[] input, int inputOffset, int inputLen, byte[] output, int outputOffset);

@@ -189,6 +189,7 @@ namespace SharpMp4Parser.Tests.Muxer.Samples
                 new SampleImpl(ByteBuffer.wrap(new byte[1230]), clearSE)
             };
 
+
             CencSampleAuxiliaryDataFormat cencAuxDef = new CencSampleAuxiliaryDataFormat();
 
             if (subSampleEncryption)
@@ -242,7 +243,7 @@ namespace SharpMp4Parser.Tests.Muxer.Samples
             {
                 ByteStream baos = new ByteStream();
                 decryptingSampleList.get(i).writeTo(Channels.newChannel(baos));
-                Assert.AreEqual(new byte[1230], baos.toByteArray(), "Sample " + i + " can not be reconstructed");
+                Assert.IsTrue(Enumerable.SequenceEqual(new byte[1230], baos.toByteArray()), "Sample " + i + " can not be reconstructed");
             }
         }
     }
