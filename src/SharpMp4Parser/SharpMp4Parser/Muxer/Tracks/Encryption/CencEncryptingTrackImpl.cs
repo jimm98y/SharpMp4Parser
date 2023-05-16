@@ -73,12 +73,12 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
                 {
                     if (box is AvcConfigurationBox) {
                         AvcConfigurationBox avcC = (AvcConfigurationBox)(configurationBox = box);
-                        nalLengthSizes.Add(sampleEntry, avcC.getLengthSizeMinusOne() + 1);
+                        nalLengthSizes[sampleEntry] = avcC.getLengthSizeMinusOne() + 1;
                         subSampleEncryption = true;
                     } 
                     else if (box is HevcConfigurationBox) {
                         HevcConfigurationBox hvcC = (HevcConfigurationBox)(configurationBox = box);
-                        nalLengthSizes.Add(sampleEntry, hvcC.getLengthSizeMinusOne() + 1);
+                        nalLengthSizes[sampleEntry] = hvcC.getLengthSizeMinusOne() + 1;
                         subSampleEncryption = true;
                     } 
                     else
