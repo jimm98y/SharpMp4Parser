@@ -3,7 +3,7 @@ using SharpMp4Parser.IsoParser;
 using SharpMp4Parser.IsoParser.Tools;
 using SharpMp4Parser.Java;
 
-namespace SharpMp4Parser.Tests.IsoParser
+namespace SharpMp4Parser.Tests.IsoParser.Boxes
 {
     public abstract class AbstractTrackEncryptionBoxTest
     {
