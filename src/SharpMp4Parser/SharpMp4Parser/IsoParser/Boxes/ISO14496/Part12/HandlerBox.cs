@@ -102,7 +102,9 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
 
         public string getHumanReadableTrackType()
         {
-            return readableTypes[handlerType] != null ? readableTypes[handlerType] : "Unknown Handler Type";
+            string readable = null;
+            readableTypes.TryGetValue(handlerType, out readable);
+            return readable != null ? readable : "Unknown Handler Type";
         }
 
         protected override long getContentSize()

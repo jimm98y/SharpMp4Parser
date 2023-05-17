@@ -25,13 +25,19 @@
     <None Remove="dts-sample.mp4" />
     <None Remove="h264-sample.h264" />
     <None Remove="h264-sample.mp4" />
+    <None Remove="MOV00006.3gp" />
     <None Remove="multiTrack.3gp" />
     <None Remove="output_audio-2ch-20s.mp4" />
+    <None Remove="QuickTimeFormat.mp4" />
     <None Remove="somesound.aac" />
     <None Remove="Tears_Of_Steel_nld.vtt" />
     <None Remove="Tears_Of_Steel_per.vtt" />
     <None Remove="Tears_Of_Steel_rus.vtt" />
+    <None Remove="test-pod.m4a" />
     <None Remove="test.m4p" />
+    <None Remove="Tiny Sample - NEW - Metaxed.mp4" />
+    <None Remove="Tiny Sample - NEW - Untouched.mp4" />
+    <None Remove="Tiny Sample - OLD.mp4" />
     <None Remove="tos.h264" />
   </ItemGroup>
 
@@ -81,10 +87,16 @@
     <Content Include="h264-sample.mp4">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="MOV00006.3gp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="multiTrack.3gp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="output_audio-2ch-20s.mp4">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="QuickTimeFormat.mp4">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="somesound.aac">
@@ -99,7 +111,19 @@
     <Content Include="Tears_Of_Steel_rus.vtt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="test-pod.m4a">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="test.m4p">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Tiny Sample - NEW - Metaxed.mp4">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Tiny Sample - NEW - Untouched.mp4">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Tiny Sample - OLD.mp4">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="tos.h264">
