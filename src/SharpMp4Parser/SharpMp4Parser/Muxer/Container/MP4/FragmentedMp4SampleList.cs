@@ -234,7 +234,7 @@ namespace SharpMp4Parser.Muxer.Container.MP4
                             try
                             {
                                 trunData = randomAccess.get(offs, size);
-                                trunDataCache.Add(trun, new WeakReference<ByteBuffer>(trunData));
+                                trunDataCache[trun] = new WeakReference<ByteBuffer>(trunData);
                             }
                             catch (IOException)
                             {

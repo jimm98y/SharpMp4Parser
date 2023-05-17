@@ -137,7 +137,7 @@ namespace SharpMp4Parser.Muxer
                 long[] chunkSizes = trackBox.getSampleTableBox().getSampleToChunkBox().blowup(chunkOffsetBox.getChunkOffsets().Length);
 
 
-                FindSaioSaizPair saizSaioPair = new FindSaioSaizPair((IsoParser.Container)Path.getPath< FindSaioSaizPair>(trackBox, "mdia[0]/minf[0]/stbl[0]")).invoke();
+                FindSaioSaizPair saizSaioPair = new FindSaioSaizPair((IsoParser.Container)Path.getPath<IsoParser.Container>(trackBox, "mdia[0]/minf[0]/stbl[0]")).invoke();
                 SampleAuxiliaryInformationOffsetsBox saio = saizSaioPair.saio;
                 SampleAuxiliaryInformationSizesBox saiz = saizSaioPair.saiz;
                 SampleEntry se = null;
