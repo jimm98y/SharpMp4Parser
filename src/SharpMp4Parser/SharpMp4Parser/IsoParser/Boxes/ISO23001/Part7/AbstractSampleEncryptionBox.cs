@@ -218,7 +218,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO23001.Part7
             {
                 return false;
             }
-            if (entries != null ? !entries.Equals(that.entries) : that.entries != null)
+            if (entries != null ? !Enumerable.SequenceEqual(entries, that.entries) : that.entries != null)
             {
                 return false;
             }
