@@ -134,7 +134,7 @@ namespace SharpMp4Parser.IsoParser.Tools
                             while (iterator.MoveNext())
                             {
                                 Box box1 = iterator.Current;
-                                if (box1.getType().CompareTo(type) == 0)
+                                if (Regex.Match(box1.getType(), type).Success)
                                 {
                                     if (index == -1 || index == currentIndex)
                                     {

@@ -193,7 +193,8 @@ namespace SharpMp4Parser.Muxer.Container.MP4
                             }
                         }
 
-                        WeakReference<ByteBuffer> trunDataRef = trunDataCache[trun];
+                        WeakReference<ByteBuffer> trunDataRef;
+                        trunDataCache.TryGetValue(trun, out trunDataRef);
 
                         ByteBuffer trunData = null;
                         if (trunDataRef != null && trunDataRef.TryGetTarget(out trunData))

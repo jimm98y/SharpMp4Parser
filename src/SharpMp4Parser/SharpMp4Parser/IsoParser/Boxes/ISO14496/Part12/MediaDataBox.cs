@@ -74,10 +74,10 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
             this.header.put(header);
 
             dataFilelength = contentSize;
-            byte[] data = new byte[contentSize];
-            dataSource.read(data, 0, (int)contentSize);
+            var data = ByteBuffer.allocate((int)contentSize); // we have to use ByteBuffer instead of byte[] because of ByteBufferByteChannel
+            dataSource.read(data);
 
-            dataFile.Write(data, 0, (int)contentSize);
+            dataFile.Write(data.array(), 0, (int)contentSize);
             dataFile.Flush();
         }
 

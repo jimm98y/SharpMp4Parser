@@ -16,7 +16,8 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
 
         public SampleEntry transform(SampleEntry se)
         {
-            SampleEntry decSe = cache[se];
+            SampleEntry decSe;
+            cache.TryGetValue(se, out decSe);
             if (decSe == null)
             {
                 OriginalFormatBox frma;
