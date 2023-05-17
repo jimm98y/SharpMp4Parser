@@ -4,7 +4,7 @@ using SharpMp4Parser.IsoParser;
 using SharpMp4Parser.Java;
 using SharpMp4Parser.IsoParser.Tools;
 
-namespace SharpMp4Parser.Tests.IsoParser.Piff
+namespace SharpMp4Parser.Tests.IsoParser.Boxes.Piff
 {
     [TestClass]
     public class PiffSampleEncryptionBoxTest
