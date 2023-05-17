@@ -197,7 +197,12 @@ namespace SharpMp4Parser.Muxer.Container.MP4
                         trunDataCache.TryGetValue(trun, out trunDataRef);
 
                         ByteBuffer trunData = null;
-                        if (trunDataRef != null && trunDataRef.TryGetTarget(out trunData))
+                        if(trunDataRef != null)
+                        {
+                            trunDataRef.TryGetTarget(out trunData);
+                        }
+
+                        if (trunData == null)
                         {
                             long offs = 0;
 
