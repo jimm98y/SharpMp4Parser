@@ -5,11 +5,27 @@ using SharpMp4Parser.IsoParser.Support;
 using System.Diagnostics;
 using System.Reflection;
 using System.Collections;
+using System.Xml.Linq;
+using System;
 
 namespace SharpMp4Parser.Tests.IsoParser.Boxes
 {
     public static class FieldInfoExtensions
     {
+        public static FieldInfo[] GetPrivateFields(this TypeInfo t)
+        {
+            TypeInfo? tt = t;
+            List<FieldInfo> fields = new List<FieldInfo>();
+            do
+            {
+                var field = tt.GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+                fields.AddRange(field);
+                tt = tt.BaseType?.GetTypeInfo();
+            } while (tt != null);
+
+            return fields.Distinct().ToArray();
+        }
+
         private static string ToFirstCharacterUpper(string a)
         {
             return Char.ToUpper(a[0]) + a.Substring(1);
@@ -18,13 +34,13 @@ namespace SharpMp4Parser.Tests.IsoParser.Boxes
         public static MethodInfo getWriteMethod(this FieldInfo info, TypeInfo beanInfo)
         {
             string writeMethod = $"set{ToFirstCharacterUpper(info.Name)}";
-            return beanInfo.GetMethod(writeMethod);
+            return beanInfo.GetMethods().First(x => x.Name == writeMethod);
         }
 
         public static MethodInfo getReadMethod(this FieldInfo info, TypeInfo beanInfo)
         {
             string readMethod = $"get{ToFirstCharacterUpper(info.Name)}";
-            return beanInfo.GetMethod(readMethod);
+            return beanInfo.GetMethods().First(x => x.Name == readMethod);
         }
     }
 
@@ -69,7 +85,7 @@ namespace SharpMp4Parser.Tests.IsoParser.Boxes
             Type clazz = getBoxUnderTest();
             T box = getInstance(clazz);
             TypeInfo beanInfo = box.GetType().GetTypeInfo();
-            FieldInfo[] propertyDescriptors = beanInfo.GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+            FieldInfo[] propertyDescriptors = beanInfo.GetPrivateFields();
             Dictionary<string, object> props = new Dictionary<string, object>();
             setupProperties(props, box);
             foreach (string property in props.Keys)
@@ -93,8 +109,16 @@ namespace SharpMp4Parser.Tests.IsoParser.Boxes
 
                             throw;
                         }
+
                         // do the next assertion on string level to not trap into the long vs java.lang.Long pitfall
-                        Assert.AreEqual(props[property], propertyDescriptor.getReadMethod(beanInfo).Invoke(box, null), "The symmetry between getter/setter of " + property + " is not given.");
+                        if (props[property] is IEnumerable<dynamic> && !(props[property] is string))
+                        {
+                            Assert.IsTrue(Enumerable.SequenceEqual<dynamic>(props[property] as IEnumerable<dynamic>, (IEnumerable<dynamic>)propertyDescriptor.getReadMethod(beanInfo).Invoke(box, null)), "The symmetry between getter/setter of " + property + " is not given.");
+                        }
+                        else
+                        {
+                            Assert.AreEqual(props[property], (Object)propertyDescriptor.getReadMethod(beanInfo).Invoke(box, null), "The symmetry between getter/setter of " + property + " is not given.");
+                        }
                     }
                 }
                 if (!found)
