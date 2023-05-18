@@ -51,7 +51,7 @@ namespace SharpMp4Parser.Tests.IsoParser.Boxes
             }
 
             TypeInfo beanInfo = parsableBoxUnderTest.GetType().GetTypeInfo();
-            FieldInfo[] propertyDescriptors = beanInfo.GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
+            FieldInfo[] propertyDescriptors = beanInfo.GetPrivateFields();
             foreach (string property in props.Keys)
             {
                 bool found = false;

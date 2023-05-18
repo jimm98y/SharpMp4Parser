@@ -13,8 +13,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO23001.Part7
     {
         int defaultAlgorithmId;
         int defaultIvSize;
-        byte[]
-        default_KID;
+        byte[] default_KID;
 
         protected AbstractTrackEncryptionBox(string type) : base(type)
         { }

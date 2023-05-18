@@ -245,7 +245,11 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part15
             if (reserved4 != that.reserved4) return false;
             if (reserved5 != that.reserved5) return false;
             if (temporalIdNested != that.temporalIdNested) return false;
-            if (arrays != null ? !arrays.Equals(that.arrays) : that.arrays != null) return false;
+            
+            
+            if (arrays != null ? 
+                (!Enumerable.SequenceEqual(arrays, that.arrays))
+                : that.arrays != null) return false;
 
             return true;
         }
@@ -561,7 +565,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part15
                         return false;
                 }
 
-                return !(m1 || m2);
+                return !(e1.MoveNext() || e2.MoveNext());
             }
 
             public override int GetHashCode()
@@ -569,7 +573,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part15
                 int result = array_completeness ? 1 : 0;
                 result = 31 * result + (reserved ? 1 : 0);
                 result = 31 * result + nal_unit_type;
-                result = 31 * result + (nalUnits != null ? nalUnits.GetHashCode() : 0);
+                result = 31 * result + (nalUnits != null ? Arrays.hashCode(nalUnits.ToArray()) : 0);
                 return result;
             }
 
