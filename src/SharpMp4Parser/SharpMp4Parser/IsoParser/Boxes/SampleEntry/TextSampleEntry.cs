@@ -48,6 +48,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.SampleEntry
         private int[] backgroundColorRgba = new int[4]; // 4 bytes
         private BoxRecord boxRecord = new BoxRecord();
         private StyleRecord styleRecord = new StyleRecord();
+         
 
         public TextSampleEntry() : base(TYPE1)
         { }

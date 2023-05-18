@@ -125,7 +125,6 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
             long s = getContainerSize();
             long t = quickTimeFormat ? 0 : 4; // bytes to container start
             return s + t + (largeBox || s + t >= 1L << 32 ? 16 : 8);
-
         }
     }
 }

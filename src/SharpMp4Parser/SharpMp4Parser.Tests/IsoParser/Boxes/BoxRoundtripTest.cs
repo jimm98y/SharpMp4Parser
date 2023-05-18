@@ -121,7 +121,14 @@ namespace SharpMp4Parser.Tests.IsoParser.Boxes
                         }
                         else
                         {
-                            Assert.AreEqual(props[property], propertyDescriptor.getReadMethod(beanInfo).Invoke(parsedBox, null), "Writing and parsing changed the value of " + property);
+                            if (props[property] is IEnumerable<dynamic> && !(props[property] is string))
+                            {
+                                Assert.IsTrue(Enumerable.SequenceEqual<dynamic>(props[property] as IEnumerable<dynamic>, (IEnumerable<dynamic>)propertyDescriptor.getReadMethod(beanInfo).Invoke(parsedBox, null)), "Writing and parsing changed the value of " + property);
+                            }
+                            else
+                            {
+                                Assert.AreEqual(props[property], propertyDescriptor.getReadMethod(beanInfo).Invoke(parsedBox, null), "Writing and parsing changed the value of " + property);
+                            }
                         }
                     }
                 }

@@ -147,9 +147,15 @@ namespace SharpMp4Parser.IsoParser.Support
                         deadBytes = content.slice();
                     }
                     this.content = null;
+
+                    bool verifyResult = verify(content);
                     
-                    // Jimm98y: Commented out to make the test pass
-                    //Debug.Assert(verify(content));
+                    if (!verifyResult)
+                    {
+                        verify(content);
+                    }
+
+                    Debug.Assert(verifyResult);
                 }
             }
         }

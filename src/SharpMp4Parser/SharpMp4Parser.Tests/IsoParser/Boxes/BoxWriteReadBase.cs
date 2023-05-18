@@ -74,7 +74,7 @@ namespace SharpMp4Parser.Tests.IsoParser.Boxes
         public abstract void setupProperties(Dictionary<string, object> addPropsHere, T box);
 
 
-        protected T getInstance(Type clazz)
+        protected virtual T getInstance(Type clazz)
         {
             return (T)Activator.CreateInstance(clazz);
         }

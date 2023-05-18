@@ -40,6 +40,7 @@ namespace SharpMp4Parser.IsoParser.Tools
             {
                 return -1;
             }
+
             dst.put((ByteBuffer)byteBuffer.duplicate().limit(byteBuffer.position() + dst.remaining()));
             ((Buffer)byteBuffer).position(byteBuffer.position() + rem);
             return rem;
