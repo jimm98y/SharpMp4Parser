@@ -21,7 +21,7 @@ namespace SharpMp4Parser.Tests.IsoParser.Boxes.SampleEntry
             addPropsHere.Add("boxes", new List<Box>() { new FreeBox(100) });
             addPropsHere.Add("dataReferenceIndex", 12);
             addPropsHere.Add("auxiliaryMimeTypes", "image/jpeg");
-            addPropsHere.Add("namespace", "urn:namespace:dunno");
+            addPropsHere.Add("ns", "urn:namespace:dunno");
             addPropsHere.Add("schemaLocation", "here");
         }
     }

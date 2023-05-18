@@ -74,12 +74,12 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part30
             writeContainer(writableByteChannel);
         }
 
-        public string getNamespace()
+        public string getNs()
         {
             return ns;
         }
 
-        public void setNamespace(string ns)
+        public void setNs(string ns)
         {
             this.ns = ns;
         }
