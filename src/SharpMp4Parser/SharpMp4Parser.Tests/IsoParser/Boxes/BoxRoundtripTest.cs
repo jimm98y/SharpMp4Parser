@@ -117,7 +117,7 @@ namespace SharpMp4Parser.Tests.IsoParser.Boxes
                         }
                         else if (props[property] is long[])
                         {
-                            Assert.AreEqual((long[])props[property], (long[])propertyDescriptor.getReadMethod(beanInfo).Invoke(parsedBox, null), "Writing and parsing changed the value of " + property);
+                            Assert.IsTrue(Enumerable.SequenceEqual((long[])props[property], (long[])propertyDescriptor.getReadMethod(beanInfo).Invoke(parsedBox, null)), "Writing and parsing changed the value of " + property);
                         }
                         else
                         {
