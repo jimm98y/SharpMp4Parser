@@ -27,22 +27,22 @@ namespace SharpMp4Parser.IsoParser.Boxes.Apple
         public PixelAspectRationAtom() : base(TYPE)
         { }
 
-        public int gethSpacing()
+        public int getHSpacing()
         {
             return hSpacing;
         }
 
-        public void sethSpacing(int hSpacing)
+        public void setHSpacing(int hSpacing)
         {
             this.hSpacing = hSpacing;
         }
 
-        public int getvSpacing()
+        public int getVSpacing()
         {
             return vSpacing;
         }
 
-        public void setvSpacing(int vSpacing)
+        public void setVSpacing(int vSpacing)
         {
             this.vSpacing = vSpacing;
         }
