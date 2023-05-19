@@ -3,8 +3,7 @@ using SharpMp4Parser.Java;
 
 namespace SharpMp4Parser.Tests.IsoParser.Boxes.SampleGrouping
 {
-#warning fix test
-    //[TestClass]
+    [TestClass]
     public class TestRateShareEntryV1 : BoxWriteReadBase<SampleGroupDescriptionBox>
     {
         public override Type getBoxUnderTest()
@@ -32,8 +31,7 @@ namespace SharpMp4Parser.Tests.IsoParser.Boxes.SampleGrouping
         }
     }
 
-#warning fix test
-    //[TestClass]
+    [TestClass]
     public class TestRateShareEntryV0 : BoxWriteReadBase<SampleGroupDescriptionBox>
     {
 

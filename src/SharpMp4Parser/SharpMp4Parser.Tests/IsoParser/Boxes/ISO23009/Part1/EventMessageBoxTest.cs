@@ -8,15 +8,13 @@ namespace SharpMp4Parser.Tests.IsoParser.Boxes.ISO23009.Part1
         [TestMethod]
         public void roundtrip()
         {
-            String schemeIdUri;
-            String value;
-            long timescale;
-            long presentationTimeDelta;
-            long eventDuration;
-            long id;
-            byte[] messageData;
-
-
+            //String schemeIdUri;
+            //String value;
+            //long timescale;
+            //long presentationTimeDelta;
+            //long eventDuration;
+            //long id;
+            //byte[] messageData;
             base.roundtrip(new EventMessageBox(),
                         new KeyValuePair<string, object>[]{
                                 new KeyValuePair<string, object>("schemeIdUri", "sjkfsdhjklfhskj"),

@@ -93,7 +93,7 @@ namespace SharpMp4Parser.Tests.Muxer.Samples
                 }
                 return copy;
             }
-            catch (IOException e)
+            catch (IOException)
             {
                 throw new Exception("Dumping stsd to memory failed");
             }

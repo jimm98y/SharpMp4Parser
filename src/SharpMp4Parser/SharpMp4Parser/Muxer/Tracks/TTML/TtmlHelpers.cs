@@ -1,9 +1,10 @@
 ﻿#if REMOVED
-
 using SharpMp4Parser.Java;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace SharpMp4Parser.Muxer.Tracks.TTML
 {
@@ -12,7 +13,7 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
         public const string SMPTE_TT_NAMESPACE = "http://www.smpte-ra.org/schemas/2052-1/2010/smpte-tt";
         public const string TTML_NAMESPACE = "http://www.w3.org/ns/ttml";
         public static readonly NamespaceContext NAMESPACE_CONTEXT = new TextTrackNamespaceContext();
-        static byte[] namespacesStyleSheet1 = ("<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\n" +
+        static byte[] namespacesStyleSheet1 = Encoding.UTF8.GetBytes("<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">\n" +
                 "    <xsl:output method=\"text\"/>\n" +
                 "    <xsl:key name=\"kElemByNSURI\"\n" +
                 "             match=\"*[namespace::*[not(. = ../../namespace::*)]]\"\n" +
@@ -24,7 +25,7 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
                 "            <xsl:value-of select=\"concat(.,'&#xA;')\"/>\n" +
                 "        </xsl:for-each>\n" +
                 "    </xsl:template>\n" +
-                "</xsl:stylesheet>").getBytes();
+                "</xsl:stylesheet>");
 
         //public static void main(string[] args)
         //{
@@ -50,10 +51,12 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
             try
             {
                 transformer = tf.newTransformer(new StreamSource(new ByteStreamBase(namespacesStyleSheet1)));
-                StringWriter sw = new StringWriter();
-                transformer.transform(new DOMSource(doc), new StreamResult(sw));
-                List<string> r = new List<string>(new List<string>(Arrays.asList(sw.getBuffer().ToString().Split("\n"))));
-                return r.toArray(new string[r.Count]);
+                using (StringWriter sw = new StringWriter())
+                {
+                    transformer.transform(new DOMSource(doc), new StreamResult(sw));
+                    List<string> r = new List<string>(new List<string>(Arrays.asList(sw.ToString().Split('\n'))));
+                    return r.ToArray();
+                }
             }
             catch (Exception)
             {
@@ -91,15 +94,16 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
 
         public static long toTime(string expr)
         {
-            Pattern p = Pattern.compile("(-?)([0-9][0-9]):([0-9][0-9]):([0-9][0-9])([\\.:][0-9][0-9]?[0-9]?)?");
-            Matcher m = p.matcher(expr);
-            if (m.matches())
+            Regex p = new Regex("(-?)([0-9][0-9]):([0-9][0-9]):([0-9][0-9])([\\.:][0-9][0-9]?[0-9]?)?");
+            Match m = p.Match(expr);
+
+            if (m.Success)
             {
-                string minus = m.group(1);
-                string hours = m.group(2);
-                string minutes = m.group(3);
-                string seconds = m.group(4);
-                string fraction = m.group(5);
+                string minus = m.Groups[1].Value;
+                string hours = m.Groups[2].Value;
+                string minutes = m.Groups[3].Value;
+                string seconds = m.Groups[4].Value;
+                string fraction = m.Groups[5].Value;
                 if (fraction == null)
                 {
                     fraction = ".000";
@@ -126,7 +130,7 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
             }
         }
 
-        public static void pretty(Document document, ByteStreamBase ByteStreamBase, int indent)
+        public static void pretty(Document document, ByteStream byteStream, int indent)
         {
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = null;
@@ -144,7 +148,7 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
                 transformer.setOutputProperty(OutputKeys.INDENT, "yes");
                 transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", indent.ToString());
             }
-            Result result = new StreamResult(ByteStreamBase);
+            Result result = new StreamResult(byteStream);
             Source source = new DOMSource(document);
             try
             {
@@ -206,7 +210,7 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
                 {
                     Node backgroundImage = nl.item(i);
                     Uri backgroundImageUri = new Uri(backgroundImage.getNodeValue());
-                    if (!backgroundImageUri.isAbsolute())
+                    if (!backgroundImageUri.IsAbsoluteUri)
                     {
                         copyLarge(new Uri(ttml.getDocumentURI()).resolve(backgroundImageUri).toURL().openStream(), new File(target.toURI().resolve(backgroundImageUri).toURL().getFile()));
                     }
@@ -219,7 +223,7 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
             }
         }
 
-        private static long copyLarge(ByteStreamBase input, File outputFile)
+        private static long copyLarge(ByteStream input, File outputFile)
         {
             byte[] buffer = new byte[16384];
             long count = 0;
@@ -256,9 +260,9 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
                 return null;
             }
 
-            public Iterator getPrefixes(string val)
+            public IEnumerator<string> getPrefixes(string val)
             {
-                return Arrays.asList("ttml", "smpte").iterator();
+                return Arrays.asList("ttml", "smpte").GetEnumerator();
             }
 
             public string getPrefix(string uri)
@@ -276,5 +280,4 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
         }
     }
 }
-
 #endif

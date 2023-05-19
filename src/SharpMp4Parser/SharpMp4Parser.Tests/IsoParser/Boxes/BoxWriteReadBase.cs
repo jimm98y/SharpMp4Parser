@@ -14,7 +14,7 @@ namespace SharpMp4Parser.Tests.IsoParser.Boxes
     {
         public static FieldInfo[] GetPrivateFields(this TypeInfo t)
         {
-            TypeInfo? tt = t;
+            TypeInfo tt = t;
             List<FieldInfo> fields = new List<FieldInfo>();
             do
             {

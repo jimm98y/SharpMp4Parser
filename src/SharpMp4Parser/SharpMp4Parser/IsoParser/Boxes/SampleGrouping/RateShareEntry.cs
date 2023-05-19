@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System;
 using SharpMp4Parser.Java;
 using SharpMp4Parser.IsoParser.Tools;
+using System.Linq;
 
 namespace SharpMp4Parser.IsoParser.Boxes.SampleGrouping
 {
@@ -130,7 +131,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.SampleGrouping
             {
                 return false;
             }
-            if (entries != null ? !entries.Equals(that.entries) : that.entries != null)
+            if (entries != null ? !Enumerable.SequenceEqual(entries, that.entries) : that.entries != null)
             {
                 return false;
             }

@@ -77,7 +77,7 @@ namespace SharpMp4Parser.IsoParser
             return dst.position() - initialDstPosition;
         }
 
-        public new void rewind()
+        public void rewind()
         {
             if (passedRewindPoint)
             {

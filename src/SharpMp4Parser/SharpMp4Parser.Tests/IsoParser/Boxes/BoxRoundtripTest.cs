@@ -64,7 +64,7 @@ namespace SharpMp4Parser.Tests.IsoParser.Boxes
                         {
                             propertyDescriptor.getWriteMethod(beanInfo).Invoke(parsableBoxUnderTest, new object[] { props[property] });
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
 
                             Debug.WriteLine(propertyDescriptor.getWriteMethod(beanInfo).Name + "(" + propertyDescriptor.getWriteMethod(beanInfo).GetParameters()[0].ParameterType.Name + ");");

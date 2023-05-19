@@ -238,7 +238,7 @@ namespace SharpMp4Parser.Streaming.Input.AAC
         public void call()
         {
             AdtsHeader header;
-            int i = 1;
+            //int i = 1;
             try
             {
                 while ((header = readADTSHeader(input)) != null)

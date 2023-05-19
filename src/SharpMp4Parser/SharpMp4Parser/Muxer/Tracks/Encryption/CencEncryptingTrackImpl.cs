@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using SharpMp4Parser.Muxer.Tracks.H264;
 using SharpMp4Parser.Muxer.Tracks.H265;
-using System.Linq;
+using Org.BouncyCastle.Security;
 
 namespace SharpMp4Parser.Muxer.Tracks.Encryption
 {
@@ -55,8 +55,7 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
 
             if (!dummyIvs)
             {
-#warning use secure random
-                Random random = new Random();
+                SecureRandom random = new SecureRandom();
                 random.NextBytes(init);
             }
             BigInteger ivInt = new BigInteger(init);

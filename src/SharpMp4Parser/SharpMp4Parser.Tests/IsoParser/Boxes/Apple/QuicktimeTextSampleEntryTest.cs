@@ -21,7 +21,7 @@ namespace SharpMp4Parser.Tests.IsoParser.Boxes.Apple
             addPropsHere.Add("backgroundG", 10);
             addPropsHere.Add("backgroundR", 15);
             addPropsHere.Add("dataReferenceIndex", 1);
-            addPropsHere.Add("defaultTextBox", 54634562222l);
+            addPropsHere.Add("defaultTextBox", 54634562222L);
             addPropsHere.Add("displayFlags", 324);
             addPropsHere.Add("reserved1", (long)0);
             addPropsHere.Add("textJustification", 1);

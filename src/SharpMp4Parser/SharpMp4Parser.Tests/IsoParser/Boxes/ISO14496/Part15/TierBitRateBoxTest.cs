@@ -18,7 +18,7 @@ namespace SharpMp4Parser.Tests.IsoParser.Boxes.ISO14496.Part15
         {
             base.roundtrip(new TierBitRateBox(),
                         new KeyValuePair<string, object>[]{
-                                new KeyValuePair<string, object>("avgBitRate", 32l),
+                                new KeyValuePair<string, object>("avgBitRate", 32L),
                                 new KeyValuePair<string, object>("baseBitRate", (long) 21),
                                 new KeyValuePair<string, object>("maxBitRate", (long) 32),
                                 new KeyValuePair<string, object>("tierAvgBitRate", (long) 45),

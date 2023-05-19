@@ -1,5 +1,4 @@
 ﻿#if REMOVED
-
 using SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12;
 using SharpMp4Parser.IsoParser.Boxes.ISO14496.Part30;
 using SharpMp4Parser.IsoParser.Boxes.SampleEntry;
@@ -7,6 +6,7 @@ using SharpMp4Parser.Java;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml;
 using System.Xml.XPath;
 
 namespace SharpMp4Parser.Muxer.Tracks.TTML
@@ -38,7 +38,7 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
                 this.xmlSubtitleSampleEntry = xmlSubtitleSampleEntry;
             }
 
-            public void writeTo(ByteStreamBase channel)
+            public void writeTo(ByteStream channel)
             {
                 channel.write(ByteBuffer.wrap(finalSample));
             }
@@ -58,7 +58,7 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
             }
         }
 
-        public TtmlTrackImpl(string name, List<Document> ttmls) : base(name)
+        public TtmlTrackImpl(string name, List<XPathDocument> ttmls) : base(name)
         {
             extractLanguage(ttmls);
             List<string> mimeTypes = new List<string>();
@@ -69,7 +69,7 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
 
             for (int sampleNo = 0; sampleNo < ttmls.Count; sampleNo++)
             {
-                Document ttml = ttmls[sampleNo];
+                XPathDocument ttml = ttmls[sampleNo];
                 SubSampleInformationBox.SubSampleEntry subSampleEntry = new SubSampleInformationBox.SubSampleEntry();
                 subSampleInformationBox.getEntries().Add(subSampleEntry);
                 subSampleEntry.setSampleDelta(1);
@@ -79,7 +79,7 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
                 mimeTypes.AddRange(extractMimeTypes(ttml));
 
                 // No changes of XML after this point!
-                ByteStreamBase baos = new ByteStreamBase();
+                ByteStream baos = new ByteStream();
                 TtmlHelpers.pretty(ttml, baos, 4);
                 SubSampleInformationBox.SubSampleEntry.SubsampleEntry xmlEntry =
                         new SubSampleInformationBox.SubSampleEntry.SubsampleEntry();
@@ -109,12 +109,12 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
 
         }
 
-        public static string getLanguage(Document document)
+        public static string getLanguage(XPathDocument document)
         {
             return document.getDocumentElement().getAttribute("xml:lang");
         }
 
-        protected static List<byte[]> extractImages(Document ttml)
+        protected static List<byte[]> extractImages(XPathDocument ttml)
         {
             XPathFactory xPathfactory = XPathFactory.newInstance();
             XPath xpath = xPathfactory.newXPath();
@@ -164,7 +164,7 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
             return result.ToString();
         }
 
-        private static long latestTimestamp(Document document)
+        private static long latestTimestamp(XPathDocument document)
         {
             XPathFactory xPathfactory = XPathFactory.newInstance();
             XPath xpath = xPathfactory.newXPath();
@@ -187,11 +187,11 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
             }
         }
 
-        private static byte[] streamToByteArray(ByteStreamBase input)
+        private static byte[] streamToByteArray(ByteStream input)
         {
             byte[]
         buffer = new byte[8096];
-            ByteStreamBase output = new ByteStreamBase();
+            ByteStream output = new ByteStream();
 
             int n = 0;
             while (-1 != (n = input.read(buffer)))
@@ -201,7 +201,7 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
             return output.toByteArray();
         }
 
-        protected long firstTimestamp(Document document)
+        protected long firstTimestamp(XPathDocument document)
         {
             XPathFactory xPathfactory = XPathFactory.newInstance();
             XPath xpath = xPathfactory.newXPath();
@@ -225,7 +225,7 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
             }
         }
 
-        protected long lastTimestamp(Document document)
+        protected long lastTimestamp(XPathDocument document)
         {
             XPathFactory xPathfactory = XPathFactory.newInstance();
             XPath xpath = xPathfactory.newXPath();
@@ -250,10 +250,10 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
 
         }
 
-        protected void extractLanguage(List<Document> ttmls)
+        protected void extractLanguage(List<XPathDocument> ttmls)
         {
             string firstLang = null;
-            foreach (Document ttml in ttmls)
+            foreach (XPathDocument ttml in ttmls)
             {
 
                 string lang = getLanguage(ttml);
@@ -270,7 +270,7 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
             }
         }
 
-        protected List<string> extractMimeTypes(Document ttml)
+        protected List<string> extractMimeTypes(XPathDocument ttml)
         {
             XPathFactory xPathfactory = XPathFactory.newInstance();
 
@@ -299,7 +299,7 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
             return new List<string>(mimeTypes);
         }
 
-        long extractDuration(Document ttml)
+        long extractDuration(XPathDocument ttml)
         {
             return lastTimestamp(ttml) - firstTimestamp(ttml);
         }
@@ -348,5 +348,4 @@ namespace SharpMp4Parser.Muxer.Tracks.TTML
         }
     }
 }
-
 #endif

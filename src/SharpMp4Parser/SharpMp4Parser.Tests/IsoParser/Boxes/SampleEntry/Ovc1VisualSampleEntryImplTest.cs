@@ -5,8 +5,7 @@ namespace SharpMp4Parser.Tests.IsoParser.Boxes.SampleEntry
     /**
      * Created by sannies on 22.05.13.
      */
-#warning Fix test
-    //   [TestClass]
+    [TestClass]
     public class Ovc1VisualSampleEntryImplTest : BoxWriteReadBase<Ovc1VisualSampleEntryImpl>
     {
         public override Type getBoxUnderTest()
