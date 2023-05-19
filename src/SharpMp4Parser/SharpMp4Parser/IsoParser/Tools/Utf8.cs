@@ -15,6 +15,7 @@
  */
 
 using System;
+using System.Linq;
 using System.Text;
 
 namespace SharpMp4Parser.IsoParser.Tools
@@ -49,7 +50,17 @@ namespace SharpMp4Parser.IsoParser.Tools
             {
                 if (b != null)
                 {
-                    return Encoding.UTF8.GetString(b);
+                    int i = 0;
+                    if (b.Length > 0 && b[0] == 0)
+                    {
+                        while (i < b.Length && b[i++] == 0) ;
+                        string ret =  new string(b.Take(i).Select(x => (char)x).ToArray()) + Encoding.UTF8.GetString(b.Skip(i).ToArray());
+                        return ret;
+                    }
+                    else
+                    {
+                        return Encoding.UTF8.GetString(b);
+                    }
                 }
                 else
                 {

@@ -131,7 +131,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
             if (content.remaining() > 0)
             {
                 name = IsoTypeReader.readString(content, content.remaining());
-                if (name.EndsWith("\0"))
+                if (name[name.Length - 1] == '\0')
                 {
                     name = name.Substring(0, name.Length - 1);
                     zeroTerm = true;
