@@ -201,9 +201,9 @@ namespace SharpMp4Parser.Java
 
     public static class Channels
     {
-        public static ByteStream newChannel(ByteStream ByteStreamBase)
+        public static ByteStream newChannel(ByteStream dataSource)
         {
-            return ByteStreamBase;
+            return dataSource;
         }
 
         public static ByteStream newInputStream(ByteStream dataSource)

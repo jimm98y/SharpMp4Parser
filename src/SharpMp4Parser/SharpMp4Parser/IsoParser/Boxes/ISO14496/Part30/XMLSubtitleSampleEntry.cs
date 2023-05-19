@@ -20,7 +20,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part30
         {
             long s = getContainerSize();
             long t = 8 + ns.Length + schemaLocation.Length + auxiliaryMimeTypes.Length + 3;
-            return s + t + (largeBox || s + t + 8 >= (1L << 32) ? 16 : 8);
+            return s + t + ((largeBox || (s + t + 8) >= (1L << 32)) ? 16 : 8);
         }
 
         public override void parse(ByteStream dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
@@ -31,10 +31,9 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part30
             dataReferenceIndex = IsoTypeReader.readUInt16(byteBuffer);
 
 
-            byte[]
-            namespaceBytes = new byte[0];
+            byte[] namespaceBytes = new byte[0];
             int read;
-            while ((read = Channels.newInputStream(dataSource).read()) != 0)
+            while ((read = dataSource.read()) != 0)
             {
                 namespaceBytes = Mp4Arrays.copyOfAndAppend(namespaceBytes, (byte)read);
             }
@@ -43,7 +42,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part30
 
             byte[] schemaLocationBytes = new byte[0];
 
-            while ((read = Channels.newInputStream(dataSource).read()) != 0)
+            while ((read = dataSource.read()) != 0)
             {
                 schemaLocationBytes = Mp4Arrays.copyOfAndAppend(schemaLocationBytes, (byte)read);
             }
@@ -52,7 +51,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part30
 
             byte[] auxiliaryMimeTypesBytes = new byte[0];
 
-            while ((read = Channels.newInputStream(dataSource).read()) != 0)
+            while ((read = dataSource.read()) != 0)
             {
                 auxiliaryMimeTypesBytes = Mp4Arrays.copyOfAndAppend(auxiliaryMimeTypesBytes, (byte)read);
             }

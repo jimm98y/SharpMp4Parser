@@ -6,19 +6,15 @@
      */
     public sealed class Mp4Arrays
     {
-        private Mp4Arrays()
-        {
-        }
-
         public static long[] copyOfAndAppend(long[] original, params long[] toAppend)
         {
             if (original == null)
             {
-                original = new long[] { };
+                original = new long[0];
             }
             if (toAppend == null)
             {
-                toAppend = new long[] { };
+                toAppend = new long[0];
             }
             long[] copy = new long[original.Length + toAppend.Length];
             System.Array.Copy(original, 0, copy, 0, original.Length);
@@ -31,11 +27,11 @@
         {
             if (original == null)
             {
-                original = new int[] { };
+                original = new int[0];
             }
             if (toAppend == null)
             {
-                toAppend = new int[] { };
+                toAppend = new int[0];
             }
             int[] copy = new int[original.Length + toAppend.Length];
             System.Array.Copy(original, 0, copy, 0, original.Length);
@@ -47,11 +43,11 @@
         {
             if (original == null)
             {
-                original = new byte[] { };
+                original = new byte[0];
             }
             if (toAppend == null)
             {
-                toAppend = new byte[] { };
+                toAppend = new byte[0];
             }
             byte[] copy = new byte[original.Length + toAppend.Length];
             System.Array.Copy(original, 0, copy, 0, original.Length);
@@ -63,11 +59,11 @@
         {
             if (original == null)
             {
-                original = new double[] { };
+                original = new double[0];
             }
             if (toAppend == null)
             {
-                toAppend = new double[] { };
+                toAppend = new double[0];
             }
             double[] copy = new double[original.Length + toAppend.Length];
             System.Array.Copy(original, 0, copy, 0, original.Length);

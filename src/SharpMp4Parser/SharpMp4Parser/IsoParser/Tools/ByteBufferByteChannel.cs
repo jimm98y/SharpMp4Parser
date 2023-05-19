@@ -46,6 +46,11 @@ namespace SharpMp4Parser.IsoParser.Tools
             return rem;
         }
 
+        public override int read()
+        {
+            return byteBuffer.get();
+        }
+
         public override bool isOpen()
         {
             return true;
