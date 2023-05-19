@@ -20,7 +20,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part30
         {
             long s = getContainerSize();
             long t = 8 + ns.Length + schemaLocation.Length + auxiliaryMimeTypes.Length + 3;
-            return s + t + (largeBox || s + t + 8 >= 1L << 32 ? 16 : 8);
+            return s + t + (largeBox || s + t + 8 >= (1L << 32) ? 16 : 8);
         }
 
         public override void parse(ByteStream dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)

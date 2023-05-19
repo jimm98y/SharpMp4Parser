@@ -47,7 +47,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.SampleEntry
 
         public override long getSize()
         {
-            long header = largeBox || vc1Content.Length + 16 >= 1 << 32 ? 16 : 8;
+            long header = largeBox || vc1Content.LongLength + 16 >= (1L << 32) ? 16 : 8;
             return header + vc1Content.Length + 8;
         }
     }
