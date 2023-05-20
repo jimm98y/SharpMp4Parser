@@ -67,12 +67,12 @@ namespace SharpMp4Parser.Streaming.Output.MP4
                 streamingTrack.setSampleSink(this);
                 chunkNumbers.Add(streamingTrack, 1L);
                 sampleNumbers.Add(streamingTrack, 1L);
-                nextSampleStartTime.TryAdd(streamingTrack, 0L);
-                nextChunkCreateStartTime.TryAdd(streamingTrack, 0L);
-                nextChunkWriteStartTime.TryAdd(streamingTrack, 0L);
-                congestionControl.TryAdd(streamingTrack, new CountDownLatch(0));
+                nextSampleStartTime[streamingTrack] = 0L;
+                nextChunkCreateStartTime[streamingTrack] = 0L;
+                nextChunkWriteStartTime[streamingTrack] = 0L;
+                congestionControl[streamingTrack] = new CountDownLatch(0);
                 sampleBuffers.Add(streamingTrack, new List<StreamingSample>());
-                chunkBuffers.TryAdd(streamingTrack, new Queue<ChunkContainer>());
+                chunkBuffers[streamingTrack] = new Queue<ChunkContainer>();
                 if (streamingTrack.getTrackExtension< TrackIdTrackExtension>(typeof(TrackIdTrackExtension)) != null)
                 {
                     TrackIdTrackExtension trackIdTrackExtension = streamingTrack.getTrackExtension< TrackIdTrackExtension>(typeof(TrackIdTrackExtension));
@@ -162,7 +162,8 @@ namespace SharpMp4Parser.Streaming.Output.MP4
             double duration = 0;
             foreach (StreamingTrack streamingTrack in source)
             {
-                duration = Math.Max((double)nextSampleStartTime[streamingTrack] / streamingTrack.getTimescale(), duration);
+                double nextSampleTime = (double)nextSampleStartTime[streamingTrack];
+                duration = Math.Max(nextSampleTime / streamingTrack.getTimescale(), duration);
                 timescales = Mp4Arrays.copyOfAndAppend(timescales, streamingTrack.getTimescale());
                 maxTrackId = Math.Max(streamingTrack.getTrackExtension<TrackIdTrackExtension>(typeof(TrackIdTrackExtension)).getTrackId(), maxTrackId);
             }
@@ -265,7 +266,7 @@ namespace SharpMp4Parser.Streaming.Output.MP4
                 ChunkContainer chunkContainer = createChunkContainer(streamingTrack);
                 //System.err.println("Creating fragment for " + streamingTrack);
                 sampleBuffers[streamingTrack].Clear();
-                nextChunkCreateStartTime.TryAdd(streamingTrack, nextChunkCreateStartTime[streamingTrack] + chunkContainer.duration);
+                nextChunkCreateStartTime[streamingTrack] = nextChunkCreateStartTime[streamingTrack] + chunkContainer.duration;
                 Queue<ChunkContainer> chunkQueue = chunkBuffers[streamingTrack];
                 chunkQueue.Enqueue(chunkContainer);
                 lock (OBJ)
@@ -282,7 +283,7 @@ namespace SharpMp4Parser.Streaming.Output.MP4
                             writeChunkContainer(currentFragmentContainer);
                             congestionControl[currentStreamingTrack].countDown();
                             long ts = nextChunkWriteStartTime[currentStreamingTrack] + currentFragmentContainer.duration;
-                            nextChunkWriteStartTime.TryAdd(currentStreamingTrack, ts);
+                            nextChunkWriteStartTime[currentStreamingTrack] = ts;
                             //if (LOG.isTraceEnabled())
                             //{
                             //    LOG.trace(currentStreamingTrack + " advanced to " + (double)ts / currentStreamingTrack.getTimescale());
@@ -296,7 +297,7 @@ namespace SharpMp4Parser.Streaming.Output.MP4
                         {
                             // if there are more than 10 fragments in the queue we don't want more samples of this track
                             // System.err.println("Stopping " + streamingTrack);
-                            congestionControl.TryAdd(streamingTrack, new CountDownLatch(chunkQueue.Count));
+                            congestionControl[streamingTrack] = new CountDownLatch(chunkQueue.Count);
                         }
                     }
                 }
@@ -306,7 +307,7 @@ namespace SharpMp4Parser.Streaming.Output.MP4
 
 
             sampleBuffers[streamingTrack].Add(streamingSample);
-            nextSampleStartTime.TryAdd(streamingTrack, nextSampleStartTime[streamingTrack] + streamingSample.getDuration());
+            nextSampleStartTime[streamingTrack] = nextSampleStartTime[streamingTrack] + streamingSample.getDuration();
 
         }
 

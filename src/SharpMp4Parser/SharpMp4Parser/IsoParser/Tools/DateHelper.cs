@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-using SharpMp4Parser.Java;
 using System;
 
 namespace SharpMp4Parser.IsoParser.Tools
@@ -32,7 +31,7 @@ namespace SharpMp4Parser.IsoParser.Tools
          */
         static public DateTime convert(long secondsSince)
         {
-            return new DateTime(1904, 1, 1).AddSeconds(secondsSince);
+            return new DateTime(1904, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(secondsSince);
         }
 
         /**
@@ -43,7 +42,7 @@ namespace SharpMp4Parser.IsoParser.Tools
          */
         static public long convert(DateTime date)
         {
-            return (long)date.Subtract(new DateTime(1904, 1, 1)).TotalSeconds;
+            return (long)date.Subtract(new DateTime(1904, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds;
         }
     }
 }
