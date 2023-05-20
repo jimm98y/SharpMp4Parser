@@ -12,13 +12,13 @@ using System.Linq;
 namespace SharpMp4Parser.Streaming.Output.MP4
 {
     /**
- * Creates a fragmented MP4 file consisting of a header [ftyp, moov], any number of fragments
- * [moof, mdat]+ and a footer [mfra].
- * The MultiTrackFragmentedMp4Writer is a passive component. It will only be active if one of the
- * source tracks pushes a sample via {@link #acceptSample(StreamingSample, StreamingTrack)}.
- * It has to be closed ({@link #close()}) actively to trigger the write of remaining buffered
- * samples and the footer.
- */
+     * Creates a fragmented MP4 file consisting of a header [ftyp, moov], any number of fragments
+     * [moof, mdat]+ and a footer [mfra].
+     * The MultiTrackFragmentedMp4Writer is a passive component. It will only be active if one of the
+     * source tracks pushes a sample via {@link #acceptSample(StreamingSample, StreamingTrack)}.
+     * It has to be closed ({@link #close()}) actively to trigger the write of remaining buffered
+     * samples and the footer.
+     */
     public class FragmentedMp4Writer : DefaultBoxes, SampleSink
     {
         public static readonly object OBJ = new object();
@@ -59,19 +59,21 @@ namespace SharpMp4Parser.Streaming.Output.MP4
             this.sink = sink;
             this.creationTime = DateTime.UtcNow;
             List<long> trackIds = new List<long>();
+
             foreach (StreamingTrack streamingTrack in source)
             {
                 // this connects sample source with sample sink
                 streamingTrack.setSampleSink(this);
-                sampleBuffers.TryAdd(streamingTrack, new List<StreamingSample>());
-                fragmentBuffers.TryAdd(streamingTrack, new Queue<FragmentContainer>());
-                nextFragmentCreateStartTime.TryAdd(streamingTrack, 0L);
-                nextFragmentWriteStartTime.TryAdd(streamingTrack, 0L);
-                nextSampleStartTime.TryAdd(streamingTrack, 0L);
-                congestionControl.TryAdd(streamingTrack, new CountDownLatch(0));
-                if (streamingTrack.getTrackExtension< TrackIdTrackExtension>(typeof(TrackIdTrackExtension)) != null)
+                sampleBuffers[streamingTrack] = new List<StreamingSample>();
+                fragmentBuffers[streamingTrack] = new Queue<FragmentContainer>();
+                nextFragmentCreateStartTime[streamingTrack] = 0L;
+                nextFragmentWriteStartTime[streamingTrack] = 0L;
+                nextSampleStartTime[streamingTrack] = 0L;
+                congestionControl[streamingTrack] = new CountDownLatch(0);
+
+                if (streamingTrack.getTrackExtension<TrackIdTrackExtension>(typeof(TrackIdTrackExtension)) != null)
                 {
-                    TrackIdTrackExtension trackIdTrackExtension = streamingTrack.getTrackExtension< TrackIdTrackExtension>(typeof(TrackIdTrackExtension));
+                    TrackIdTrackExtension trackIdTrackExtension = streamingTrack.getTrackExtension<TrackIdTrackExtension>(typeof(TrackIdTrackExtension));
                     Debug.Assert(trackIdTrackExtension != null);
                     if (trackIds.Contains(trackIdTrackExtension.getTrackId()))
                     {
@@ -79,21 +81,22 @@ namespace SharpMp4Parser.Streaming.Output.MP4
                     }
                 }
             }
+
             foreach (StreamingTrack streamingTrack in source)
             {
-                if (streamingTrack.getTrackExtension< TrackIdTrackExtension>(typeof(TrackIdTrackExtension)) == null)
+                if (streamingTrack.getTrackExtension<TrackIdTrackExtension>(typeof(TrackIdTrackExtension)) == null)
                 {
                     long maxTrackId = 0;
                     foreach (long trackId in trackIds)
                     {
                         maxTrackId = Math.Max(trackId, maxTrackId);
                     }
+
                     TrackIdTrackExtension tiExt = new TrackIdTrackExtension(maxTrackId + 1);
                     trackIds.Add(tiExt.getTrackId());
                     streamingTrack.addTrackExtension(tiExt);
                 }
             }
-
         }
 
         private readonly object _syncRoot = new object();
@@ -278,7 +281,7 @@ namespace SharpMp4Parser.Streaming.Output.MP4
                 FragmentContainer fragmentContainer = createFragmentContainer(streamingTrack);
                 //System.err.println("Creating fragment for " + streamingTrack);
                 sampleBuffers[streamingTrack].Clear();
-                nextFragmentCreateStartTime.TryAdd(streamingTrack, nextFragmentCreateStartTime[streamingTrack] + fragmentContainer.duration);
+                nextFragmentCreateStartTime[streamingTrack] = nextFragmentCreateStartTime[streamingTrack] + fragmentContainer.duration;
                 Queue<FragmentContainer> fragmentQueue = fragmentBuffers[streamingTrack];
                 fragmentQueue.Enqueue(fragmentContainer);
                 lock (OBJ)
@@ -298,7 +301,7 @@ namespace SharpMp4Parser.Streaming.Output.MP4
 
                             congestionControl[currentStreamingTrack].countDown();
                             long ts = nextFragmentWriteStartTime[currentStreamingTrack] + currentFragmentContainer.duration;
-                            nextFragmentWriteStartTime.TryAdd(currentStreamingTrack, ts);
+                            nextFragmentWriteStartTime[currentStreamingTrack] = ts;
                             //if (LOG.isDebugEnabled())
                             //{
                             //LOG.debug(currentStreamingTrack + " advanced to " + (double)ts / currentStreamingTrack.getTimescale());
@@ -311,17 +314,14 @@ namespace SharpMp4Parser.Streaming.Output.MP4
                         {
                             // if there are more than 10 fragments in the queue we don't want more samples of this track
                             // System.err.println("Stopping " + streamingTrack);
-                            congestionControl.TryAdd(streamingTrack, new CountDownLatch(fragmentQueue.Count));
+                            congestionControl[streamingTrack] = new CountDownLatch(fragmentQueue.Count);
                         }
                     }
                 }
             }
 
-
             sampleBuffers[streamingTrack].Add(streamingSample);
-            nextSampleStartTime.TryAdd(streamingTrack, nextSampleStartTime[streamingTrack] + streamingSample.getDuration());
-
-
+            nextSampleStartTime[streamingTrack] = nextSampleStartTime[streamingTrack] + streamingSample.getDuration();
         }
 
         /**
@@ -360,8 +360,8 @@ namespace SharpMp4Parser.Streaming.Output.MP4
             tfraOffsets.TryGetValue(streamingTrack, out var origTrack);
             tfraTimes.TryGetValue(streamingTrack, out var origTimes);
             nextFragmentCreateStartTime.TryGetValue(streamingTrack, out var nextFragment);
-            tfraOffsets.TryAdd(streamingTrack, Mp4Arrays.copyOfAndAppend(origTrack, bytesWritten));
-            tfraTimes.TryAdd(streamingTrack, Mp4Arrays.copyOfAndAppend(origTimes, nextFragment));
+            tfraOffsets[streamingTrack] = Mp4Arrays.copyOfAndAppend(origTrack, bytesWritten);
+            tfraTimes[streamingTrack] = Mp4Arrays.copyOfAndAppend(origTimes, nextFragment);
 
             //LOG.trace("Container created");
             Box moof = createMoof(streamingTrack, samples);
@@ -437,7 +437,6 @@ namespace SharpMp4Parser.Streaming.Output.MP4
             write(sink, boxes);
         }
 
-
         private Box createMoof(StreamingTrack streamingTrack, List<StreamingSample> samples)
         {
             MovieFragmentBox moof = new MovieFragmentBox();
@@ -447,7 +446,6 @@ namespace SharpMp4Parser.Streaming.Output.MP4
             firstTrun.setDataOffset(1); // dummy to make size correct
             firstTrun.setDataOffset((int)(8 + moof.getSize())); // mdat header + moof size
             return moof;
-
         }
 
         protected void createTfhd(StreamingTrack streamingTrack, TrackFragmentBox parent)

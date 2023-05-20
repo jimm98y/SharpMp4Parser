@@ -24,12 +24,12 @@ using SharpMp4Parser.Java;
 namespace SharpMp4Parser.Streaming.Input.H264.SpsPps
 {
     /**
- * Sequence Parameter Set structure of h264 bitstream
- * <p>
- * capable to serialize and deserialize with CAVLC bitstream</p>
- *
- * @author Stanislav Vitvitskiy
- */
+     * Sequence Parameter Set structure of h264 bitstream
+     * <p>
+     * capable to serialize and deserialize with CAVLC bitstream</p>
+     *
+     * @author Stanislav Vitvitskiy
+     */
     public class SeqParameterSet
     {
         public int pic_order_cnt_type;
@@ -81,18 +81,12 @@ namespace SharpMp4Parser.Streaming.Input.H264.SpsPps
             SeqParameterSet sps = new SeqParameterSet();
 
             sps.profile_idc = (int)reader.readNBit(8);
-            sps.constraint_set_0_flag = reader
-                    .readBool();
-            sps.constraint_set_1_flag = reader
-                    .readBool();
-            sps.constraint_set_2_flag = reader
-                    .readBool();
-            sps.constraint_set_3_flag = reader
-                    .readBool();
-            sps.constraint_set_4_flag = reader
-                    .readBool();
-            sps.constraint_set_5_flag = reader
-                    .readBool();
+            sps.constraint_set_0_flag = reader.readBool();
+            sps.constraint_set_1_flag = reader.readBool();
+            sps.constraint_set_2_flag = reader.readBool();
+            sps.constraint_set_3_flag = reader.readBool();
+            sps.constraint_set_4_flag = reader.readBool();
+            sps.constraint_set_5_flag = reader.readBool();
 
             sps.reserved_zero_2bits = reader.readNBit(2);
             sps.level_idc = (int)reader.readNBit(8);
@@ -101,21 +95,19 @@ namespace SharpMp4Parser.Streaming.Input.H264.SpsPps
             if (sps.profile_idc == 100 || sps.profile_idc == 110
                     || sps.profile_idc == 122 || sps.profile_idc == 144)
             {
-                sps.chroma_format_idc = ChromaFormat.fromId(reader
-                        .readUE());
+                sps.chroma_format_idc = ChromaFormat.fromId(reader.readUE());
+               
                 if (sps.chroma_format_idc == ChromaFormat.YUV_444)
                 {
-                    sps.residual_color_transform_flag = reader
-                            .readBool();
+                    sps.residual_color_transform_flag = reader.readBool();
                 }
-                sps.bit_depth_luma_minus8 = reader
-                .readUE();
-                sps.bit_depth_chroma_minus8 = reader
-                        .readUE();
-                sps.qpprime_y_zero_transform_bypass_flag = reader
-                        .readBool();
-                bool seqScalingMatrixPresent = reader
-                    .readBool();
+                
+                sps.bit_depth_luma_minus8 = reader.readUE();
+                sps.bit_depth_chroma_minus8 = reader.readUE();
+                sps.qpprime_y_zero_transform_bypass_flag = reader.readBool();
+                
+                bool seqScalingMatrixPresent = reader.readBool();
+                
                 if (seqScalingMatrixPresent)
                 {
                     readScalingListMatrix(reader, sps);
@@ -125,47 +117,40 @@ namespace SharpMp4Parser.Streaming.Input.H264.SpsPps
             {
                 sps.chroma_format_idc = ChromaFormat.YUV_420;
             }
-            sps.log2_max_frame_num_minus4 = reader
-                    .readUE();
+
+            sps.log2_max_frame_num_minus4 = reader.readUE();
             sps.pic_order_cnt_type = reader.readUE();
+
             if (sps.pic_order_cnt_type == 0)
             {
-                sps.log2_max_pic_order_cnt_lsb_minus4 = reader
-                        .readUE();
+                sps.log2_max_pic_order_cnt_lsb_minus4 = reader.readUE();
             }
             else if (sps.pic_order_cnt_type == 1)
             {
-                sps.delta_pic_order_always_zero_flag = reader
-                        .readBool();
-                sps.offset_for_non_ref_pic = reader
-                        .readSE();
-                sps.offset_for_top_to_bottom_field = reader
-                        .readSE();
-                sps.num_ref_frames_in_pic_order_cnt_cycle = reader
-                        .readUE();
+                sps.delta_pic_order_always_zero_flag = reader.readBool();
+                sps.offset_for_non_ref_pic = reader.readSE();
+                sps.offset_for_top_to_bottom_field = reader.readSE();
+                sps.num_ref_frames_in_pic_order_cnt_cycle = reader.readUE();
                 sps.offsetForRefFrame = new int[sps.num_ref_frames_in_pic_order_cnt_cycle];
                 for (int i = 0; i < sps.num_ref_frames_in_pic_order_cnt_cycle; i++)
                 {
-                    sps.offsetForRefFrame[i] = reader
-                            .readSE();
+                    sps.offsetForRefFrame[i] = reader.readSE();
                 }
             }
+
             sps.num_ref_frames = reader.readUE();
-            sps.gaps_in_frame_num_value_allowed_flag = reader
-                    .readBool();
-            sps.pic_width_in_mbs_minus1 = reader
-                    .readUE();
-            sps.pic_height_in_map_units_minus1 = reader
-                    .readUE();
+            sps.gaps_in_frame_num_value_allowed_flag = reader.readBool();
+            sps.pic_width_in_mbs_minus1 = reader.readUE();
+            sps.pic_height_in_map_units_minus1 = reader.readUE();
             sps.frame_mbs_only_flag = reader.readBool();
             if (!sps.frame_mbs_only_flag)
             {
-                sps.mb_adaptive_frame_field_flag = reader
-                        .readBool();
+                sps.mb_adaptive_frame_field_flag = reader.readBool();
             }
-            sps.direct_8x8_inference_flag = reader
-                    .readBool();
+
+            sps.direct_8x8_inference_flag = reader.readBool();
             sps.frame_cropping_flag = reader.readBool();
+
             if (sps.frame_cropping_flag)
             {
                 sps.frame_crop_left_offset = reader
@@ -177,8 +162,9 @@ namespace SharpMp4Parser.Streaming.Input.H264.SpsPps
                 sps.frame_crop_bottom_offset = reader
                         .readUE();
             }
-            bool vui_parameters_present_flag = reader
-        .readBool();
+
+            bool vui_parameters_present_flag = reader.readBool();
+
             if (vui_parameters_present_flag)
                 sps.vuiParams = ReadVUIParameters(reader);
 
@@ -193,8 +179,8 @@ namespace SharpMp4Parser.Streaming.Input.H264.SpsPps
             sps.scalingMatrix = new ScalingMatrix();
             for (int i = 0; i < 8; i++)
             {
-                bool seqScalingListPresentFlag = reader
-            .readBool();
+                bool seqScalingListPresentFlag = reader.readBool();
+
                 if (seqScalingListPresentFlag)
                 {
                     sps.scalingMatrix.ScalingList4x4 = new ScalingList[8];
@@ -216,8 +202,8 @@ namespace SharpMp4Parser.Streaming.Input.H264.SpsPps
         private static VUIParameters ReadVUIParameters(ByteBufferBitreader reader)
         {
             VUIParameters vuip = new VUIParameters();
-            vuip.aspect_ratio_info_present_flag = reader
-                    .readBool();
+            vuip.aspect_ratio_info_present_flag = reader.readBool();
+            
             if (vuip.aspect_ratio_info_present_flag)
             {
                 vuip.aspect_ratio = AspectRatio.fromValue((int)reader.readNBit(8));
@@ -227,22 +213,21 @@ namespace SharpMp4Parser.Streaming.Input.H264.SpsPps
                     vuip.sar_height = (int)reader.readNBit(16);
                 }
             }
-            vuip.overscan_info_present_flag = reader
-                    .readBool();
+            
+            vuip.overscan_info_present_flag = reader.readBool();
+            
             if (vuip.overscan_info_present_flag)
             {
-                vuip.overscan_appropriate_flag = reader
-                        .readBool();
+                vuip.overscan_appropriate_flag = reader.readBool();
             }
-            vuip.video_signal_type_present_flag = reader
-                    .readBool();
+            
+            vuip.video_signal_type_present_flag = reader.readBool();
+            
             if (vuip.video_signal_type_present_flag)
             {
                 vuip.video_format = (int)reader.readNBit(3);
-                vuip.video_full_range_flag = reader
-                        .readBool();
-                vuip.colour_description_present_flag = reader
-                        .readBool();
+                vuip.video_full_range_flag = reader.readBool();
+                vuip.colour_description_present_flag = reader.readBool();
                 if (vuip.colour_description_present_flag)
                 {
                     vuip.colour_primaries = (int)reader.readNBit(8);
@@ -250,58 +235,52 @@ namespace SharpMp4Parser.Streaming.Input.H264.SpsPps
                     vuip.matrix_coefficients = (int)reader.readNBit(8);
                 }
             }
-            vuip.chroma_loc_info_present_flag = reader
-                    .readBool();
+            
+            vuip.chroma_loc_info_present_flag = reader.readBool();
+            
             if (vuip.chroma_loc_info_present_flag)
             {
-                vuip.chroma_sample_loc_type_top_field = reader
-                        .readUE();
-                vuip.chroma_sample_loc_type_bottom_field = reader
-                        .readUE();
+                vuip.chroma_sample_loc_type_top_field = reader.readUE();
+                vuip.chroma_sample_loc_type_bottom_field = reader.readUE();
             }
-            vuip.timing_info_present_flag = reader
-                    .readBool();
+            
+            vuip.timing_info_present_flag = reader.readBool();
+            
             if (vuip.timing_info_present_flag)
             {
                 vuip.num_units_in_tick = (int)reader.readNBit(32);
                 vuip.time_scale = (int)reader.readNBit(32);
-                vuip.fixed_frame_rate_flag = reader
-                .readBool();
+                vuip.fixed_frame_rate_flag = reader.readBool();
             }
-            bool nal_hrd_parameters_present_flag = reader
-        .readBool();
+            
+            bool nal_hrd_parameters_present_flag = reader.readBool();
+            
             if (nal_hrd_parameters_present_flag)
                 vuip.nalHRDParams = readHRDParameters(reader);
-            bool vcl_hrd_parameters_present_flag = reader
-        .readBool();
+            
+            bool vcl_hrd_parameters_present_flag = reader.readBool();
+           
             if (vcl_hrd_parameters_present_flag)
                 vuip.vclHRDParams = readHRDParameters(reader);
+            
             if (nal_hrd_parameters_present_flag || vcl_hrd_parameters_present_flag)
             {
-                vuip.low_delay_hrd_flag = reader
-                        .readBool();
+                vuip.low_delay_hrd_flag = reader.readBool();
             }
-            vuip.pic_struct_present_flag = reader
-                    .readBool();
-            bool bitstream_restriction_flag = reader
-        .readBool();
+
+            vuip.pic_struct_present_flag = reader.readBool();
+
+            bool bitstream_restriction_flag = reader.readBool();
             if (bitstream_restriction_flag)
             {
                 vuip.bitstreamRestriction = new VUIParameters.BitstreamRestriction();
-                vuip.bitstreamRestriction.motion_vectors_over_pic_boundaries_flag = reader
-                        .readBool();
-                vuip.bitstreamRestriction.max_bytes_per_pic_denom = reader
-                        .readUE();
-                vuip.bitstreamRestriction.max_bits_per_mb_denom = reader
-                        .readUE();
-                vuip.bitstreamRestriction.log2_max_mv_length_horizontal = reader
-                        .readUE();
-                vuip.bitstreamRestriction.log2_max_mv_length_vertical = reader
-                        .readUE();
-                vuip.bitstreamRestriction.num_reorder_frames = reader
-                        .readUE();
-                vuip.bitstreamRestriction.max_dec_frame_buffering = reader
-                        .readUE();
+                vuip.bitstreamRestriction.motion_vectors_over_pic_boundaries_flag = reader.readBool();
+                vuip.bitstreamRestriction.max_bytes_per_pic_denom = reader.readUE();
+                vuip.bitstreamRestriction.max_bits_per_mb_denom = reader.readUE();
+                vuip.bitstreamRestriction.log2_max_mv_length_horizontal = reader.readUE();
+                vuip.bitstreamRestriction.log2_max_mv_length_vertical = reader.readUE();
+                vuip.bitstreamRestriction.num_reorder_frames = reader.readUE();
+                vuip.bitstreamRestriction.max_dec_frame_buffering = reader.readUE();
             }
 
             return vuip;
@@ -319,16 +298,16 @@ namespace SharpMp4Parser.Streaming.Input.H264.SpsPps
 
             for (int SchedSelIdx = 0; SchedSelIdx <= hrd.cpb_cnt_minus1; SchedSelIdx++)
             {
-                hrd.bit_rate_value_minus1[SchedSelIdx] = reader
-                        .readUE();
-                hrd.cpb_size_value_minus1[SchedSelIdx] = reader
-                        .readUE();
+                hrd.bit_rate_value_minus1[SchedSelIdx] = reader.readUE();
+                hrd.cpb_size_value_minus1[SchedSelIdx] = reader.readUE();
                 hrd.cbr_flag[SchedSelIdx] = reader.readBool();
             }
+
             hrd.initial_cpb_removal_delay_length_minus1 = (int)reader.readNBit(5);
             hrd.cpb_removal_delay_length_minus1 = (int)reader.readNBit(5);
             hrd.dpb_output_delay_length_minus1 = (int)reader.readNBit(5);
             hrd.time_offset_length = (int)reader.readNBit(5);
+
             return hrd;
         }
 
