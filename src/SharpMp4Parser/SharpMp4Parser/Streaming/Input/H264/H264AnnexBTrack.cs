@@ -27,9 +27,9 @@ namespace SharpMp4Parser.Streaming.Input.H264
 
             while ((nal = st.getNext()) != null)
             {
-                //System.err.println("NAL before consume");
+                Debug.WriteLine("NAL before consume");
                 consumeNal(ByteBuffer.wrap(nal));
-                //System.err.println("NAL after consume");
+                Debug.WriteLine("NAL after consume");
             }
             pushSample(createSample(buffered, fvnd.sliceHeader, sliceNalUnitHeader), true, true);
         }

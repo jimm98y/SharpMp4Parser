@@ -58,12 +58,14 @@ namespace SharpMp4Parser.Streaming.Input
 
         public T getSampleExtension<T>(Type clazz) where T : SampleExtension
         {
-            return (T)sampleExtensions[clazz];
+            SampleExtension ret = null;
+            sampleExtensions.TryGetValue(clazz, out ret);
+            return (T)ret;
         }
 
         public void addSampleExtension(SampleExtension sampleExtension)
         {
-            sampleExtensions.Add(sampleExtension.GetType(), sampleExtension);
+            sampleExtensions[sampleExtension.GetType()] = sampleExtension;
         }
 
         public T removeSampleExtension<T>(Type clazz) where T : SampleExtension

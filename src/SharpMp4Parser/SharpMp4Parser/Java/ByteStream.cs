@@ -9,9 +9,19 @@ namespace SharpMp4Parser.Java
     {
         internal MemoryStream _ms = null;
 
+        public void CopyTo(Stream stream)
+        {
+            _ms.CopyTo(stream);
+        }
+
         public ByteStream()
         {
             _ms = new MemoryStream();
+        }
+
+        public ByteStream(MemoryStream ms)
+        {
+            _ms = ms;
         }
 
         public ByteStream(ByteStream input)
