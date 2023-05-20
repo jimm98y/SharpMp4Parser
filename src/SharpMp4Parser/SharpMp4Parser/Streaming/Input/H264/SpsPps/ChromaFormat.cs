@@ -22,10 +22,10 @@ OR OTHER DEALINGS IN THE SOFTWARE.
 namespace SharpMp4Parser.Streaming.Input.H264.SpsPps
 {
     /**
- * Chroma format enum
- *
- * @author Stanislav Vitvitskiy
- */
+     * Chroma format enum
+     *
+     * @author Stanislav Vitvitskiy
+     */
     public class ChromaFormat
     {
         public static ChromaFormat MONOCHROME = new ChromaFormat(0, 0, 0);

@@ -22,12 +22,12 @@ OR OTHER DEALINGS IN THE SOFTWARE.
 namespace SharpMp4Parser.Streaming.Input.H264.SpsPps
 {
     /**
- * Scaling list entity
- * <p>
- * capable to serialize / deserialize with CAVLC bitstream</p>
- *
- * @author Stanislav Vitvitskiy
- */
+     * Scaling list entity
+     * <p>
+     * capable to serialize / deserialize with CAVLC bitstream</p>
+     *
+     * @author Stanislav Vitvitskiy
+     */
     public class ScalingList
     {
 
