@@ -4,47 +4,16 @@ using SharpMp4Parser.IsoParser.Boxes.ISO14496.Part14;
 using SharpMp4Parser.IsoParser.Boxes.SampleEntry;
 using SharpMp4Parser.Java;
 using SharpMp4Parser.Streaming.Extensions;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
 namespace SharpMp4Parser.Streaming.Input.AAC
 {
-    public class AacStreamingTrack : AbstractStreamingTrack /*, Callable<Void> */
+    /**
+     * Created by Jimm98y on 5/20/2023.
+     */
+    public class AacStreamingTrack : AbstractStreamingTrack
     {
-        private static Dictionary<int, int> samplingFrequencyIndexMap = new Dictionary<int, int>();
-        //private static Logger LOG = LoggerFactory.getLogger(AdtsAacStreamingTrack.class.getName());
-
-        static AacStreamingTrack()
-        {
-            samplingFrequencyIndexMap.Add(96000, 0);
-            samplingFrequencyIndexMap.Add(88200, 1);
-            samplingFrequencyIndexMap.Add(64000, 2);
-            samplingFrequencyIndexMap.Add(48000, 3);
-            samplingFrequencyIndexMap.Add(44100, 4);
-            samplingFrequencyIndexMap.Add(32000, 5);
-            samplingFrequencyIndexMap.Add(24000, 6);
-            samplingFrequencyIndexMap.Add(22050, 7);
-            samplingFrequencyIndexMap.Add(16000, 8);
-            samplingFrequencyIndexMap.Add(12000, 9);
-            samplingFrequencyIndexMap.Add(11025, 10);
-            samplingFrequencyIndexMap.Add(8000, 11);
-            samplingFrequencyIndexMap.Add(0x0, 96000);
-            samplingFrequencyIndexMap.Add(0x1, 88200);
-            samplingFrequencyIndexMap.Add(0x2, 64000);
-            samplingFrequencyIndexMap.Add(0x3, 48000);
-            samplingFrequencyIndexMap.Add(0x4, 44100);
-            samplingFrequencyIndexMap.Add(0x5, 32000);
-            samplingFrequencyIndexMap.Add(0x6, 24000);
-            samplingFrequencyIndexMap.Add(0x7, 22050);
-            samplingFrequencyIndexMap.Add(0x8, 16000);
-            samplingFrequencyIndexMap.Add(0x9, 12000);
-            samplingFrequencyIndexMap.Add(0xa, 11025);
-            samplingFrequencyIndexMap.Add(0xb, 8000);
-        }
-
-        CountDownLatch gotFirstSample = new CountDownLatch(1);
         SampleDescriptionBox stsd = null;
         private ByteStream input;
         private bool closed;
@@ -123,6 +92,7 @@ namespace SharpMp4Parser.Streaming.Input.AAC
                     audioSampleEntry.addBox(esds);
                     stsd.addBox(audioSampleEntry);
                 }
+
                 return stsd;
             }
         }
@@ -155,7 +125,6 @@ namespace SharpMp4Parser.Streaming.Input.AAC
 
         public void call()
         {
-            //int i = 1;
             try
             {
                 while (true)
@@ -172,7 +141,6 @@ namespace SharpMp4Parser.Streaming.Input.AAC
                             throw new EndOfStreamException();
                         n += count;
                     }
-                    //System.err.println("Sample " + i++);
                     sampleSink.acceptSample(new StreamingSampleImpl(ByteBuffer.wrap(frame), 1024), this);
                 }
             }
