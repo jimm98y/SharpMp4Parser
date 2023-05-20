@@ -157,37 +157,34 @@ namespace SharpMp4Parser.Muxer.Container.MP4
 
         private int getChunkForSample(int index)
         {
-            lock (_syncRoot)
+            int sampleNum = index + 1;
+            // we always look for the next chunk in the last one to make linear access fast
+            if (sampleNum >= chunkNumsStartSampleNum[lastChunk] && sampleNum < chunkNumsStartSampleNum[lastChunk + 1])
             {
-                int sampleNum = index + 1;
-                // we always look for the next chunk in the last one to make linear access fast
-                if (sampleNum >= chunkNumsStartSampleNum[lastChunk] && sampleNum < chunkNumsStartSampleNum[lastChunk + 1])
-                {
-                    return lastChunk;
-                }
-                else if (sampleNum < chunkNumsStartSampleNum[lastChunk])
-                {
-                    // we could search backwards but i don't believe there is much backward linear access
-                    // I'd then rather suspect a start from scratch
-                    lastChunk = 0;
+                return lastChunk;
+            }
+            else if (sampleNum < chunkNumsStartSampleNum[lastChunk])
+            {
+                // we could search backwards but i don't believe there is much backward linear access
+                // I'd then rather suspect a start from scratch
+                lastChunk = 0;
 
-                    while (chunkNumsStartSampleNum[lastChunk + 1] <= sampleNum)
-                    {
-                        lastChunk++;
-                    }
-                    return lastChunk;
-
-                }
-                else
+                while (chunkNumsStartSampleNum[lastChunk + 1] <= sampleNum)
                 {
-                    lastChunk += 1;
-
-                    while (chunkNumsStartSampleNum[lastChunk + 1] <= sampleNum)
-                    {
-                        lastChunk++;
-                    }
-                    return lastChunk;
+                    lastChunk++;
                 }
+                return lastChunk;
+
+            }
+            else
+            {
+                lastChunk += 1;
+
+                while (chunkNumsStartSampleNum[lastChunk + 1] <= sampleNum)
+                {
+                    lastChunk++;
+                }
+                return lastChunk;
             }
         }
 
@@ -230,38 +227,37 @@ namespace SharpMp4Parser.Muxer.Container.MP4
 
             public ByteBuffer asByteBuffer()
             {
-                lock (_syncRoot)
+                ByteBuffer b;
+
+                int chunkNumber = that.getChunkForSample(index);
+                WeakReference<ByteBuffer> chunkBufferSr = that.cache[chunkNumber];
+
+                int chunkStartSample = that.chunkNumsStartSampleNum[chunkNumber] - 1;
+
+                int sampleInChunk = index - chunkStartSample;
+                long[] sampleOffsetsWithinChunk = that.sampleOffsetsWithinChunks[CastUtils.l2i(chunkNumber)];
+                long offsetWithInChunk = sampleOffsetsWithinChunk[sampleInChunk];
+
+                ByteBuffer chunkBuffer;
+                
+                if (chunkBufferSr == null || !chunkBufferSr.TryGetTarget(out chunkBuffer))
                 {
-                    ByteBuffer b;
-
-                    int chunkNumber = that.getChunkForSample(index);
-                    WeakReference<ByteBuffer> chunkBufferSr = that.cache[chunkNumber];
-
-                    int chunkStartSample = that.chunkNumsStartSampleNum[chunkNumber] - 1;
-
-                    int sampleInChunk = index - chunkStartSample;
-                    long[] sampleOffsetsWithinChunk = that.sampleOffsetsWithinChunks[CastUtils.l2i(chunkNumber)];
-                    long offsetWithInChunk = sampleOffsetsWithinChunk[sampleInChunk];
-
-                    ByteBuffer chunkBuffer;
-                    if (chunkBufferSr == null || !chunkBufferSr.TryGetTarget(out chunkBuffer))
+                    try
                     {
-                        try
-                        {
-                            chunkBuffer = that.randomAccess.get(
-                                    that.chunkOffsets[CastUtils.l2i(chunkNumber)],
-                                    sampleOffsetsWithinChunk[sampleOffsetsWithinChunk.Length - 1] + that.ssb.getSampleSizeAtIndex(chunkStartSample + sampleOffsetsWithinChunk.Length - 1));
-                            that.cache[chunkNumber] = new WeakReference<ByteBuffer>(chunkBuffer);
-                        }
-                        catch (IOException e)
-                        {
-                            //LOG.error("", e);
-                            throw new IndexOutOfRangeException(e.Message);
-                        }
+                        chunkBuffer = that.randomAccess.get(
+                                that.chunkOffsets[CastUtils.l2i(chunkNumber)],
+                                sampleOffsetsWithinChunk[sampleOffsetsWithinChunk.Length - 1] + that.ssb.getSampleSizeAtIndex(chunkStartSample + sampleOffsetsWithinChunk.Length - 1));
+                        that.cache[chunkNumber] = new WeakReference<ByteBuffer>(chunkBuffer);
                     }
-                    b = (ByteBuffer)((ByteBuffer)chunkBuffer.duplicate().position(CastUtils.l2i(offsetWithInChunk))).slice().limit(CastUtils.l2i(that.ssb.getSampleSizeAtIndex(index)));
-                    return b;
+                    catch (IOException e)
+                    {
+                        //LOG.error("", e);
+                        throw new IndexOutOfRangeException(e.Message);
+                    }
                 }
+               
+                b = (ByteBuffer)((ByteBuffer)chunkBuffer.duplicate().position(CastUtils.l2i(offsetWithInChunk))).slice().limit(CastUtils.l2i(that.ssb.getSampleSizeAtIndex(index)));
+                return b;
             }
 
             public override string ToString()

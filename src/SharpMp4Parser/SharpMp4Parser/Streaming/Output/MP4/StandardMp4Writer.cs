@@ -5,8 +5,6 @@ using SharpMp4Parser.Java;
 using SharpMp4Parser.Streaming.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Collections.Concurrent;
-using System.Threading;
 using System.Diagnostics;
 using System.Linq;
 
@@ -20,27 +18,23 @@ namespace SharpMp4Parser.Streaming.Output.MP4
      */
     public class StandardMp4Writer : DefaultBoxes, SampleSink
     {
-
-        public static readonly object OBJ = new object();
         //private static Logger LOG = LoggerFactory.getLogger(FragmentedMp4Writer.class.getName());
         protected readonly ByteStream sink;
         protected List<StreamingTrack> source;
         protected DateTime creationTime = DateTime.UtcNow;
 
-
-        protected ConcurrentDictionary<StreamingTrack, CountDownLatch> congestionControl = new ConcurrentDictionary<StreamingTrack, CountDownLatch>();
         /**
          * Contains the start time of the next segment in line that will be created.
          */
-        protected ConcurrentDictionary<StreamingTrack, long> nextChunkCreateStartTime = new ConcurrentDictionary<StreamingTrack, long>();
+        protected Dictionary<StreamingTrack, long> nextChunkCreateStartTime = new Dictionary<StreamingTrack, long>();
         /**
          * Contains the start time of the next segment in line that will be written.
          */
-        protected ConcurrentDictionary<StreamingTrack, long> nextChunkWriteStartTime = new ConcurrentDictionary<StreamingTrack, long>();
+        protected Dictionary<StreamingTrack, long> nextChunkWriteStartTime = new Dictionary<StreamingTrack, long>();
         /**
          * Contains the next sample's start time.
          */
-        protected ConcurrentDictionary<StreamingTrack, long> nextSampleStartTime = new ConcurrentDictionary<StreamingTrack, long>();
+        protected Dictionary<StreamingTrack, long> nextSampleStartTime = new Dictionary<StreamingTrack, long>();
         /**
          * Buffers the samples per track until there are enough samples to form a Segment.
          */
@@ -49,7 +43,7 @@ namespace SharpMp4Parser.Streaming.Output.MP4
         /**
          * Buffers segements until it's time for a segment to be written.
          */
-        protected ConcurrentDictionary<StreamingTrack, Queue<ChunkContainer>> chunkBuffers = new ConcurrentDictionary<StreamingTrack, Queue<ChunkContainer>>();
+        protected Dictionary<StreamingTrack, Queue<ChunkContainer>> chunkBuffers = new Dictionary<StreamingTrack, Queue<ChunkContainer>>();
         protected Dictionary<StreamingTrack, long> chunkNumbers = new Dictionary<StreamingTrack, long>();
         protected Dictionary<StreamingTrack, long> sampleNumbers = new Dictionary<StreamingTrack, long>();
         long bytesWritten = 0;
@@ -70,7 +64,6 @@ namespace SharpMp4Parser.Streaming.Output.MP4
                 nextSampleStartTime[streamingTrack] = 0L;
                 nextChunkCreateStartTime[streamingTrack] = 0L;
                 nextChunkWriteStartTime[streamingTrack] = 0L;
-                congestionControl[streamingTrack] = new CountDownLatch(0);
                 sampleBuffers.Add(streamingTrack, new List<StreamingSample>());
                 chunkBuffers[streamingTrack] = new Queue<ChunkContainer>();
                 if (streamingTrack.getTrackExtension< TrackIdTrackExtension>(typeof(TrackIdTrackExtension)) != null)
@@ -127,9 +120,9 @@ namespace SharpMp4Parser.Streaming.Output.MP4
 
         class TrackComparator : IComparer<StreamingTrack>
         {
-            private ConcurrentDictionary<StreamingTrack, long> nextChunkWriteStartTime;
+            private Dictionary<StreamingTrack, long> nextChunkWriteStartTime;
 
-            public TrackComparator(ConcurrentDictionary<StreamingTrack, long> nextChunkWriteStartTime)
+            public TrackComparator(Dictionary<StreamingTrack, long> nextChunkWriteStartTime)
             {
                 this.nextChunkWriteStartTime = nextChunkWriteStartTime;
             }
@@ -228,87 +221,53 @@ namespace SharpMp4Parser.Streaming.Output.MP4
 
             // We might want to do that when the chunk is created to save memory copy
 
-
-            lock (OBJ)
+            // need to synchronized here - I don't want two headers written under any circumstances
+            if (!headerWritten)
             {
-                // need to synchronized here - I don't want two headers written under any circumstances
-                if (!headerWritten)
+                bool allTracksAtLeastOneSample = true;
+                foreach (StreamingTrack track in source)
                 {
-                    bool allTracksAtLeastOneSample = true;
-                    foreach (StreamingTrack track in source)
-                    {
-                        allTracksAtLeastOneSample &= (nextSampleStartTime[track] > 0 || track == streamingTrack);
-                    }
-                    if (allTracksAtLeastOneSample)
-                    {
-                        write(sink, createFtyp());
-                        headerWritten = true;
-                    }
+                    allTracksAtLeastOneSample &= (nextSampleStartTime[track] > 0 || track == streamingTrack);
                 }
-            }
-
-            try
-            {
-                CountDownLatch cdl = congestionControl[streamingTrack];
-                if (cdl.getCount() > 0)
+                if (allTracksAtLeastOneSample)
                 {
-                    cdl.await();
+                    write(sink, createFtyp());
+                    headerWritten = true;
                 }
-            }
-            catch (Exception)
-            {
-                // don't care just move on
             }
 
             if (isChunkReady(streamingTrack, streamingSample))
             {
-
                 ChunkContainer chunkContainer = createChunkContainer(streamingTrack);
                 //System.err.println("Creating fragment for " + streamingTrack);
                 sampleBuffers[streamingTrack].Clear();
                 nextChunkCreateStartTime[streamingTrack] = nextChunkCreateStartTime[streamingTrack] + chunkContainer.duration;
                 Queue<ChunkContainer> chunkQueue = chunkBuffers[streamingTrack];
                 chunkQueue.Enqueue(chunkContainer);
-                lock (OBJ)
-                {
-                    if (headerWritten && this.source[0] == streamingTrack)
-                    {
 
-                        Queue<ChunkContainer> tracksFragmentQueue;
-                        StreamingTrack currentStreamingTrack;
-                        // This will write AT LEAST the currently created fragment and possibly a few more
-                        while ((tracksFragmentQueue = chunkBuffers[(currentStreamingTrack = this.source[0])]).Count != 0)
-                        {
-                            ChunkContainer currentFragmentContainer = tracksFragmentQueue.Dequeue();
-                            writeChunkContainer(currentFragmentContainer);
-                            congestionControl[currentStreamingTrack].countDown();
-                            long ts = nextChunkWriteStartTime[currentStreamingTrack] + currentFragmentContainer.duration;
-                            nextChunkWriteStartTime[currentStreamingTrack] = ts;
-                            //if (LOG.isTraceEnabled())
-                            //{
-                            //    LOG.trace(currentStreamingTrack + " advanced to " + (double)ts / currentStreamingTrack.getTimescale());
-                            //}
-                            sortTracks();
-                        }
-                    }
-                    else
+                if (headerWritten && this.source[0] == streamingTrack)
+                {
+
+                    Queue<ChunkContainer> tracksFragmentQueue;
+                    StreamingTrack currentStreamingTrack;
+                    // This will write AT LEAST the currently created fragment and possibly a few more
+                    while ((tracksFragmentQueue = chunkBuffers[(currentStreamingTrack = this.source[0])]).Count != 0)
                     {
-                        if (chunkQueue.Count > 10)
-                        {
-                            // if there are more than 10 fragments in the queue we don't want more samples of this track
-                            // System.err.println("Stopping " + streamingTrack);
-                            congestionControl[streamingTrack] = new CountDownLatch(chunkQueue.Count);
-                        }
+                        ChunkContainer currentFragmentContainer = tracksFragmentQueue.Dequeue();
+                        writeChunkContainer(currentFragmentContainer);
+                        long ts = nextChunkWriteStartTime[currentStreamingTrack] + currentFragmentContainer.duration;
+                        nextChunkWriteStartTime[currentStreamingTrack] = ts;
+                        //if (LOG.isTraceEnabled())
+                        //{
+                        //    LOG.trace(currentStreamingTrack + " advanced to " + (double)ts / currentStreamingTrack.getTimescale());
+                        //}
+                        sortTracks();
                     }
                 }
-
-
             }
-
 
             sampleBuffers[streamingTrack].Add(streamingSample);
             nextSampleStartTime[streamingTrack] = nextSampleStartTime[streamingTrack] + streamingSample.getDuration();
-
         }
 
         private ChunkContainer createChunkContainer(StreamingTrack streamingTrack)

@@ -56,14 +56,9 @@ namespace SharpMp4Parser.Muxer.Tracks
             return origTrack.getSampleEntries();
         }
 
-        private readonly object _syncRoot = new object();
-
         public override long[] getSampleDurations()
         {
-            lock (_syncRoot)
-            {
-                return origTrack.getSampleDurations();
-            }
+            return origTrack.getSampleDurations();
         }
 
         public override List<CompositionTimeToSample.Entry> getCompositionTimeEntries()
@@ -74,10 +69,7 @@ namespace SharpMp4Parser.Muxer.Tracks
 
         public override long[] getSyncSamples()
         {
-            lock (_syncRoot)
-            {
-                return origTrack.getSyncSamples();
-            }
+            return origTrack.getSyncSamples();
         }
 
         public override List<SampleDependencyTypeBox.Entry> getSampleDependencies()

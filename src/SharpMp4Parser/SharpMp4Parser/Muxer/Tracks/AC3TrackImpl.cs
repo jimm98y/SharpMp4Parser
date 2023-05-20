@@ -297,14 +297,9 @@ namespace SharpMp4Parser.Muxer.Tracks
             return new List<SampleEntry>() { audioSampleEntry };
         }
 
-        private readonly object _syncRoot = new object();
-
         public override long[] getSampleDurations()
         {
-            lock (_syncRoot)
-            {
-                return duration;
-            }
+            return duration;
         }
 
         public override List<CompositionTimeToSample.Entry> getCompositionTimeEntries()

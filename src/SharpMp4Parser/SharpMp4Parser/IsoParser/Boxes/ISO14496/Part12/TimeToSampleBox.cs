@@ -18,6 +18,7 @@ using SharpMp4Parser.IsoParser.Support;
 using SharpMp4Parser.IsoParser.Tools;
 using SharpMp4Parser.Java;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -40,7 +41,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
     public class TimeToSampleBox : AbstractFullBox
     {
         public const string TYPE = "stts";
-        static Dictionary<List<Entry>, WeakReference<long[]>> cache = new Dictionary<List<Entry>, WeakReference<long[]>>();
+        static ConcurrentDictionary<List<Entry>, WeakReference<long[]>> cache = new ConcurrentDictionary<List<Entry>, WeakReference<long[]>>();
         List<Entry> entries = new List<Entry>();
 
         private static object _syncRoot = new object();
@@ -85,7 +86,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
                         decodingTime[current++] = entry.getDelta();
                     }
                 }
-                cache.Add(entries, new WeakReference<long[]>(decodingTime));
+                cache[entries] = new WeakReference<long[]>(decodingTime);
                 return decodingTime;
             }
         }

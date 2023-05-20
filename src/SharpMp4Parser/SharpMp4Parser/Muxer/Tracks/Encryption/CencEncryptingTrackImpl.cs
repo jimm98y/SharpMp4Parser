@@ -186,14 +186,9 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
             return cencSampleAuxiliaryData;
         }
 
-        private readonly object _syncRoot = new object();
-
         public List<SampleEntry> getSampleEntries()
         {
-            lock (_syncRoot)
-            {
-                return new List<SampleEntry>(sampleEntries);
-            }
+            return new List<SampleEntry>(sampleEntries);
         }
 
         public long[] getSampleDurations()

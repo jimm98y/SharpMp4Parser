@@ -161,12 +161,9 @@ namespace SharpMp4Parser.Muxer.Tracks
 
         public override long[] getSampleDurations()
         {
-            lock (_syncRoot)
-            {
-                long[] decodingTimes = new long[toSample - fromSample];
-                System.Array.Copy(origTrack.getSampleDurations(), fromSample, decodingTimes, 0, decodingTimes.Length);
-                return decodingTimes;
-            }
+            long[] decodingTimes = new long[toSample - fromSample];
+            System.Array.Copy(origTrack.getSampleDurations(), fromSample, decodingTimes, 0, decodingTimes.Length);
+            return decodingTimes;
         }
 
         public override List<CompositionTimeToSample.Entry> getCompositionTimeEntries()
@@ -176,30 +173,33 @@ namespace SharpMp4Parser.Muxer.Tracks
 
         public override long[] getSyncSamples()
         {
-            lock (_syncRoot)
+            if (origTrack.getSyncSamples() != null)
             {
-                if (origTrack.getSyncSamples() != null)
+                long[] origSyncSamples = origTrack.getSyncSamples();
+                int i = 0, j = origSyncSamples.Length;
+               
+                while (i < origSyncSamples.Length && origSyncSamples[i] < fromSample)
                 {
-                    long[] origSyncSamples = origTrack.getSyncSamples();
-                    int i = 0, j = origSyncSamples.Length;
-                    while (i < origSyncSamples.Length && origSyncSamples[i] < fromSample)
-                    {
-                        i++;
-                    }
-                    while (j > 0 && toSample < origSyncSamples[j - 1])
-                    {
-                        j--;
-                    }
-                    long[] syncSampleArray = new long[j - i];
-                    System.Array.Copy(origTrack.getSyncSamples(), i, syncSampleArray, 0, j - i);
-                    for (int k = 0; k < syncSampleArray.Length; k++)
-                    {
-                        syncSampleArray[k] -= fromSample;
-                    }
-                    return syncSampleArray;
+                    i++;
                 }
-                return null;
+
+                while (j > 0 && toSample < origSyncSamples[j - 1])
+                {
+                    j--;
+                }
+
+                long[] syncSampleArray = new long[j - i];
+                System.Array.Copy(origTrack.getSyncSamples(), i, syncSampleArray, 0, j - i);
+               
+                for (int k = 0; k < syncSampleArray.Length; k++)
+                {
+                    syncSampleArray[k] -= fromSample;
+                }
+
+                return syncSampleArray;
             }
+
+            return null;
         }
 
         public override List<SampleDependencyTypeBox.Entry> getSampleDependencies()

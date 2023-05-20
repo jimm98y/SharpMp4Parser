@@ -266,156 +266,151 @@ namespace SharpMp4Parser.Streaming.Input.H264
             this.frametick = frametick;
         }
 
-        private readonly object _syncRoot = new object();
-
         public void configure()
         {
-            lock (_syncRoot)
+            if (!configured)
             {
-                if (!configured)
+                SeqParameterSet sps;
+                try
                 {
-                    SeqParameterSet sps;
-                    try
+                    if (!spsForConfig.TryTake(out sps, 5000))
                     {
-                        if (!spsForConfig.TryTake(out sps, 5000))
-                        {
-                            //LOG.warn("Can't determine frame rate as no SPS became available in time");
-                            return;
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        //LOG.warn(e.getMessage());
                         //LOG.warn("Can't determine frame rate as no SPS became available in time");
                         return;
                     }
+                }
+                catch (Exception)
+                {
+                    //LOG.warn(e.getMessage());
+                    //LOG.warn("Can't determine frame rate as no SPS became available in time");
+                    return;
+                }
 
-                    if (sps.pic_order_cnt_type == 0 || sps.pic_order_cnt_type == 1)
+                if (sps.pic_order_cnt_type == 0 || sps.pic_order_cnt_type == 1)
+                {
+                    this.addTrackExtension(new CompositionTimeTrackExtension());
+                }
+
+                int width = (sps.pic_width_in_mbs_minus1 + 1) * 16;
+                int mult = 2;
+                if (sps.frame_mbs_only_flag)
+                {
+                    mult = 1;
+                }
+                int height = 16 * (sps.pic_height_in_map_units_minus1 + 1) * mult;
+                if (sps.frame_cropping_flag)
+                {
+                    int chromaArrayType = 0;
+                    if (!sps.residual_color_transform_flag)
                     {
-                        this.addTrackExtension(new CompositionTimeTrackExtension());
+                        chromaArrayType = sps.chroma_format_idc.getId();
+                    }
+                    int cropUnitX = 1;
+                    int cropUnitY = mult;
+                    if (chromaArrayType != 0)
+                    {
+                        cropUnitX = sps.chroma_format_idc.getSubWidth();
+                        cropUnitY = sps.chroma_format_idc.getSubHeight() * mult;
                     }
 
-                    int width = (sps.pic_width_in_mbs_minus1 + 1) * 16;
-                    int mult = 2;
-                    if (sps.frame_mbs_only_flag)
+                    width -= cropUnitX * (sps.frame_crop_left_offset + sps.frame_crop_right_offset);
+                    height -= cropUnitY * (sps.frame_crop_top_offset + sps.frame_crop_bottom_offset);
+                }
+
+
+                VisualSampleEntry visualSampleEntry = new VisualSampleEntry("avc1");
+                visualSampleEntry.setDataReferenceIndex(1);
+                visualSampleEntry.setDepth(24);
+                visualSampleEntry.setFrameCount(1);
+                visualSampleEntry.setHorizresolution(72);
+                visualSampleEntry.setVertresolution(72);
+                DimensionTrackExtension dte = this.getTrackExtension< DimensionTrackExtension>(typeof(DimensionTrackExtension));
+                if (dte == null)
+                {
+                    this.addTrackExtension(new DimensionTrackExtension(width, height));
+                }
+                visualSampleEntry.setWidth(width);
+                visualSampleEntry.setHeight(height);
+
+                visualSampleEntry.setCompressorname("AVC Coding");
+
+                AvcConfigurationBox avcConfigurationBox = new AvcConfigurationBox();
+
+                avcConfigurationBox.setSequenceParameterSets(new List<ByteBuffer>(spsIdToSpsBytes.Values));
+                avcConfigurationBox.setPictureParameterSets(new List<ByteBuffer>(ppsIdToPpsBytes.Values));
+                avcConfigurationBox.setAvcLevelIndication(sps.level_idc);
+                avcConfigurationBox.setAvcProfileIndication(sps.profile_idc);
+                avcConfigurationBox.setBitDepthLumaMinus8(sps.bit_depth_luma_minus8);
+                avcConfigurationBox.setBitDepthChromaMinus8(sps.bit_depth_chroma_minus8);
+                avcConfigurationBox.setChromaFormat(sps.chroma_format_idc.getId());
+                avcConfigurationBox.setConfigurationVersion(1);
+                avcConfigurationBox.setLengthSizeMinusOne(3);
+
+
+                avcConfigurationBox.setProfileCompatibility(
+                        (sps.constraint_set_0_flag ? 128 : 0) +
+                                (sps.constraint_set_1_flag ? 64 : 0) +
+                                (sps.constraint_set_2_flag ? 32 : 0) +
+                                (sps.constraint_set_3_flag ? 16 : 0) +
+                                (sps.constraint_set_4_flag ? 8 : 0) +
+                                (int)(sps.reserved_zero_2bits & 0x3)
+                );
+
+                visualSampleEntry.addBox(avcConfigurationBox);
+                stsd = new SampleDescriptionBox();
+                stsd.addBox(visualSampleEntry);
+
+                int _timescale;
+                int _frametick;
+                if (sps.vuiParams != null)
+                {
+                    _timescale = sps.vuiParams.time_scale >> 1; // Not sure why, but I found this in several places, and it works...
+                    _frametick = sps.vuiParams.num_units_in_tick;
+                    if (_timescale == 0 || _frametick == 0)
                     {
-                        mult = 1;
+                        //LOG.warn("vuiParams contain invalid values: time_scale: " + _timescale + " and frame_tick: " + _frametick + ". Setting frame rate to 25fps");
+                        _timescale = 0;
+                        _frametick = 0;
                     }
-                    int height = 16 * (sps.pic_height_in_map_units_minus1 + 1) * mult;
-                    if (sps.frame_cropping_flag)
+                    if (_frametick > 0)
                     {
-                        int chromaArrayType = 0;
-                        if (!sps.residual_color_transform_flag)
+                        if (_timescale / _frametick > 100)
                         {
-                            chromaArrayType = sps.chroma_format_idc.getId();
-                        }
-                        int cropUnitX = 1;
-                        int cropUnitY = mult;
-                        if (chromaArrayType != 0)
-                        {
-                            cropUnitX = sps.chroma_format_idc.getSubWidth();
-                            cropUnitY = sps.chroma_format_idc.getSubHeight() * mult;
-                        }
-
-                        width -= cropUnitX * (sps.frame_crop_left_offset + sps.frame_crop_right_offset);
-                        height -= cropUnitY * (sps.frame_crop_top_offset + sps.frame_crop_bottom_offset);
-                    }
-
-
-                    VisualSampleEntry visualSampleEntry = new VisualSampleEntry("avc1");
-                    visualSampleEntry.setDataReferenceIndex(1);
-                    visualSampleEntry.setDepth(24);
-                    visualSampleEntry.setFrameCount(1);
-                    visualSampleEntry.setHorizresolution(72);
-                    visualSampleEntry.setVertresolution(72);
-                    DimensionTrackExtension dte = this.getTrackExtension< DimensionTrackExtension>(typeof(DimensionTrackExtension));
-                    if (dte == null)
-                    {
-                        this.addTrackExtension(new DimensionTrackExtension(width, height));
-                    }
-                    visualSampleEntry.setWidth(width);
-                    visualSampleEntry.setHeight(height);
-
-                    visualSampleEntry.setCompressorname("AVC Coding");
-
-                    AvcConfigurationBox avcConfigurationBox = new AvcConfigurationBox();
-
-                    avcConfigurationBox.setSequenceParameterSets(new List<ByteBuffer>(spsIdToSpsBytes.Values));
-                    avcConfigurationBox.setPictureParameterSets(new List<ByteBuffer>(ppsIdToPpsBytes.Values));
-                    avcConfigurationBox.setAvcLevelIndication(sps.level_idc);
-                    avcConfigurationBox.setAvcProfileIndication(sps.profile_idc);
-                    avcConfigurationBox.setBitDepthLumaMinus8(sps.bit_depth_luma_minus8);
-                    avcConfigurationBox.setBitDepthChromaMinus8(sps.bit_depth_chroma_minus8);
-                    avcConfigurationBox.setChromaFormat(sps.chroma_format_idc.getId());
-                    avcConfigurationBox.setConfigurationVersion(1);
-                    avcConfigurationBox.setLengthSizeMinusOne(3);
-
-
-                    avcConfigurationBox.setProfileCompatibility(
-                            (sps.constraint_set_0_flag ? 128 : 0) +
-                                    (sps.constraint_set_1_flag ? 64 : 0) +
-                                    (sps.constraint_set_2_flag ? 32 : 0) +
-                                    (sps.constraint_set_3_flag ? 16 : 0) +
-                                    (sps.constraint_set_4_flag ? 8 : 0) +
-                                    (int)(sps.reserved_zero_2bits & 0x3)
-                    );
-
-                    visualSampleEntry.addBox(avcConfigurationBox);
-                    stsd = new SampleDescriptionBox();
-                    stsd.addBox(visualSampleEntry);
-
-                    int _timescale;
-                    int _frametick;
-                    if (sps.vuiParams != null)
-                    {
-                        _timescale = sps.vuiParams.time_scale >> 1; // Not sure why, but I found this in several places, and it works...
-                        _frametick = sps.vuiParams.num_units_in_tick;
-                        if (_timescale == 0 || _frametick == 0)
-                        {
-                            //LOG.warn("vuiParams contain invalid values: time_scale: " + _timescale + " and frame_tick: " + _frametick + ". Setting frame rate to 25fps");
-                            _timescale = 0;
-                            _frametick = 0;
-                        }
-                        if (_frametick > 0)
-                        {
-                            if (_timescale / _frametick > 100)
-                            {
-                                //LOG.warn("Framerate is " + (_timescale / _frametick) + ". That is suspicious.");
-                            }
-                        }
-                        else
-                        {
-                            //LOG.warn("Frametick is " + _frametick + ". That is suspicious.");
-                        }
-                        if (sps.vuiParams.bitstreamRestriction != null)
-                        {
-                            max_dec_frame_buffering = sps.vuiParams.bitstreamRestriction.max_dec_frame_buffering;
+                            //LOG.warn("Framerate is " + (_timescale / _frametick) + ". That is suspicious.");
                         }
                     }
                     else
                     {
-                        //LOG.warn("Can't determine frame rate as SPS does not contain vuiParama");
-                        _timescale = 0;
-                        _frametick = 0;
+                        //LOG.warn("Frametick is " + _frametick + ". That is suspicious.");
                     }
-                    if (timescale == 0)
+                    if (sps.vuiParams.bitstreamRestriction != null)
                     {
-                        timescale = _timescale;
+                        max_dec_frame_buffering = sps.vuiParams.bitstreamRestriction.max_dec_frame_buffering;
                     }
-                    if (frametick == 0)
-                    {
-                        frametick = _frametick;
-                    }
-                    if (sps.pic_order_cnt_type == 0)
-                    {
-                        this.addTrackExtension(new CompositionTimeTrackExtension());
-                    }
-                    else if (sps.pic_order_cnt_type == 1)
-                    {
-                        throw new Exception("Have not yet imlemented pic_order_cnt_type 1");
-                    }
-                    configured = true;
                 }
+                else
+                {
+                    //LOG.warn("Can't determine frame rate as SPS does not contain vuiParama");
+                    _timescale = 0;
+                    _frametick = 0;
+                }
+                if (timescale == 0)
+                {
+                    timescale = _timescale;
+                }
+                if (frametick == 0)
+                {
+                    frametick = _frametick;
+                }
+                if (sps.pic_order_cnt_type == 0)
+                {
+                    this.addTrackExtension(new CompositionTimeTrackExtension());
+                }
+                else if (sps.pic_order_cnt_type == 1)
+                {
+                    throw new Exception("Have not yet imlemented pic_order_cnt_type 1");
+                }
+                configured = true;
             }
         }
 

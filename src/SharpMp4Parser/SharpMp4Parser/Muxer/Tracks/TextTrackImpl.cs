@@ -68,41 +68,39 @@ namespace SharpMp4Parser.Muxer.Tracks
 
         public override IList<Sample> getSamples()
         {
-            lock (_syncRoot)
+            if (samples == null)
             {
-                if (samples == null)
+                samples = new List<Sample>();
+                long lastEnd = 0;
+                foreach (Line sub in subs)
                 {
-                    samples = new List<Sample>();
-                    long lastEnd = 0;
-                    foreach (Line sub in subs)
+                    long silentTime = sub.from - lastEnd;
+                    if (silentTime > 0)
                     {
-                        long silentTime = sub.from - lastEnd;
-                        if (silentTime > 0)
-                        {
-                            samples.Add(new SampleImpl(ByteBuffer.wrap(new byte[] { 0, 0 }), tx3g));
-                        }
-                        else if (silentTime < 0)
-                        {
-                            throw new Exception("Subtitle display times may not intersect");
-                        }
-                        ByteStream baos = new ByteStream();
-                        ByteStream dos = new ByteStream(baos);
-                        try
-                        {
-                            dos.writeShort((short)Encoding.UTF8.GetBytes(sub.text).Length);
-                            dos.write(Encoding.UTF8.GetBytes(sub.text));
-                            dos.close();
-                        }
-                        catch (IOException)
-                        {
-                            throw new Exception("VM is broken. Does not support UTF-8");
-                        }
-                        samples.Add(new SampleImpl(ByteBuffer.wrap(baos.toByteArray()), tx3g));
-                        lastEnd = sub.to;
+                        samples.Add(new SampleImpl(ByteBuffer.wrap(new byte[] { 0, 0 }), tx3g));
                     }
+                    else if (silentTime < 0)
+                    {
+                        throw new Exception("Subtitle display times may not intersect");
+                    }
+                    ByteStream baos = new ByteStream();
+                    ByteStream dos = new ByteStream(baos);
+                    try
+                    {
+                        dos.writeShort((short)Encoding.UTF8.GetBytes(sub.text).Length);
+                        dos.write(Encoding.UTF8.GetBytes(sub.text));
+                        dos.close();
+                    }
+                    catch (IOException)
+                    {
+                        throw new Exception("VM is broken. Does not support UTF-8");
+                    }
+                    samples.Add(new SampleImpl(ByteBuffer.wrap(baos.toByteArray()), tx3g));
+                    lastEnd = sub.to;
                 }
-                return samples;
             }
+
+            return samples;
         }
 
         public override List<SampleEntry> getSampleEntries()
@@ -118,6 +116,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             foreach (Line sub in subs)
             {
                 long silentTime = sub.from - lastEnd;
+                
                 if (silentTime > 0)
                 {
 
@@ -127,6 +126,7 @@ namespace SharpMp4Parser.Muxer.Tracks
                 {
                     throw new Exception("Subtitle display times may not intersect");
                 }
+
                 decTimes.Add(sub.to - sub.from);
                 lastEnd = sub.to;
             }

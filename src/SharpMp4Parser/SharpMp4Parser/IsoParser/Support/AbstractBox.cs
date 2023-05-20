@@ -125,38 +125,33 @@ namespace SharpMp4Parser.IsoParser.Support
             }
         }
 
-        private readonly object _syncRoot = new object();
-
         /**
          * Parses the raw content of the box. It surrounds the actual parsing
          * which is done
          */
         public void parseDetails()
         {
-            lock (_syncRoot)
+            //LOG.debug("parsing details of {}", this.getType());
+            if (content != null)
             {
-                //LOG.debug("parsing details of {}", this.getType());
-                if (content != null)
+                ByteBuffer content = this.content;
+                isParsed = true;
+                content.rewind();
+                _parseDetails(content);
+                if (content.remaining() > 0)
                 {
-                    ByteBuffer content = this.content;
-                    isParsed = true;
-                    content.rewind();
-                    _parseDetails(content);
-                    if (content.remaining() > 0)
-                    {
-                        deadBytes = content.slice();
-                    }
-                    this.content = null;
-
-                    bool verifyResult = verify(content);
-                    
-                    if (!verifyResult)
-                    {
-                        verify(content);
-                    }
-
-                    Debug.Assert(verifyResult);
+                    deadBytes = content.slice();
                 }
+                this.content = null;
+
+                bool verifyResult = verify(content);
+                    
+                if (!verifyResult)
+                {
+                    verify(content);
+                }
+
+                Debug.Assert(verifyResult);
             }
         }
 

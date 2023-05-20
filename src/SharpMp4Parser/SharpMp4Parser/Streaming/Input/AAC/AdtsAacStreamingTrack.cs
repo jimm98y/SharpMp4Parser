@@ -4,11 +4,9 @@ using SharpMp4Parser.IsoParser.Boxes.ISO14496.Part14;
 using SharpMp4Parser.IsoParser.Boxes.SampleEntry;
 using SharpMp4Parser.Java;
 using SharpMp4Parser.Streaming.Extensions;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Threading;
 
 namespace SharpMp4Parser.Streaming.Input.AAC
 {
@@ -45,7 +43,6 @@ namespace SharpMp4Parser.Streaming.Input.AAC
             samplingFrequencyIndexMap.Add(0xb, 8000);
         }
 
-        CountDownLatch gotFirstSample = new CountDownLatch(1);
         SampleDescriptionBox stsd = null;
         private ByteStream input;
         private bool closed;
@@ -143,74 +140,57 @@ namespace SharpMp4Parser.Streaming.Input.AAC
 
         public override SampleDescriptionBox getSampleDescriptionBox()
         {
-            lock (_syncRoot)
+            if (stsd == null)
             {
-                waitForFirstSample();
-                if (stsd == null)
+                stsd = new SampleDescriptionBox();
+                AudioSampleEntry audioSampleEntry = new AudioSampleEntry("mp4a");
+                if (firstHeader.channelconfig == 7)
                 {
-                    stsd = new SampleDescriptionBox();
-                    AudioSampleEntry audioSampleEntry = new AudioSampleEntry("mp4a");
-                    if (firstHeader.channelconfig == 7)
-                    {
-                        audioSampleEntry.setChannelCount(8);
-                    }
-                    else
-                    {
-                        audioSampleEntry.setChannelCount(firstHeader.channelconfig);
-                    }
-                    audioSampleEntry.setSampleRate(firstHeader.sampleRate);
-                    audioSampleEntry.setDataReferenceIndex(1);
-                    audioSampleEntry.setSampleSize(16);
-
-
-                    ESDescriptorBox esds = new ESDescriptorBox();
-                    ESDescriptor descriptor = new ESDescriptor();
-                    descriptor.setEsId(0);
-
-                    SLConfigDescriptor slConfigDescriptor = new SLConfigDescriptor();
-                    slConfigDescriptor.setPredefined(2);
-                    descriptor.setSlConfigDescriptor(slConfigDescriptor);
-
-                    DecoderConfigDescriptor decoderConfigDescriptor = new DecoderConfigDescriptor();
-                    decoderConfigDescriptor.setObjectTypeIndication(0x40);
-                    decoderConfigDescriptor.setStreamType(5);
-                    decoderConfigDescriptor.setBufferSizeDB(1536);
-                    decoderConfigDescriptor.setMaxBitRate(maxBitrate);
-                    decoderConfigDescriptor.setAvgBitRate(avgBitrate);
-
-                    AudioSpecificConfig audioSpecificConfig = new AudioSpecificConfig();
-                    audioSpecificConfig.setOriginalAudioObjectType(2); // AAC LC
-                    audioSpecificConfig.setSamplingFrequencyIndex(firstHeader.sampleFrequencyIndex);
-                    audioSpecificConfig.setChannelConfiguration(firstHeader.channelconfig);
-                    decoderConfigDescriptor.setAudioSpecificInfo(audioSpecificConfig);
-
-                    descriptor.setDecoderConfigDescriptor(decoderConfigDescriptor);
-
-                    esds.setEsDescriptor(descriptor);
-
-                    audioSampleEntry.addBox(esds);
-                    stsd.addBox(audioSampleEntry);
-
+                    audioSampleEntry.setChannelCount(8);
                 }
-                return stsd;
-            }
-        }
+                else
+                {
+                    audioSampleEntry.setChannelCount(firstHeader.channelconfig);
+                }
+                audioSampleEntry.setSampleRate(firstHeader.sampleRate);
+                audioSampleEntry.setDataReferenceIndex(1);
+                audioSampleEntry.setSampleSize(16);
 
-        void waitForFirstSample()
-        {
-            try
-            {
-                gotFirstSample.await();
+
+                ESDescriptorBox esds = new ESDescriptorBox();
+                ESDescriptor descriptor = new ESDescriptor();
+                descriptor.setEsId(0);
+
+                SLConfigDescriptor slConfigDescriptor = new SLConfigDescriptor();
+                slConfigDescriptor.setPredefined(2);
+                descriptor.setSlConfigDescriptor(slConfigDescriptor);
+
+                DecoderConfigDescriptor decoderConfigDescriptor = new DecoderConfigDescriptor();
+                decoderConfigDescriptor.setObjectTypeIndication(0x40);
+                decoderConfigDescriptor.setStreamType(5);
+                decoderConfigDescriptor.setBufferSizeDB(1536);
+                decoderConfigDescriptor.setMaxBitRate(maxBitrate);
+                decoderConfigDescriptor.setAvgBitRate(avgBitrate);
+
+                AudioSpecificConfig audioSpecificConfig = new AudioSpecificConfig();
+                audioSpecificConfig.setOriginalAudioObjectType(2); // AAC LC
+                audioSpecificConfig.setSamplingFrequencyIndex(firstHeader.sampleFrequencyIndex);
+                audioSpecificConfig.setChannelConfiguration(firstHeader.channelconfig);
+                decoderConfigDescriptor.setAudioSpecificInfo(audioSpecificConfig);
+
+                descriptor.setDecoderConfigDescriptor(decoderConfigDescriptor);
+
+                esds.setEsDescriptor(descriptor);
+
+                audioSampleEntry.addBox(esds);
+                stsd.addBox(audioSampleEntry);
             }
-            catch (Exception)
-            {
-                throw;
-            }
+
+            return stsd;
         }
 
         public override long getTimescale()
         {
-            waitForFirstSample();
             return firstHeader.sampleRate;
         }
 
@@ -246,7 +226,6 @@ namespace SharpMp4Parser.Streaming.Input.AAC
                     if (firstHeader == null)
                     {
                         firstHeader = header;
-                        gotFirstSample.countDown();
                     }
                     byte[] frame = new byte[header.frameLength - header.getSize()];
                     int n = 0;

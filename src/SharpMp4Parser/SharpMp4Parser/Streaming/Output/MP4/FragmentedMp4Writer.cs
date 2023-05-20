@@ -21,35 +21,33 @@ namespace SharpMp4Parser.Streaming.Output.MP4
      */
     public class FragmentedMp4Writer : DefaultBoxes, SampleSink
     {
-        public static readonly object OBJ = new object();
         //private static Logger LOG = LoggerFactory.getLogger(FragmentedMp4Writer.class.getName());
         protected readonly ByteStream sink;
         protected List<StreamingTrack> source;
         protected DateTime creationTime;
         protected long sequenceNumber = 1;
-        protected ConcurrentDictionary<StreamingTrack, CountDownLatch> congestionControl = new ConcurrentDictionary<StreamingTrack, CountDownLatch>();
         /**
          * Contains the start time of the next segment in line that will be created.
          */
-        protected ConcurrentDictionary<StreamingTrack, long> nextFragmentCreateStartTime = new ConcurrentDictionary<StreamingTrack, long>();
+        protected Dictionary<StreamingTrack, long> nextFragmentCreateStartTime = new Dictionary<StreamingTrack, long>();
         /**
          * Contains the start time of the next segment in line that will be written.
          */
-        protected ConcurrentDictionary<StreamingTrack, long> nextFragmentWriteStartTime = new ConcurrentDictionary<StreamingTrack, long>();
+        protected Dictionary<StreamingTrack, long> nextFragmentWriteStartTime = new Dictionary<StreamingTrack, long>();
         /**
          * Contains the next sample's start time.
          */
-        protected ConcurrentDictionary<StreamingTrack, long> nextSampleStartTime = new ConcurrentDictionary<StreamingTrack, long>();
+        protected Dictionary<StreamingTrack, long> nextSampleStartTime = new Dictionary<StreamingTrack, long>();
         /**
          * Buffers the samples per track until there are enough samples to form a Segment.
          */
-        protected ConcurrentDictionary<StreamingTrack, List<StreamingSample>> sampleBuffers = new ConcurrentDictionary<StreamingTrack, List<StreamingSample>>();
+        protected Dictionary<StreamingTrack, List<StreamingSample>> sampleBuffers = new Dictionary<StreamingTrack, List<StreamingSample>>();
         /**
          * Buffers segements until it's time for a segment to be written.
          */
-        protected ConcurrentDictionary<StreamingTrack, Queue<FragmentContainer>> fragmentBuffers = new ConcurrentDictionary<StreamingTrack, Queue<FragmentContainer>>();
-        protected ConcurrentDictionary<StreamingTrack, long[]> tfraOffsets = new ConcurrentDictionary<StreamingTrack, long[]>();
-        protected ConcurrentDictionary<StreamingTrack, long[]> tfraTimes = new ConcurrentDictionary<StreamingTrack, long[]>();
+        protected Dictionary<StreamingTrack, Queue<FragmentContainer>> fragmentBuffers = new Dictionary<StreamingTrack, Queue<FragmentContainer>>();
+        protected Dictionary<StreamingTrack, long[]> tfraOffsets = new Dictionary<StreamingTrack, long[]>();
+        protected Dictionary<StreamingTrack, long[]> tfraTimes = new Dictionary<StreamingTrack, long[]>();
         long bytesWritten = 0;
         volatile bool headerWritten = false;
 
@@ -69,7 +67,6 @@ namespace SharpMp4Parser.Streaming.Output.MP4
                 nextFragmentCreateStartTime[streamingTrack] = 0L;
                 nextFragmentWriteStartTime[streamingTrack] = 0L;
                 nextSampleStartTime[streamingTrack] = 0L;
-                congestionControl[streamingTrack] = new CountDownLatch(0);
 
                 if (streamingTrack.getTrackExtension<TrackIdTrackExtension>(typeof(TrackIdTrackExtension)) != null)
                 {
@@ -99,8 +96,6 @@ namespace SharpMp4Parser.Streaming.Output.MP4
             }
         }
 
-        private readonly object _syncRoot = new object();
-
         /**
          * Writes the remaining samples to file (even though the typical condition for wrapping up
          * a segment have not yet been met) and writes the MovieFragmentRandomAccessBox.
@@ -111,15 +106,12 @@ namespace SharpMp4Parser.Streaming.Output.MP4
          */
         public void close()
         {
-            lock (_syncRoot)
+            foreach (StreamingTrack streamingTrack in source)
             {
-                foreach (StreamingTrack streamingTrack in source)
-                {
-                    writeFragment(createFragment(streamingTrack, sampleBuffers[streamingTrack]));
-                    streamingTrack.close();
-                }
-                writeFooter(createFooter());
+                writeFragment(createFragment(streamingTrack, sampleBuffers[streamingTrack]));
+                streamingTrack.close();
             }
+            writeFooter(createFooter());
         }
 
         protected void write(ByteStream output, params Box[] boxes)
@@ -218,9 +210,9 @@ namespace SharpMp4Parser.Streaming.Output.MP4
 
         class TracksComparer : IComparer<StreamingTrack>
         {
-            private ConcurrentDictionary<StreamingTrack, long> nextFragmentWriteStartTime;
+            private Dictionary<StreamingTrack, long> nextFragmentWriteStartTime;
 
-            public TracksComparer(ConcurrentDictionary<StreamingTrack, long> nextFragmentWriteStartTime)
+            public TracksComparer(Dictionary<StreamingTrack, long> nextFragmentWriteStartTime)
             {
                 this.nextFragmentWriteStartTime = nextFragmentWriteStartTime;
             }
@@ -242,37 +234,20 @@ namespace SharpMp4Parser.Streaming.Output.MP4
 
         public void acceptSample(StreamingSample streamingSample, StreamingTrack streamingTrack)
         {
-
-            lock (OBJ)
+            // need to synchronized here - I don't want two headers written under any circumstances
+            if (!headerWritten)
             {
-                // need to synchronized here - I don't want two headers written under any circumstances
-                if (!headerWritten)
+                bool allTracksAtLeastOneSample = true;
+                foreach (StreamingTrack track in source)
                 {
-                    bool allTracksAtLeastOneSample = true;
-                    foreach (StreamingTrack track in source)
-                    {
-                        allTracksAtLeastOneSample &= (nextSampleStartTime[track] > 0 || track == streamingTrack);
-                    }
-                    if (allTracksAtLeastOneSample)
-                    {
-
-                        writeHeader(createHeader());
-                        headerWritten = true;
-                    }
+                    allTracksAtLeastOneSample &= (nextSampleStartTime[track] > 0 || track == streamingTrack);
                 }
-            }
-
-            try
-            {
-                CountDownLatch cdl = congestionControl[streamingTrack];
-                if (cdl.getCount() > 0)
+                if (allTracksAtLeastOneSample)
                 {
-                    cdl.await();
+
+                    writeHeader(createHeader());
+                    headerWritten = true;
                 }
-            }
-            catch (Exception)
-            {
-                // don't care just move on
             }
 
             if (isFragmentReady(streamingTrack, streamingSample))
@@ -284,39 +259,27 @@ namespace SharpMp4Parser.Streaming.Output.MP4
                 nextFragmentCreateStartTime[streamingTrack] = nextFragmentCreateStartTime[streamingTrack] + fragmentContainer.duration;
                 Queue<FragmentContainer> fragmentQueue = fragmentBuffers[streamingTrack];
                 fragmentQueue.Enqueue(fragmentContainer);
-                lock (OBJ)
+
+                if (headerWritten && this.source[0] == streamingTrack)
                 {
-                    if (headerWritten && this.source[0] == streamingTrack)
+
+                    Queue<FragmentContainer> tracksFragmentQueue;
+                    StreamingTrack currentStreamingTrack;
+                    // This will write AT LEAST the currently created fragment and possibly a few more
+                    while ((tracksFragmentQueue = fragmentBuffers[(currentStreamingTrack = this.source[0])]).Count > 0)
                     {
 
-                        Queue<FragmentContainer> tracksFragmentQueue;
-                        StreamingTrack currentStreamingTrack;
-                        // This will write AT LEAST the currently created fragment and possibly a few more
-                        while ((tracksFragmentQueue = fragmentBuffers[(currentStreamingTrack = this.source[0])]).Count > 0)
-                        {
+                        FragmentContainer currentFragmentContainer = tracksFragmentQueue.Dequeue();
 
-                            FragmentContainer currentFragmentContainer = tracksFragmentQueue.Dequeue();
+                        writeFragment(currentFragmentContainer.fragmentContent);
 
-                            writeFragment(currentFragmentContainer.fragmentContent);
-
-                            congestionControl[currentStreamingTrack].countDown();
-                            long ts = nextFragmentWriteStartTime[currentStreamingTrack] + currentFragmentContainer.duration;
-                            nextFragmentWriteStartTime[currentStreamingTrack] = ts;
-                            //if (LOG.isDebugEnabled())
-                            //{
-                            //LOG.debug(currentStreamingTrack + " advanced to " + (double)ts / currentStreamingTrack.getTimescale());
-                        }
-                        //sortTracks();
+                        long ts = nextFragmentWriteStartTime[currentStreamingTrack] + currentFragmentContainer.duration;
+                        nextFragmentWriteStartTime[currentStreamingTrack] = ts;
+                        //if (LOG.isDebugEnabled())
+                        //{
+                        //LOG.debug(currentStreamingTrack + " advanced to " + (double)ts / currentStreamingTrack.getTimescale());
                     }
-                    else
-                    {
-                        if (fragmentQueue.Count > 10)
-                        {
-                            // if there are more than 10 fragments in the queue we don't want more samples of this track
-                            // System.err.println("Stopping " + streamingTrack);
-                            congestionControl[streamingTrack] = new CountDownLatch(fragmentQueue.Count);
-                        }
-                    }
+                    //sortTracks();
                 }
             }
 
