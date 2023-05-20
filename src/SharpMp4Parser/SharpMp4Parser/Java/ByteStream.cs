@@ -106,6 +106,14 @@ namespace SharpMp4Parser.Java
             return _ms.ReadByte();
         }
 
+        public short readShort()
+        {
+            using (BinaryReader br = new BinaryReader(_ms, Encoding.UTF8, true))
+            {
+                return br.ReadInt16();
+            }
+        }
+
         public virtual void write(int value)
         {
             _ms.WriteByte((byte)value);
