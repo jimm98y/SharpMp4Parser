@@ -25,7 +25,7 @@ namespace SharpMp4Parser.Tests.Streaming.Output
                 await Task.Run(() => b.call());
                 writer.close();
 
-                //using (var file = File.Create("test.mp4"))
+                //using (var file = File.Create("output_standard.mp4"))
                 //{
                 //    baos.position(0);
                 //    baos.CopyTo(file);
