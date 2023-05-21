@@ -103,7 +103,7 @@ namespace SharpMp4Parser.Muxer
             long timescale = enumerator.Current.getTrackMetaData().getTimescale();
             foreach (Track track in this.getTracks())
             {
-                timescale = Mp4Math.gcd(track.getTrackMetaData().getTimescale(), timescale);
+                timescale = Mp4Math.lcm(track.getTrackMetaData().getTimescale(), timescale);
             }
             return timescale;
         }
