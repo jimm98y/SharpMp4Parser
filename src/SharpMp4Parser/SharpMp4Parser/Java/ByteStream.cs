@@ -7,7 +7,7 @@ namespace SharpMp4Parser.Java
 {
     public class ByteStream : Closeable
     {
-        internal MemoryStream _ms = null;
+        internal Stream _ms = null;
 
         public void CopyTo(Stream stream)
         {
@@ -19,14 +19,14 @@ namespace SharpMp4Parser.Java
             _ms = new MemoryStream();
         }
 
-        public ByteStream(MemoryStream ms)
+        public ByteStream(Stream ms)
         {
             _ms = ms;
         }
 
         public ByteStream(ByteStream input)
         {
-            _ms = new MemoryStream(input._ms.ToArray());
+            _ms = input._ms;
         }
 
         public ByteStream(byte[] input)
@@ -134,14 +134,25 @@ namespace SharpMp4Parser.Java
 
         public virtual byte[] toByteArray()
         {
-            return _ms.ToArray().Take(position()).ToArray();
+            if(_ms is MemoryStream)
+            {
+                return ((MemoryStream)_ms).ToArray().Take(position()).ToArray();
+            }
+
+            throw new NotSupportedException();
         }
 
         public virtual long available()
         {
-            // https://docs.oracle.com/javase/8/docs/api/java/io/ByteStreamBase.html
-            // Returns an estimate of the number of bytes that can be read (or skipped over) from this input stream without blocking by the next invocation of a method for this input stream.
-            return (int)(_ms.Capacity - _ms.Position);
+            if (_ms is MemoryStream)
+            {
+                var ms = (MemoryStream)_ms;
+                // https://docs.oracle.com/javase/8/docs/api/java/io/ByteStreamBase.html
+                // Returns an estimate of the number of bytes that can be read (or skipped over) from this input stream without blocking by the next invocation of a method for this input stream.
+                return (int)(ms.Capacity - ms.Position);
+            }
+
+            throw new NotSupportedException();
         }
 
         public virtual void close()

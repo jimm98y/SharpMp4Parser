@@ -227,10 +227,10 @@ namespace SharpMp4Parser.Streaming.Output.MP4
             }
         }
 
-        private void sortTracks()
-        {
-            source = source.OrderBy(x => x, new TracksComparer(nextFragmentWriteStartTime)).ToList();
-        }
+        //private void sortTracks()
+        //{
+        //    source = source.OrderBy(x => x, new TracksComparer(nextFragmentWriteStartTime)).ToList();
+        //}
 
         public void acceptSample(StreamingSample streamingSample, StreamingTrack streamingTrack)
         {
@@ -404,6 +404,7 @@ namespace SharpMp4Parser.Streaming.Output.MP4
         {
             MovieFragmentBox moof = new MovieFragmentBox();
             createMfhd(sequenceNumber, moof);
+
             createTraf(streamingTrack, moof, samples);
             TrackRunBox firstTrun = moof.getTrackRunBoxes()[0];
             firstTrun.setDataOffset(1); // dummy to make size correct
