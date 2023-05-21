@@ -640,7 +640,7 @@ namespace SharpMp4Parser.Streaming.Output.MP4
 
                 foreach (StreamingSample streamingSample in samples)
                 {
-                    writableByteChannel.write((ByteBuffer)((Java.Buffer)streamingSample.getContent()).rewind());
+                    writableByteChannel.write((ByteBuffer)streamingSample.getContent().rewind());
                 }
             }
         }
