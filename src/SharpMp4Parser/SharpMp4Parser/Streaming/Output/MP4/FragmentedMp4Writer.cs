@@ -460,7 +460,7 @@ namespace SharpMp4Parser.Streaming.Output.MP4
             foreach (StreamingSample streamingSample in samples)
             {
                 TrackRunBox.Entry entry = new TrackRunBox.Entry();
-                entry.setSampleSize(streamingSample.getContent().remaining());
+                entry.setSampleSize(streamingSample.getContent().capacity());
                 if (defaultSampleFlagsTrackExtension == null)
                 {
                     SampleFlagsSampleExtension sampleFlagsSampleExtension = streamingSample.getSampleExtension< SampleFlagsSampleExtension>(typeof(SampleFlagsSampleExtension));

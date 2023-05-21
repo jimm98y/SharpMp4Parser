@@ -9,6 +9,34 @@ namespace SharpMp4Parser.Streaming.Input.H264
      */
     public class H264StreamingTrack : H264NalConsumingTrack
     {
+        private static byte[] AddEmulationPreventionBytes(byte[] nal)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                int i;
+                for (i = 0; i < nal.Length; i++)
+                {
+                    if (i >= 2)
+                    {
+                        if (nal[i - 1] == 0)
+                        {
+                            if (nal[i - 2] == 0)
+                            {
+                                if (nal[i] == 0x00 || nal[i] == 0x01 || nal[i] == 0x02)
+                                {
+                                    ms.WriteByte(0x03);
+                                }
+                            }
+                        }
+                    }
+
+                    ms.WriteByte(nal[i]);
+                }
+
+                return ms.ToArray();
+            }
+        }
+
         private static byte[] RemoveEmulationPreventionBytes(byte[] nal)
         {
             /*

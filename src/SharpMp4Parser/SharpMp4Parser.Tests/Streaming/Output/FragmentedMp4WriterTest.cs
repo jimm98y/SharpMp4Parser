@@ -6,7 +6,7 @@ using SharpMp4Parser.Streaming.Output.MP4;
 namespace SharpMp4Parser.Tests.Streaming.Output
 {
     [TestClass]
-    public class StandardMp4WriterTest
+    public class FragmentedMp4WriterTest
     {
         [TestMethod]
         public async Task testMuxing()
@@ -20,8 +20,8 @@ namespace SharpMp4Parser.Tests.Streaming.Output
                 var h264Stream = new ByteStream(h264Ms.ToArray());
                 H264AnnexBTrack b = new H264AnnexBTrack(h264Stream);
                 ByteStream baos = new ByteStream();
-                StandardMp4Writer writer = new StandardMp4Writer(new List<StreamingTrack>() { b }, Channels.newChannel(baos));
-                //FragmentedMp4Writer writer = new FragmentedMp4Writer(new List<StreamingTrack> { b }, Channels.newChannel(baos));
+                //StandardMp4Writer writer = new StandardMp4Writer(new List<StreamingTrack>() { b }, Channels.newChannel(baos));
+                FragmentedMp4Writer writer = new FragmentedMp4Writer(new List<StreamingTrack> { b }, Channels.newChannel(baos));
                 await Task.Run(() => b.call());
                 writer.close();
 

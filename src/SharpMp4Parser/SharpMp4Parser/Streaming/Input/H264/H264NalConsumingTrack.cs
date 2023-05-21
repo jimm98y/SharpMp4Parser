@@ -61,7 +61,7 @@ namespace SharpMp4Parser.Streaming.Input.H264
                 case H264NalUnitTypes.CODED_SLICE_IDR:
                     FirstVclNalDetector current = new FirstVclNalDetector(nal,
                             nalUnitHeader.nal_ref_idc, nalUnitHeader.nal_unit_type, spsIdToSps, ppsIdToPps);
-                    sliceNalUnitHeader = nalUnitHeader;
+                    sliceNalUnitHeader = nalUnitHeader; 
                     if (fvnd != null && fvnd.isFirstInNew(current))
                     {
                         //LOG.debug("Wrapping up cause of first vcl nal is found");
