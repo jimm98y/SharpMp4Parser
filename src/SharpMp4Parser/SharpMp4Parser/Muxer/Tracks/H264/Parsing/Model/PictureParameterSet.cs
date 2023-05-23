@@ -1,6 +1,7 @@
 ﻿using SharpMp4Parser.Java;
 using SharpMp4Parser.Muxer.Tracks.H264.Parsing.Read;
 using SharpMp4Parser.Muxer.Tracks.H264.Parsing.Write;
+using SharpMp4Parser.Streaming.Input.H264;
 using System.Linq;
 
 namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Model
@@ -46,6 +47,17 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Model
         public static PictureParameterSet read(ByteStream input)
         {
             CAVLCReader reader = new CAVLCReader(input);
+            return read(reader);
+        }
+
+        public static PictureParameterSet read(ByteBuffer bb)
+        {
+            ByteBufferBitreader reader = new ByteBufferBitreader(bb);
+            return read(reader);
+        }
+
+        private static PictureParameterSet read(IByteBufferReader reader)
+        {
             PictureParameterSet pps = new PictureParameterSet();
 
             pps.pic_parameter_set_id = reader.readUE("PPS: pic_parameter_set_id");

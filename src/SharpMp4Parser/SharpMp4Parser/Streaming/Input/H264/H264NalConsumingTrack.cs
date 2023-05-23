@@ -4,11 +4,12 @@ using SharpMp4Parser.IsoParser.Boxes.SampleEntry;
 using SharpMp4Parser.IsoParser.Tools;
 using SharpMp4Parser.Java;
 using SharpMp4Parser.Streaming.Extensions;
-using SharpMp4Parser.Streaming.Input.H264.SpsPps;
+using SharpMp4Parser.Muxer.Tracks.H264.Parsing.Model;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using SharpMp4Parser.Muxer.Tracks.H264;
 
 namespace SharpMp4Parser.Streaming.Input.H264
 {

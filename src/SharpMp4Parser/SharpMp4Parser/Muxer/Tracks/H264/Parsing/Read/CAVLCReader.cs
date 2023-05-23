@@ -26,7 +26,7 @@ using SharpMp4Parser.Java;
 
 namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Read
 {
-    public class CAVLCReader : BitstreamReader
+    public class CAVLCReader : BitstreamReader, IByteBufferReader
     {
 
         public CAVLCReader(ByteStream input) : base(input)
@@ -48,7 +48,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Read
          * @throws java.io.IOException
          * @throws java.io.IOException
          */
-        private int readUE()
+        public int readUE()
         {
             int cnt = 0;
             while (read1Bit() == 0)
@@ -78,6 +78,11 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Read
             trace(message, res.ToString());
 
             return res;
+        }
+
+        public int readSE()
+        {
+            return readSE(null);
         }
 
         public int readSE(string message)
@@ -180,6 +185,9 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Read
 
         private void trace(string message, string val)
         {
+            if (string.IsNullOrEmpty(message))
+                return;
+
             StringBuilder traceBuilder = new StringBuilder();
             int spaces;
             string pos = (bitsRead - debugBits.length()).ToString();

@@ -37,7 +37,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Model
         public int[] scalingList;
         public bool useDefaultScalingMatrixFlag;
 
-        public static ScalingList read(CAVLCReader input, int sizeOfScalingList)
+        public static ScalingList read(IByteBufferReader input, int sizeOfScalingList)
         {
 
             ScalingList sl = new ScalingList();

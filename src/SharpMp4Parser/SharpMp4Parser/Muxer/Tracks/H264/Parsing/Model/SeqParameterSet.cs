@@ -22,6 +22,7 @@ OR OTHER DEALINGS IN THE SOFTWARE.
 using SharpMp4Parser.Java;
 using SharpMp4Parser.Muxer.Tracks.H264.Parsing.Read;
 using SharpMp4Parser.Muxer.Tracks.H264.Parsing.Write;
+using SharpMp4Parser.Streaming.Input.H264;
 
 namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Model
 {
@@ -85,6 +86,17 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Model
         public static SeqParameterSet read(ByteStream input)
         {
             CAVLCReader reader = new CAVLCReader(input);
+            return read(reader);
+        }
+
+        public static SeqParameterSet read(ByteBuffer input)
+        {
+            ByteBufferBitreader reader = new ByteBufferBitreader(input);
+            return read(reader);
+        }
+
+        private static SeqParameterSet read(IByteBufferReader reader)
+        {
             SeqParameterSet sps = new SeqParameterSet();
 
             sps.profile_idc = (int)reader.readNBit(8, "SPS: profile_idc");
@@ -194,7 +206,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Model
             return sps;
         }
 
-        private static void readScalingListMatrix(CAVLCReader reader,
+        private static void readScalingListMatrix(IByteBufferReader reader,
                                                   SeqParameterSet sps)
         {
             sps.scalingMatrix = new ScalingMatrix();
@@ -220,7 +232,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Model
             }
         }
 
-        private static VUIParameters ReadVUIParameters(CAVLCReader reader)
+        private static VUIParameters ReadVUIParameters(IByteBufferReader reader)
         {
             VUIParameters vuip = new VUIParameters();
             vuip.aspect_ratio_info_present_flag = reader
@@ -319,7 +331,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Model
             return vuip;
         }
 
-        private static HRDParameters readHRDParameters(CAVLCReader reader)
+        private static HRDParameters readHRDParameters(IByteBufferReader reader)
         {
             HRDParameters hrd = new HRDParameters();
             hrd.cpb_cnt_minus1 = reader.readUE("SPS: cpb_cnt_minus1");

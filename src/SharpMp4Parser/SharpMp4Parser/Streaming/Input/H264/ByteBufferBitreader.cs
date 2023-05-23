@@ -1,9 +1,10 @@
 ﻿using SharpMp4Parser.Java;
+using SharpMp4Parser.Muxer.Tracks.H264.Parsing.Read;
 using System;
 
-namespace SharpMp4Parser.Streaming.Input.H264.SpsPps
+namespace SharpMp4Parser.Streaming.Input.H264
 {
-    public class ByteBufferBitreader
+    public class ByteBufferBitreader : IByteBufferReader
     {
         ByteBuffer buffer;
 
@@ -44,7 +45,7 @@ namespace SharpMp4Parser.Streaming.Input.H264.SpsPps
                     return -1;
                 }
             }
-            int res = (currentByte >> (7 - nBit)) & 1;
+            int res = currentByte >> 7 - nBit & 1;
             nBit++;
             return res;
         }
@@ -54,6 +55,11 @@ namespace SharpMp4Parser.Streaming.Input.H264.SpsPps
             currentByte = nextByte;
             nextByte = get();
             nBit = 0;
+        }
+
+        public int readUE(string message)
+        {
+            return readUE();
         }
 
         public int readUE()
@@ -73,6 +79,11 @@ namespace SharpMp4Parser.Streaming.Input.H264.SpsPps
             return res;
         }
 
+        public long readNBit(int n, string message)
+        {
+            return readNBit(n);
+        }
+
         public long readNBit(int n)
         {
             if (n > 64)
@@ -89,9 +100,19 @@ namespace SharpMp4Parser.Streaming.Input.H264.SpsPps
             return val;
         }
 
+        public bool readBool(string message)
+        {
+            return readBool();
+        }
+
         public bool readBool()
         {
             return read1Bit() != 0;
+        }
+
+        public int readSE(string message)
+        {
+            return readSE();
         }
 
         public int readSE()
@@ -108,11 +129,21 @@ namespace SharpMp4Parser.Streaming.Input.H264.SpsPps
             {
                 advance();
             }
-            int tail = 1 << (8 - nBit - 1);
-            int mask = ((tail << 1) - 1);
+            int tail = 1 << 8 - nBit - 1;
+            int mask = (tail << 1) - 1;
             bool hasTail = (currentByte & mask) == tail;
 
-            return !(currentByte == -1 || (nextByte == -1 && hasTail));
+            return !(currentByte == -1 || nextByte == -1 && hasTail);
+        }
+
+        public void readTrailingBits()
+        {
+            // no-op
+        }
+
+        public int readU(int i, string str)
+        {
+            return (int)readNBit(i, str);
         }
     }
 }
