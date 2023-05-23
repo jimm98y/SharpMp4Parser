@@ -6,9 +6,10 @@ using System.Text;
 
 namespace SharpMp4Parser.Java
 {
-    public class ByteStream : Closeable
+    public class ByteStream : Closeable, IDisposable
     {
         internal Stream _ms = null;
+        private bool disposedValue;
 
         public void CopyTo(Stream stream)
         {
@@ -35,9 +36,9 @@ namespace SharpMp4Parser.Java
             _ms = new MemoryStream(input);
         }
 
-        // random access
         public ByteBuffer get(long offset, long size)
         {
+            // random access
             var ret = ByteBuffer.allocate((int)size);
             long oldPos = _ms.Position;
             _ms.Position = CastUtils.l2i(offset);
@@ -45,11 +46,6 @@ namespace SharpMp4Parser.Java
             _ms.Position = oldPos;
             return ret;
         }
-
-
-
-
-
 
         public int position()
         {
@@ -111,10 +107,6 @@ namespace SharpMp4Parser.Java
         {
             return _ms.Read(bytes, offset, length);
         }
-
-
-
-
 
         public virtual int read()
         {
@@ -182,6 +174,25 @@ namespace SharpMp4Parser.Java
         public virtual void close()
         {
             _ms.Close();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    _ms.Close();
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 
