@@ -1,7 +1,6 @@
 ﻿using SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12;
 using SharpMp4Parser.IsoParser.Boxes.ISO14496.Part15;
 using SharpMp4Parser.IsoParser.Boxes.SampleEntry;
-using SharpMp4Parser.IsoParser.Tools;
 using SharpMp4Parser.Java;
 using SharpMp4Parser.Streaming.Extensions;
 using SharpMp4Parser.Muxer.Tracks.H264.Parsing.Model;
@@ -13,7 +12,7 @@ using SharpMp4Parser.Muxer.Tracks.H264;
 
 namespace SharpMp4Parser.Streaming.Input.H264
 {
-    public abstract class H264NalConsumingTrack : AbstractH264Track
+    public abstract class H264NalConsumingTrack : AbstractStreamingTrack
     {
         //private static Logger LOG = LoggerFactory.getLogger(H264NalConsumingTrack.class.getName());
         int max_dec_frame_buffering = 16;
