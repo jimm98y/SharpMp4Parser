@@ -149,29 +149,23 @@ namespace SharpMp4Parser.Tests.Muxer.Samples
 
             FileStream fis = File.OpenRead(filename);
 
-            using (MemoryStream ms = new MemoryStream())
+            var buff = new ByteStream(fis);
+
+            IsoFile isoFile = new IsoFile(buff);
+            Mp4SampleList sl = new Mp4SampleList(1, isoFile, buff);
+
+            using (MD5 md5 = MD5.Create())
             {
-                fis.CopyTo(ms);
-                ms.Position = 0;
-
-                var buff = new ByteStream(ms.ToArray());
-
-                IsoFile isoFile = new IsoFile(buff);
-                Mp4SampleList sl = new Mp4SampleList(1, isoFile, new InMemRandomAccessSourceImpl(ms.ToArray()));
-
-                using (MD5 md5 = MD5.Create())
+                for (int i = 0; i < sl.size(); i++)
                 {
-                    for (int i = 0; i < sl.size(); i++)
-                    {
-                        //System.err.println("\"" + Hex.encodeHex(md5.digest(sl.get(i).asByteBuffer().array())) + "\",");
-                        byte[] sampleBytes = new byte[(int)sl.get(i).getSize()];
-                        sl.get(i).asByteBuffer().get(sampleBytes);
-                        Assert.AreEqual(sampleChecksum[i], Hex.encodeHex(md5.ComputeHash(sampleBytes)));
-                    }
+                    //System.err.println("\"" + Hex.encodeHex(md5.digest(sl.get(i).asByteBuffer().array())) + "\",");
+                    byte[] sampleBytes = new byte[(int)sl.get(i).getSize()];
+                    sl.get(i).asByteBuffer().get(sampleBytes);
+                    Assert.AreEqual(sampleChecksum[i], Hex.encodeHex(md5.ComputeHash(sampleBytes)));
                 }
-
-                fis.Close();
             }
+
+            fis.Close();
         }
     }
 }

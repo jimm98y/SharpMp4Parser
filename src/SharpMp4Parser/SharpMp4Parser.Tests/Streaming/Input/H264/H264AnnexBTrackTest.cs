@@ -31,7 +31,7 @@ namespace SharpMp4Parser.Tests.Streaming.Input.H264
                 writer.close();
                 IsoFile isoFile = new IsoFile(Channels.newChannel(new ByteStream(baos.toByteArray())));
                 Walk.through(isoFile);
-                IList<Sample> s = new Mp4SampleList(1, isoFile, new InMemRandomAccessSourceImpl(baos.toByteArray()));
+                IList<Sample> s = new Mp4SampleList(1, isoFile, baos);
                 foreach (Sample sample in s)
                 {
                     //            System.err.println("s: " + sample.getSize());

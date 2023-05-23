@@ -32,7 +32,7 @@ namespace SharpMp4Parser.Tests.Muxer.Tracks
 
             //c.writeContainer(new FileOutputStream("output.mp4").getChannel());
 
-            Movie m2 = MovieCreator.build(new ByteBufferByteChannel(baos.toByteArray()), new InMemRandomAccessSourceImpl(baos.toByteArray()), "inmem");
+            Movie m2 = MovieCreator.build(new ByteBufferByteChannel(baos.toByteArray()), "inmem");
             List<Track> decTracks = new List<Track>();
             foreach (Track track in m2.getTracks())
             {
@@ -67,7 +67,7 @@ namespace SharpMp4Parser.Tests.Muxer.Tracks
 
             //c.writeContainer(new FileOutputStream("output.mp4").getChannel());
 
-            Movie m2 = MovieCreator.build(new ByteBufferByteChannel(baos.toByteArray()), new InMemRandomAccessSourceImpl(baos.toByteArray()), "inmem");
+            Movie m2 = MovieCreator.build(new ByteBufferByteChannel(baos.toByteArray()), "inmem");
             List<Track> decTracks = new List<Track>();
             foreach (Track track in m2.getTracks())
             {
@@ -102,7 +102,7 @@ namespace SharpMp4Parser.Tests.Muxer.Tracks
 
             //c.writeContainer(new FileOutputStream("output.mp4").getChannel());
 
-            Movie m2 = MovieCreator.build(new ByteBufferByteChannel(baos.toByteArray()), new InMemRandomAccessSourceImpl(baos.toByteArray()), "inmem");
+            Movie m2 = MovieCreator.build(new ByteBufferByteChannel(baos.toByteArray()), "inmem");
             List<Track> decTracks = new List<Track>();
             foreach (Track track in m2.getTracks())
             {

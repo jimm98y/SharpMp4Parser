@@ -11,7 +11,7 @@ namespace SharpMp4Parser.Muxer.Container.MP4
     {
         private AbstractList<Sample> samples;
 
-        public Mp4SampleList(long trackId, IsoParser.Container isofile, RandomAccessSource source) 
+        public Mp4SampleList(long trackId, IsoParser.Container isofile, ByteStream source) 
         {
 
             if (Path.getPaths< TrackExtendsBox>(isofile, "moov/mvex/trex").Count == 0)

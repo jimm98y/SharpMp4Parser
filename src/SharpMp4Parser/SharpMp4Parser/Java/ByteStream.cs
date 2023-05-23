@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpMp4Parser.IsoParser.Tools;
+using System;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -34,7 +35,21 @@ namespace SharpMp4Parser.Java
             _ms = new MemoryStream(input);
         }
 
-        
+        // random access
+        public ByteBuffer get(long offset, long size)
+        {
+            var ret = ByteBuffer.allocate((int)size);
+            long oldPos = _ms.Position;
+            _ms.Position = CastUtils.l2i(offset);
+            _ms.Read(ret.array(), 0, CastUtils.l2i(size));
+            _ms.Position = oldPos;
+            return ret;
+        }
+
+
+
+
+
 
         public int position()
         {

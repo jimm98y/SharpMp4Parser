@@ -31,19 +31,11 @@ namespace SharpMp4Parser.Muxer.Container.MP4
 
         public static Movie build(string file)
         {
-            FileStream fis = File.OpenRead(file);
-
-            using(MemoryStream ms = new MemoryStream())
-            {
-                fis.CopyTo(ms);
-                ms.Position = 0;
-
-                var array = ms.ToArray();
-                var buff = new ByteStream(array);
-                Movie m = build(buff, new InMemRandomAccessSourceImpl(array), file);
-                fis.Close();
-                return m;
-            }
+            var fis = File.OpenRead(file);
+            var buff = new ByteStream(fis);
+            Movie m = build(buff, file);
+            //fis.Close();
+            return m;
         }
 
         /**
@@ -55,7 +47,7 @@ namespace SharpMp4Parser.Muxer.Container.MP4
          * @return a representation of the movie
          * @throws IOException in case of I/O error during IsoFile creation
          */
-        public static Movie build(ByteStream readableByteChannel, RandomAccessSource randomAccessSource, string name)
+        public static Movie build(ByteStream readableByteChannel, string name)
         {
             IsoFile isoFile = new IsoFile(readableByteChannel);
             Movie m = new Movie();
@@ -67,19 +59,19 @@ namespace SharpMp4Parser.Muxer.Container.MP4
                 {
                     m.addTrack(new CencMp4TrackImplImpl(
                         trackBox.getTrackHeaderBox().getTrackId(), isoFile,
-                            randomAccessSource, name + "[" + trackBox.getTrackHeaderBox().getTrackId() + "]"));
+                            readableByteChannel, name + "[" + trackBox.getTrackHeaderBox().getTrackId() + "]"));
                 }
                 else if (schm != null && (schm.getSchemeType().Equals("piff")))
                 {
                     m.addTrack(new PiffMp4TrackImpl(
                     trackBox.getTrackHeaderBox().getTrackId(), isoFile,
-                            randomAccessSource, name + "[" + trackBox.getTrackHeaderBox().getTrackId() + "]"));
+                            readableByteChannel, name + "[" + trackBox.getTrackHeaderBox().getTrackId() + "]"));
                 }
                 else
                 {
                     m.addTrack(new Mp4TrackImpl(
                     trackBox.getTrackHeaderBox().getTrackId(), isoFile,
-                            randomAccessSource, name + "[" + trackBox.getTrackHeaderBox().getTrackId() + "]"));
+                            readableByteChannel, name + "[" + trackBox.getTrackHeaderBox().getTrackId() + "]"));
                 }
             }
             m.setMatrix(isoFile.getMovieBox().getMovieHeaderBox().getMatrix());

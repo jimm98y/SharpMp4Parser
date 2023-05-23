@@ -29,7 +29,7 @@ namespace SharpMp4Parser.Muxer
          * @param name         an arbitrary naem to identify track later - e.g. filename
          * @throws java.io.IOException if reading from underlying <code>DataSource</code> fails
          */
-        public CencMp4TrackImplImpl(long trackId, IsoParser.Container isofile, RandomAccessSource randomAccess, string name) : base(trackId, isofile, randomAccess, name)
+        public CencMp4TrackImplImpl(long trackId, IsoParser.Container isofile, ByteStream randomAccess, string name) : base(trackId, isofile, randomAccess, name)
         {
             TrackBox trackBox = null;
             foreach (TrackBox box in Path.getPaths<TrackBox>(isofile, "moov/trak"))

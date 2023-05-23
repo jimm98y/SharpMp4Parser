@@ -21,10 +21,10 @@ namespace SharpMp4Parser.Muxer.Container.MP4
         private long[][] sampleOffsetsWithinChunks;
         private SampleSizeBox ssb;
         private int lastChunk = 0;
-        private RandomAccessSource randomAccess;
+        private ByteStream randomAccess;
         private List<SampleEntry> sampleEntries;
 
-        public DefaultMp4SampleList(long track, IsoParser.Container topLevel, RandomAccessSource randomAccessFile)
+        public DefaultMp4SampleList(long track, IsoParser.Container topLevel, ByteStream randomAccessFile)
         {
             this.randomAccess = randomAccessFile;
             MovieBox movieBox = topLevel.getBoxes<MovieBox>(typeof(MovieBox))[0];
@@ -204,8 +204,6 @@ namespace SharpMp4Parser.Muxer.Container.MP4
 
         public class SampleImpl : Sample
         {
-            private readonly object _syncRoot = new object();
-
             private int index;
             private DefaultMp4SampleList that;
 

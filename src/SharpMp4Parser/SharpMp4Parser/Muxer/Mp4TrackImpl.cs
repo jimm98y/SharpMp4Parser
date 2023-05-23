@@ -18,6 +18,7 @@ using SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12;
 using SharpMp4Parser.IsoParser.Boxes.SampleEntry;
 using SharpMp4Parser.IsoParser.Boxes.SampleGrouping;
 using SharpMp4Parser.IsoParser.Tools;
+using SharpMp4Parser.Java;
 using SharpMp4Parser.Muxer.Container.MP4;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -49,7 +50,7 @@ namespace SharpMp4Parser.Muxer
          * @param randomAccess the RandomAccessSource to read the samples from
          * @param name         an arbitrary naem to identify track later - e.g. filename
          */
-        public Mp4TrackImpl(long trackId, IsoParser.Container isofile, RandomAccessSource randomAccess, string name) : base(name)
+        public Mp4TrackImpl(long trackId, IsoParser.Container isofile, ByteStream randomAccess, string name) : base(name)
         {
             samples = new Mp4SampleList(trackId, isofile, randomAccess);
             TrackBox trackBox = null;

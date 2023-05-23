@@ -139,9 +139,7 @@ namespace SharpMp4Parser.Tests.Muxer
             c.writeContainer(Channels.newChannel(baos));
             new ByteStream().write(baos.toByteArray()); // write only in memory as we don't have file access yet
 
-            Movie m3 = MovieCreator.build(
-                    new ByteBufferByteChannel(baos.toByteArray()),
-                    new InMemRandomAccessSourceImpl(baos.toByteArray()), "inmem");
+            Movie m3 = MovieCreator.build(new ByteBufferByteChannel(baos.toByteArray()), "inmem");
 
             Movie m4 = new Movie();
             foreach (Track track in m3.getTracks())
@@ -154,9 +152,7 @@ namespace SharpMp4Parser.Tests.Muxer
 
             ByteStream baos2 = new ByteStream();
             c2.writeContainer(Channels.newChannel(baos2));
-            Movie m5 = MovieCreator.build(
-                    new ByteBufferByteChannel(baos2.toByteArray()),
-                    new InMemRandomAccessSourceImpl(baos2.toByteArray()), "inmem");
+            Movie m5 = MovieCreator.build(new ByteBufferByteChannel(baos2.toByteArray()), "inmem");
 
             List<Track>.Enumerator tracksPlainIter = m1.getTracks().GetEnumerator();
             List<Track>.Enumerator roundTrippedTracksIter = m5.getTracks().GetEnumerator();

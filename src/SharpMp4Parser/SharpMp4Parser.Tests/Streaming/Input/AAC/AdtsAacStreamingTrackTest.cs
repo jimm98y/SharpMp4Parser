@@ -33,7 +33,7 @@ namespace SharpMp4Parser.Tests.Streaming.Input.AAC
                 //new FileOutputStream("output.mp4").write(baos.toByteArray());
 
                 Walk.through(isoFile);
-                IList<Sample> s = new Mp4SampleList(1, isoFile, new InMemRandomAccessSourceImpl(baos.toByteArray()));
+                IList<Sample> s = new Mp4SampleList(1, isoFile, baos);
                 foreach (Sample sample in s)
                 {
                     //System.err.println("s: " + sample.getSize());

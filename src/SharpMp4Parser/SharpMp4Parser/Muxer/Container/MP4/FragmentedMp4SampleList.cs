@@ -21,10 +21,10 @@ namespace SharpMp4Parser.Muxer.Container.MP4
                 trunDataCache = new Dictionary<TrackRunBox, WeakReference<ByteBuffer>>();
         private int[] firstSamples;
         private int size_ = -1;
-        private readonly RandomAccessSource randomAccess;
+        private readonly ByteStream randomAccess;
         private readonly List<SampleEntry> sampleEntries;
 
-        public FragmentedMp4SampleList(long track, IsoParser.Container isofile, RandomAccessSource randomAccess)
+        public FragmentedMp4SampleList(long track, IsoParser.Container isofile, ByteStream randomAccess)
         {
             this.isofile = isofile;
             this.randomAccess = randomAccess;
