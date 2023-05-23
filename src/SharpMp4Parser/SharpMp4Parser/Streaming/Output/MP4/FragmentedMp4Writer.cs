@@ -277,7 +277,7 @@ namespace SharpMp4Parser.Streaming.Output.MP4
                         nextFragmentWriteStartTime[currentStreamingTrack] = ts;
                         //if (LOG.isDebugEnabled())
                         //{
-                        //LOG.debug(currentStreamingTrack + " advanced to " + (double)ts / currentStreamingTrack.getTimescale());
+                        Java.LOG.debug(currentStreamingTrack + " advanced to " + (double)ts / currentStreamingTrack.getTimescale());
                     }
                     //sortTracks();
                 }
@@ -326,11 +326,11 @@ namespace SharpMp4Parser.Streaming.Output.MP4
             tfraOffsets[streamingTrack] = Mp4Arrays.copyOfAndAppend(origTrack, bytesWritten);
             tfraTimes[streamingTrack] = Mp4Arrays.copyOfAndAppend(origTimes, nextFragment);
 
-            //LOG.trace("Container created");
+            Java.LOG.trace("Container created");
             Box moof = createMoof(streamingTrack, samples);
-            //LOG.trace("moof created");
+            Java.LOG.trace("moof created");
             Box mdat = createMdat(samples);
-            //LOG.trace("mdat created");
+            Java.LOG.trace("mdat created");
 
             //if (LOG.isDebugEnabled())
             //{

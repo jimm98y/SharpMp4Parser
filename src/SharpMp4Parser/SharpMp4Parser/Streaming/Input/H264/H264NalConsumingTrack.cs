@@ -1,6 +1,7 @@
 ﻿using SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12;
 using SharpMp4Parser.IsoParser.Boxes.ISO14496.Part15;
 using SharpMp4Parser.IsoParser.Boxes.SampleEntry;
+using SharpMp4Parser.IsoParser.Tools;
 using SharpMp4Parser.Java;
 using SharpMp4Parser.Streaming.Extensions;
 using SharpMp4Parser.Streaming.Input.H264.SpsPps;
@@ -50,7 +51,7 @@ namespace SharpMp4Parser.Streaming.Input.H264
 
         protected void consumeNal(ByteBuffer nal)
         {
-            //LOG.finest("Consume NAL of " + nal.length + " bytes." + Hex.encodeHex(new byte[]{nal[0], nal[1], nal[2], nal[3], nal[4]}));
+            //Java.LOG.finest("Consume NAL of " + nal.position() + " bytes." + Hex.encodeHex(new byte[]{nal.get(0), nal.get(1), nal.get(2), nal.get(3), nal.get(4)}));
             H264NalUnitHeader nalUnitHeader = getNalUnitHeader(nal);
             switch (nalUnitHeader.nal_unit_type)
             {
@@ -64,20 +65,20 @@ namespace SharpMp4Parser.Streaming.Input.H264
                     sliceNalUnitHeader = nalUnitHeader; 
                     if (fvnd != null && fvnd.isFirstInNew(current))
                     {
-                        //LOG.debug("Wrapping up cause of first vcl nal is found");
+                        Java.LOG.debug("Wrapping up cause of first vcl nal is found");
                         pushSample(createSample(buffered, fvnd.sliceHeader, sliceNalUnitHeader), false, false);
                         buffered.Clear();
                     }
                     fvnd = current;
                     //System.err.println("" + nalUnitHeader.nal_unit_type);
                     buffered.Add(nal);
-                    //LOG.debug("NAL Unit Type: " + nalUnitHeader.nal_unit_type + " " + fvnd.frame_num);
+                    Java.LOG.debug("NAL Unit Type: " + nalUnitHeader.nal_unit_type + " " + fvnd.frame_num);
                     break;
 
                 case H264NalUnitTypes.SEI:
                     if (fvnd != null)
                     {
-                        //LOG.debug("Wrapping up cause of SEI after vcl marks new sample");
+                        Java.LOG.debug("Wrapping up cause of SEI after vcl marks new sample");
                         pushSample(createSample(buffered, fvnd.sliceHeader, sliceNalUnitHeader), false, false);
                         buffered.Clear();
                         fvnd = null;
@@ -89,7 +90,7 @@ namespace SharpMp4Parser.Streaming.Input.H264
                 case H264NalUnitTypes.AU_UNIT_DELIMITER:
                     if (fvnd != null)
                     {
-                        //LOG.debug("Wrapping up cause of AU after vcl marks new sample");
+                        Java.LOG.debug("Wrapping up cause of AU after vcl marks new sample");
                         pushSample(createSample(buffered, fvnd.sliceHeader, sliceNalUnitHeader), false, false);
                         buffered.Clear();
                         fvnd = null;
@@ -100,7 +101,7 @@ namespace SharpMp4Parser.Streaming.Input.H264
                 case H264NalUnitTypes.SEQ_PARAMETER_SET:
                     if (fvnd != null)
                     {
-                        //LOG.debug("Wrapping up cause of SPS after vcl marks new sample");
+                        Java.LOG.debug("Wrapping up cause of SPS after vcl marks new sample");
                         pushSample(createSample(buffered, fvnd.sliceHeader, sliceNalUnitHeader), false, false);
                         buffered.Clear();
                         fvnd = null;
@@ -110,7 +111,7 @@ namespace SharpMp4Parser.Streaming.Input.H264
                 case 8:
                     if (fvnd != null)
                     {
-                        //LOG.debug("Wrapping up cause of PPS after vcl marks new sample");
+                        Java.LOG.debug("Wrapping up cause of PPS after vcl marks new sample");
                         pushSample(createSample(buffered, fvnd.sliceHeader, sliceNalUnitHeader), false, false);
                         buffered.Clear();
                         fvnd = null;
@@ -127,7 +128,7 @@ namespace SharpMp4Parser.Streaming.Input.H264
 
                 default:
                     //  buffered.add(nal);
-                    //LOG.warn("Unknown NAL unit type: " + nalUnitHeader.nal_unit_type);
+                    Java.LOG.warn("Unknown NAL unit type: " + nalUnitHeader.nal_unit_type);
                     break;
 
             }
@@ -243,7 +244,7 @@ namespace SharpMp4Parser.Streaming.Input.H264
 
         protected StreamingSample createSample(List<ByteBuffer> nals, SliceHeader sliceHeader, H264NalUnitHeader nu)
         {
-            //LOG.debug("Create Sample");
+            Java.LOG.debug("Create Sample");
             configure();
             if (timescale == 0 || frametick == 0)
             {
@@ -275,14 +276,14 @@ namespace SharpMp4Parser.Streaming.Input.H264
                 {
                     if (!spsForConfig.TryTake(out sps, 5000))
                     {
-                        //LOG.warn("Can't determine frame rate as no SPS became available in time");
+                        Java.LOG.warn("Can't determine frame rate as no SPS became available in time");
                         return;
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    //LOG.warn(e.getMessage());
-                    //LOG.warn("Can't determine frame rate as no SPS became available in time");
+                    Java.LOG.warn(e.Message);
+                    Java.LOG.warn("Can't determine frame rate as no SPS became available in time");
                     return;
                 }
 
@@ -368,7 +369,7 @@ namespace SharpMp4Parser.Streaming.Input.H264
                     _frametick = sps.vuiParams.num_units_in_tick;
                     if (_timescale == 0 || _frametick == 0)
                     {
-                        //LOG.warn("vuiParams contain invalid values: time_scale: " + _timescale + " and frame_tick: " + _frametick + ". Setting frame rate to 25fps");
+                        Java.LOG.warn("vuiParams contain invalid values: time_scale: " + _timescale + " and frame_tick: " + _frametick + ". Setting frame rate to 25fps");
                         _timescale = 0;
                         _frametick = 0;
                     }
@@ -376,12 +377,12 @@ namespace SharpMp4Parser.Streaming.Input.H264
                     {
                         if (_timescale / _frametick > 100)
                         {
-                            //LOG.warn("Framerate is " + (_timescale / _frametick) + ". That is suspicious.");
+                            Java.LOG.warn("Framerate is " + (_timescale / _frametick) + ". That is suspicious.");
                         }
                     }
                     else
                     {
-                        //LOG.warn("Frametick is " + _frametick + ". That is suspicious.");
+                        Java.LOG.warn("Frametick is " + _frametick + ". That is suspicious.");
                     }
                     if (sps.vuiParams.bitstreamRestriction != null)
                     {
@@ -390,7 +391,7 @@ namespace SharpMp4Parser.Streaming.Input.H264
                 }
                 else
                 {
-                    //LOG.warn("Can't determine frame rate as SPS does not contain vuiParama");
+                    Java.LOG.warn("Can't determine frame rate as SPS does not contain vuiParama");
                     _timescale = 0;
                     _frametick = 0;
                 }
@@ -508,20 +509,19 @@ namespace SharpMp4Parser.Streaming.Input.H264
 
         public class FirstVclNalDetector
         {
-
             public readonly SliceHeader sliceHeader;
-            int frame_num;
-            int pic_parameter_set_id;
-            bool field_pic_flag;
-            bool bottom_field_flag;
-            int nal_ref_idc;
-            int pic_order_cnt_type;
-            int delta_pic_order_cnt_bottom;
-            int pic_order_cnt_lsb;
-            int delta_pic_order_cnt_0;
-            int delta_pic_order_cnt_1;
-            bool idrPicFlag;
-            int idr_pic_id;
+            public int frame_num;
+            public int pic_parameter_set_id;
+            public bool field_pic_flag;
+            public bool bottom_field_flag;
+            public int nal_ref_idc;
+            public int pic_order_cnt_type;
+            public int delta_pic_order_cnt_bottom;
+            public int pic_order_cnt_lsb;
+            public int delta_pic_order_cnt_0;
+            public int delta_pic_order_cnt_1;
+            public bool idrPicFlag;
+            public int idr_pic_id;
             private Dictionary<int, SeqParameterSet> spsIdToSps;
             private Dictionary<int, PictureParameterSet> ppsIdToPps;
 

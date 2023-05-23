@@ -156,7 +156,7 @@ namespace SharpMp4Parser.Muxer.Builder
          */
         public IsoParser.Container build(Movie movie)
         {
-            //LOG.debug("Creating movie " + movie);
+            Java.LOG.debug("Creating movie " + movie);
             if (fragmenter == null)
             {
                 fragmenter = new DefaultFragmenterImpl(2);
@@ -904,7 +904,7 @@ namespace SharpMp4Parser.Muxer.Builder
 
         protected ParsableBox createTrak(Track track, Movie movie)
         {
-            //LOG.debug("Creating Track " + track);
+            Java.LOG.debug("Creating Track " + track);
             TrackBox trackBox = new TrackBox();
             trackBox.addBox(createTkhd(movie, track));
             ParsableBox edts = createEdts(track, movie);

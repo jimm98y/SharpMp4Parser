@@ -70,7 +70,7 @@ namespace SharpMp4Parser.IsoParser
             // do plausibility check
             if (size < 8 && size > 1)
             {
-                //LOG.error("Plausibility check failed: size < 8 (size = {}). Stop parsing!", size);
+                Java.LOG.error($"Plausibility check failed: size < 8 (size = {size}). Stop parsing!");
                 return null;
             }
 
@@ -111,16 +111,16 @@ namespace SharpMp4Parser.IsoParser
             ParsableBox parsableBox = null;
             if (skippedTypes != null && skippedTypes.Contains(type))
             {
-                //LOG.trace("Skipping box {} {} {}", type, usertype, parentType);
+                Java.LOG.trace($"Skipping box {type} {usertype} {parentType}");
                 parsableBox = new SkipBox(type, usertype, parentType);
             }
             else
             {
-                //LOG.trace("Creating box {} {} {}", type, usertype, parentType);
+                Java.LOG.trace($"Creating box {type} {usertype} {parentType}");
                 parsableBox = createBox(type, usertype, parentType);
             }
 
-            //LOG.finest("Parsing " + box.getType());
+            Java.LOG.finest("Parsing " + parsableBox.getType());
             // System.out.println("parsing " + Mp4Arrays.toString(box.getType()) + " " + box.getClass().getName() + " size=" + size);
             header.rewind();
 

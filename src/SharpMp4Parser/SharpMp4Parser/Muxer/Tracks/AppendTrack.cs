@@ -83,9 +83,9 @@ namespace SharpMp4Parser.Muxer.Tracks
                 stsd1.getBox(Channels.newChannel(curBaos));
                 stsd2.getBox(Channels.newChannel(refBaos));
             }
-            catch (IOException)
+            catch (IOException e)
             {
-                //LOG.error(e.getMessage());
+                Java.LOG.error(e.Message);
                 return null;
             }
             byte[] cur = curBaos.toByteArray();
@@ -135,7 +135,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             }
             else
             {
-                //LOG.error("Horizontal Resolution differs");
+                Java.LOG.error("Horizontal Resolution differs");
                 return null;
             }
             vse.setCompressorname(vse1.getCompressorname()); // ignore if they differ
@@ -145,7 +145,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             }
             else
             {
-                //LOG.error("Depth differs");
+                Java.LOG.error("Depth differs");
                 return null;
             }
 
@@ -155,7 +155,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             }
             else
             {
-                //LOG.error("frame count differs");
+                Java.LOG.error("frame count differs");
                 return null;
             }
 
@@ -165,7 +165,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             }
             else
             {
-                //LOG.error("height differs");
+                Java.LOG.error("height differs");
                 return null;
             }
             if (vse1.getWidth() == vse2.getWidth())
@@ -174,7 +174,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             }
             else
             {
-                //LOG.error("width differs");
+                Java.LOG.error("width differs");
                 return null;
             }
 
@@ -184,7 +184,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             }
             else
             {
-                //LOG.error("vert resolution differs");
+                Java.LOG.error("vert resolution differs");
                 return null;
             }
 
@@ -194,7 +194,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             }
             else
             {
-                //LOG.error("horizontal resolution differs");
+                Java.LOG.error("horizontal resolution differs");
                 return null;
             }
 
@@ -213,9 +213,9 @@ namespace SharpMp4Parser.Muxer.Tracks
                         cur1.getBox(Channels.newChannel(baos1));
                         cur2.getBox(Channels.newChannel(baos2));
                     }
-                    catch (IOException)
+                    catch (IOException e)
                     {
-                        //LOG.warn(e.getMessage());
+                        Java.LOG.warn(e.Message);
                         return null;
                     }
                     if (Enumerable.SequenceEqual(baos1.toByteArray(), baos2.toByteArray()))
@@ -245,7 +245,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             }
             else
             {
-                //LOG.error("BytesPerFrame differ");
+                Java.LOG.error("BytesPerFrame differ");
                 return null;
             }
             if (ase1.getBytesPerPacket() == ase2.getBytesPerPacket())
@@ -262,7 +262,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             }
             else
             {
-                //LOG.error("BytesPerSample differ");
+                Java.LOG.error("BytesPerSample differ");
                 return null;
             }
             if (ase1.getChannelCount() == ase2.getChannelCount())
@@ -279,7 +279,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             }
             else
             {
-                //LOG.error("ChannelCount differ");
+                Java.LOG.error("ChannelCount differ");
                 return null;
             }
             if (ase1.getCompressionId() == ase2.getCompressionId())
@@ -345,9 +345,9 @@ namespace SharpMp4Parser.Muxer.Tracks
                         cur1.getBox(Channels.newChannel(baos1));
                         cur2.getBox(Channels.newChannel(baos2));
                     }
-                    catch (IOException)
+                    catch (IOException e)
                     {
-                        //LOG.warn(e.getMessage());
+                        Java.LOG.warn(e.Message);
                         return null;
                     }
                     if (Enumerable.SequenceEqual(baos1.toByteArray(), baos2.toByteArray()))
@@ -476,7 +476,7 @@ namespace SharpMp4Parser.Muxer.Tracks
             }
             else
             {
-                //LOG.error("I can only merge ESDescriptors");
+                Java.LOG.error("I can only merge ESDescriptors");
                 return null;
             }
         }

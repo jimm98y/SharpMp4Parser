@@ -287,7 +287,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.SampleEntry
 
             if ("owma".Equals(type))
             {
-                //LOG.error("owma");
+                Java.LOG.error("owma");
                 long remaining = contentSize - 28
                         - (soundVersion == 1 ? 16 : 0)
                         - (soundVersion == 2 ? 36 : 0);

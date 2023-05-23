@@ -242,7 +242,7 @@ namespace SharpMp4Parser.Streaming.Input.AAC
             }
             catch (EndOfStreamException)
             {
-                //LOG.info("Done reading ADTS AAC file.");
+                Java.LOG.info("Done reading ADTS AAC file.");
             }
         }
 

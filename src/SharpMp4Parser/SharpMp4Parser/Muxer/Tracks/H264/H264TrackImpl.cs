@@ -337,7 +337,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
                                 nalUnitHeader.nal_ref_idc, nalUnitHeader.nal_unit_type, spsIdToSps, ppsIdToPps);
                         if (fvnd != null && fvnd.isFirstInNew(current))
                         {
-                            //LOG.debug("Wrapping up cause of first vcl nal is found");
+                            Java.LOG.debug("Wrapping up cause of first vcl nal is found");
                             createSample(buffered);
                         }
                         fvnd = current;
@@ -349,7 +349,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
                     case H264NalUnitTypes.SEI:
                         if (fvnd != null)
                         {
-                            //LOG.debug("Wrapping up cause of SEI after vcl marks new sample");
+                            Java.LOG.debug("Wrapping up cause of SEI after vcl marks new sample");
                             createSample(buffered);
                             fvnd = null;
                         }
@@ -361,7 +361,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
                     case H264NalUnitTypes.AU_UNIT_DELIMITER:
                         if (fvnd != null)
                         {
-                            //LOG.debug("Wrapping up cause of AU after vcl marks new sample");
+                            Java.LOG.debug("Wrapping up cause of AU after vcl marks new sample");
                             createSample(buffered);
                             fvnd = null;
                         }
@@ -371,7 +371,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
                     case H264NalUnitTypes.SEQ_PARAMETER_SET:
                         if (fvnd != null)
                         {
-                            //LOG.debug("Wrapping up cause of SPS after vcl marks new sample");
+                            Java.LOG.debug("Wrapping up cause of SPS after vcl marks new sample");
                             createSample(buffered);
                             fvnd = null;
                         }
@@ -380,7 +380,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
                     case 8:
                         if (fvnd != null)
                         {
-                            //LOG.debug("Wrapping up cause of PPS after vcl marks new sample");
+                            Java.LOG.debug("Wrapping up cause of PPS after vcl marks new sample");
                             createSample(buffered);
                             fvnd = null;
                         }
@@ -396,7 +396,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
 
                     default:
                         //  buffered.add(nal);
-                        //LOG.warn("Unknown NAL unit type: " + nalUnitHeader.nal_unit_type);
+                        Java.LOG.warn("Unknown NAL unit type: " + nalUnitHeader.nal_unit_type);
                         break;
 
                 }
@@ -483,7 +483,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
             }
             if (nu == null)
             {
-                //LOG.warn("Sample without Slice");
+                Java.LOG.warn("Sample without Slice");
                 return;
             }
             Debug.Assert(slice != null);
@@ -671,19 +671,19 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
                     frametick = firstSeqParameterSet.vuiParams.num_units_in_tick;
                     if (timescale == 0 || frametick == 0)
                     {
-                        //LOG.warn("vuiParams contain invalid values: time_scale: " + timescale + " and frame_tick: " + frametick + ". Setting frame rate to 25fps");
+                        Java.LOG.warn("vuiParams contain invalid values: time_scale: " + timescale + " and frame_tick: " + frametick + ". Setting frame rate to 25fps");
                         timescale = 90000;
                         frametick = 3600;
                     }
 
                     if (timescale / frametick > 100)
                     {
-                        //LOG.warn("Framerate is " + (timescale / frametick) + ". That is suspicious.");
+                        Java.LOG.warn("Framerate is " + (timescale / frametick) + ". That is suspicious.");
                     }
                 }
                 else
                 {
-                    //LOG.warn("Can't determine frame rate. Guessing 25 fps");
+                    Java.LOG.warn("Can't determine frame rate. Guessing 25 fps");
                     timescale = 90000;
                     frametick = 3600;
                 }

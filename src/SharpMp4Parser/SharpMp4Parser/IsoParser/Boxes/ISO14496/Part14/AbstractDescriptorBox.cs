@@ -82,14 +82,14 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part14
                 data.rewind();
                 descriptor = ObjectDescriptorFactory.createFrom(-1, (ByteBuffer)data.duplicate());
             }
-            catch (IOException)
+            catch (IOException e)
             {
-                //LOG.warn("Error parsing ObjectDescriptor", e);
+                Java.LOG.warn("Error parsing ObjectDescriptor", e);
                 //that's why we copied it ;)
             }
-            catch (IndexOutOfRangeException)
+            catch (IndexOutOfRangeException ex)
             {
-                //LOG.warn("Error parsing ObjectDescriptor", e);
+                Java.LOG.warn("Error parsing ObjectDescriptor", ex);
                 //that's why we copied it ;)
             }
         }

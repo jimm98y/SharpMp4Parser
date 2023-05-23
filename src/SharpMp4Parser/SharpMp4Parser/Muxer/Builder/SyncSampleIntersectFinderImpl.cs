@@ -318,7 +318,7 @@ namespace SharpMp4Parser.Muxer.Builder
                     log += (string.Format("{0},", l));
                 }
                 log += ("]");
-                //LOG.warn(log);
+                Java.LOG.warn(log);
                 log = "";
 
                 log += string.Format("{0} - In    :  [", syncSamples.Length);
@@ -327,17 +327,17 @@ namespace SharpMp4Parser.Muxer.Builder
                     log += (string.Format("{0},", l));
                 }
                 log += ("]");
-                //LOG.warn(log);
-                //LOG.warn("There are less than 25% of common sync samples in the given track.");
+                Java.LOG.warn(log);
+                Java.LOG.warn("There are less than 25% of common sync samples in the given track.");
                 throw new Exception("There are less than 25% of common sync samples in the given track.");
             }
             else if (nuSyncSamples.Count < (syncSamples.Length * 0.5))
             {
-                //LOG.info("There are less than 50% of common sync samples in the given track. This is implausible but I'm ok to continue.");
+                Java.LOG.info("There are less than 50% of common sync samples in the given track. This is implausible but I'm ok to continue.");
             }
             else if (nuSyncSamples.Count < syncSamples.Length)
             {
-                //LOG.trace("Common SyncSample positions vs. this tracks SyncSample positions: " + nuSyncSamples.size() + " vs. " + syncSamples.length);
+                Java.LOG.trace("Common SyncSample positions vs. this tracks SyncSample positions: " + nuSyncSamples.Count + " vs. " + syncSamples.Length);
             }
             // End: Warn user if samples are not matching!
 

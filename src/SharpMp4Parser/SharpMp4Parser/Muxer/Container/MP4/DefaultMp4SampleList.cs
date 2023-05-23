@@ -249,7 +249,7 @@ namespace SharpMp4Parser.Muxer.Container.MP4
                     }
                     catch (IOException e)
                     {
-                        //LOG.error("", e);
+                        Java.LOG.error("", e);
                         throw new IndexOutOfRangeException(e.Message);
                     }
                 }

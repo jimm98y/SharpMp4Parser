@@ -76,7 +76,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part1.ObjectDescriptors
                 int begin = bb.position();
                 descriptor = ObjectDescriptorFactory.createFrom(objectTypeIndication, bb);
                 int read = bb.position() - begin;
-                //LOG.trace("{} - DecoderConfigDescr1 read: {}, size: {}", descriptor, read, descriptor != null ? descriptor.getSize() : null);
+                Java.LOG.trace($"{descriptor} - DecoderConfigDescr1 read: {read}, size: {(descriptor != null ? descriptor.getSize().ToString() : "")}");
                 if (descriptor != null)
                 {
                     int size = descriptor.getSize();

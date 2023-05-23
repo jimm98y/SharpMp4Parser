@@ -200,7 +200,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
 
             if (duration < -1)
             {
-                //LOG.warn("tkhd duration is not in expected range");
+                Java.LOG.warn("tkhd duration is not in expected range");
             }
 
             IsoTypeReader.readUInt32(content);

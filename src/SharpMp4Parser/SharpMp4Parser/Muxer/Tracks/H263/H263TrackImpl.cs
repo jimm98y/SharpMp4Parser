@@ -222,7 +222,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H263
             bool fixed_vop_rate = brb.readBool();
             if (fixed_vop_rate)
             {
-                //LOG.info("Fixed Frame Rate");
+                Java.LOG.info("Fixed Frame Rate");
                 int i = 0;
                 while (vop_time_increment_resolution >= (1 << i))
                 {

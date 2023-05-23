@@ -365,7 +365,7 @@ namespace SharpMp4Parser.Streaming.Output.MP4
 
             sampleNumbers[streamingTrack] = sampleNumber;
             samples.Clear();
-            //LOG.debug("CC created. mdat size: " + cc.mdat.size);
+            Java.LOG.debug("CC created. mdat size: " + cc.mdat.size);
             return cc;
         }
 
@@ -383,7 +383,7 @@ namespace SharpMp4Parser.Streaming.Output.MP4
         public class Mdat : Box
         {
             List<StreamingSample> samples;
-            long size;
+            public long size;
 
             public Mdat(List<StreamingSample> samples)
             {

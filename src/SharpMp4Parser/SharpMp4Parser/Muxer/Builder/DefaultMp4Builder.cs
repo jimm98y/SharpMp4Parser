@@ -79,7 +79,7 @@ namespace SharpMp4Parser.Muxer.Builder
             {
                 fragmenter = new DefaultFragmenterImpl(2);
             }
-            //LOG.debug("Creating movie {}", movie);
+            Java.LOG.debug($"Creating movie {movie}");
             foreach (Track track in movie.getTracks())
             {
                 // getting the samples may be a time consuming activity
@@ -114,7 +114,7 @@ namespace SharpMp4Parser.Muxer.Builder
                 contentSize += sum(stsz.getSampleSizes());
 
             }
-            //LOG.debug("About to create mdat");
+            Java.LOG.debug("About to create mdat");
             InterleaveChunkMdat mdat = new InterleaveChunkMdat(movie, chunks, contentSize);
 
             long dataOffset = 16;
@@ -123,7 +123,7 @@ namespace SharpMp4Parser.Muxer.Builder
                 dataOffset += lightBox.getSize();
             }
             isoFile.addBox(mdat);
-            //LOG.debug("mdat crated");
+            Java.LOG.debug("mdat crated");
 
             /*
             dataOffset is where the first sample starts. In this special mdat the samples always start
@@ -340,7 +340,7 @@ namespace SharpMp4Parser.Muxer.Builder
             ParsableBox stbl = createStbl(track, movie, chunks);
             minf.addBox(stbl);
             mdia.addBox(minf);
-            //LOG.debug("done with trak for track_{}", track.getTrackMetaData().getTrackId());
+            Java.LOG.debug($"done with trak for track_{track.getTrackMetaData().getTrackId()}");
             return trackBox;
         }
 
@@ -437,7 +437,7 @@ namespace SharpMp4Parser.Muxer.Builder
                 createCencBoxes((CencEncryptedTrack)track, stbl, chunks[track]);
             }
             createSubs(track, stbl);
-            //LOG.debug("done with stbl for track_{}", track.getTrackMetaData().getTrackId());
+            Java.LOG.debug($"done with stbl for track_{track.getTrackMetaData().getTrackId()}");
             return stbl;
         }
 
@@ -526,7 +526,7 @@ namespace SharpMp4Parser.Muxer.Builder
 
                 long offset = 0;
                 // all tracks have the same number of chunks
-                //LOG.debug("Calculating chunk offsets for track_{}", targetTrack.getTrackMetaData().getTrackId());
+                Java.LOG.debug($"Calculating chunk offsets for track_{targetTrack.getTrackMetaData().getTrackId()}");
 
                 List<Track> tracks = new List<Track>(chunks.Keys);
                 tracks = tracks.OrderBy(x => x, new TrackComparer()).ToList();
@@ -828,7 +828,7 @@ namespace SharpMp4Parser.Muxer.Builder
                 long writtenBytes = 0;
                 long writtenMegaBytes = 0;
 
-                //LOG.debug("About to write {}", contentSize);
+                Java.LOG.debug($"About to write {contentSize}");
                 foreach (List<Sample> samples in chunkList)
                 {
                     foreach (Sample sample in samples)
@@ -839,7 +839,7 @@ namespace SharpMp4Parser.Muxer.Builder
                         {
                             writtenBytes -= 1024 * 1024;
                             writtenMegaBytes++;
-                            //LOG.debug("Written {} MB", writtenMegaBytes);
+                            Java.LOG.debug($"Written {writtenMegaBytes} MB");
                         }
                     }
                 }

@@ -32,7 +32,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part1.ObjectDescriptors
             for (int i = 0x6A; i < 0xFE; i++)
             {
                 int pos = i - 0x6A;
-                //LOG.trace("pos: {}", pos);
+                Java.LOG.trace($"pos: {pos}");
                 ints[pos] = i;
             }
             return ints;

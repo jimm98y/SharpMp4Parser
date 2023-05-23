@@ -190,9 +190,9 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part1.ObjectDescriptors
                 {
                     baseDescriptor = (BaseDescriptor)Activator.CreateInstance(aClass);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    //LOG.error("Couldn't instantiate BaseDescriptor class " + aClass + " for objectTypeIndication " + objectTypeIndication + " and tag " + tag, e);
+                    Java.LOG.error("Couldn't instantiate BaseDescriptor class " + aClass + " for objectTypeIndication " + objectTypeIndication + " and tag " + tag, e);
                     throw;
                 }
             }

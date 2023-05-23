@@ -185,10 +185,10 @@ namespace SharpMp4Parser.IsoParser.Boxes.Microsoft
                 }
                 successfulParse = true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 successfulParse = false;
-                //LOG.error("Malformed Xtra Tag detected: {}", e.ToString());
+                Java.LOG.error("Malformed Xtra Tag detected", e);
                 ((Java.Buffer)content).position(content.position() + content.remaining());
             }
             finally

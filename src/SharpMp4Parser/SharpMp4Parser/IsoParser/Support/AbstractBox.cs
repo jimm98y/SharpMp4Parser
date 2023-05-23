@@ -90,7 +90,7 @@ namespace SharpMp4Parser.IsoParser.Support
             {
                 if (dataSource.read(content) == -1)
                 {
-                    //LOG.error("{} might have been truncated by file end. bytesRead={} contentSize={}", this, content.position(), contentSize);
+                    Java.LOG.error($"{this} might have been truncated by file end. bytesRead={content.position()} contentSize={contentSize}");
                     break;
                 }
             }
@@ -131,7 +131,7 @@ namespace SharpMp4Parser.IsoParser.Support
          */
         public void parseDetails()
         {
-            //LOG.debug("parsing details of {}", this.getType());
+            Java.LOG.debug($"parsing details of {this.getType()}");
             if (content != null)
             {
                 ByteBuffer content = this.content;
@@ -215,7 +215,7 @@ namespace SharpMp4Parser.IsoParser.Support
 
             if (content.remaining() != bb.remaining())
             {
-                //LOG.error("{}: remaining differs {}  vs. {}", this.getType(), content.remaining(), bb.remaining());
+                Java.LOG.error($"{this.getType()}: remaining differs {content.remaining()}  vs. {bb.remaining()}");
                 return false;
             }
             int p = content.position();
@@ -225,13 +225,13 @@ namespace SharpMp4Parser.IsoParser.Support
                 byte v2 = bb.get(j);
                 if (v1 != v2)
                 {
-                    //LOG.error("{}: buffers differ at {}: {}/{}", this.getType(), i, v1, v2);
+                    Java.LOG.error($"{this.getType()}: buffers differ at {i}: {v1}/{v2}");
                     byte[] b1 = new byte[content.remaining()];
                     byte[] b2 = new byte[bb.remaining()];
                     content.get(b1);
                     bb.get(b2);
-                    //LOG.error("original      : {}", Hex.encodeHex(b1, 4));
-                    //LOG.error("reconstructed : {}", Hex.encodeHex(b2, 4));
+                    Java.LOG.error($"original      : {Hex.encodeHex(b1, 4)}");
+                    Java.LOG.error($"reconstructed : {Hex.encodeHex(b2, 4)}");
                     return false;
                 }
             }

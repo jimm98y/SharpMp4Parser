@@ -102,7 +102,7 @@ namespace SharpMp4Parser.Muxer.Tracks
                     if (syncSampleTimes[ssIndex] != summedDurations)
                     {
                         long correction = syncSampleTimes[ssIndex] - (summedDurations + x);
-                        //LOG.debug(String.format("Sample %d %d / %d - correct by %d", i, summedDurations, syncSampleTimes[ssIndex], correction));
+                        Java.LOG.debug(String.Format("Sample {0} {1} / {2} - correct by {3}", i, summedDurations, syncSampleTimes[ssIndex], correction));
                         x += correction;
                     }
                 }
