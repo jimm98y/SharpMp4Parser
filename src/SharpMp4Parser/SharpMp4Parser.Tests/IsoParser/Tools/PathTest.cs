@@ -9,16 +9,11 @@ namespace SharpMp4Parser.Tests.IsoParser.Tools
         [TestMethod]
         public void setup()
         {
-            using (MemoryStream multiMs = new MemoryStream())
-            {
-                FileStream multiFis = File.OpenRead("multiTrack.3gp");
-                multiFis.CopyTo(multiMs);
-                multiMs.Position = 0;
+            FileStream multiFis = File.OpenRead("multiTrack.3gp");
 
-                var isoBuff = new ByteStream(multiMs.ToArray());
+            var isoBuff = new ByteStream(multiFis);
 
-                IsoFile isoFile = new IsoFile(isoBuff);
-            }
+            IsoFile isoFile = new IsoFile(isoBuff);
         }
     }
 }

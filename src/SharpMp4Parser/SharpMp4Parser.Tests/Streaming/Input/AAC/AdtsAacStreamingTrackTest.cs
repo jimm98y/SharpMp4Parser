@@ -15,30 +15,24 @@ namespace SharpMp4Parser.Tests.Streaming.Input.AAC
         [TestMethod]
         public async Task testMuxing()
         {
-            using (MemoryStream aacMs = new MemoryStream())
+            FileStream aacFis = File.OpenRead("somesound.aac");
+            var aacStream = new ByteStream(aacFis);
+
+            AdtsAacStreamingTrack b = new AdtsAacStreamingTrack(aacStream, 65000, 80000);
+            ByteStream baos = new ByteStream();
+            new FragmentedMp4Writer(new List<StreamingTrack>() { b }, Channels.newChannel(baos));
+            //MultiTrackFragmentedMp4Writer writer = new MultiTrackFragmentedMp4Writer(new StreamingTrack[]{b}, new ByteArrayOutputStream());
+            await Task.Run(() => b.call());
+            IsoFile isoFile = new IsoFile(Channels.newChannel(new ByteStream(baos.toByteArray())));
+
+            //new FileOutputStream("output.mp4").write(baos.toByteArray());
+
+            Walk.through(isoFile);
+            IList<Sample> s = new Mp4SampleList(1, isoFile, baos);
+            foreach (Sample sample in s)
             {
-                FileStream aacFis = File.OpenRead("somesound.aac");
-                aacFis.CopyTo(aacMs);
-                aacMs.Position = 0;
-
-                var aacStream = new ByteStream(aacMs.ToArray());
-
-                AdtsAacStreamingTrack b = new AdtsAacStreamingTrack(aacStream, 65000, 80000);
-                ByteStream baos = new ByteStream();
-                new FragmentedMp4Writer(new List<StreamingTrack>() { b }, Channels.newChannel(baos));
-                //MultiTrackFragmentedMp4Writer writer = new MultiTrackFragmentedMp4Writer(new StreamingTrack[]{b}, new ByteArrayOutputStream());
-                await Task.Run(() => b.call());
-                IsoFile isoFile = new IsoFile(Channels.newChannel(new ByteStream(baos.toByteArray())));
-
-                //new FileOutputStream("output.mp4").write(baos.toByteArray());
-
-                Walk.through(isoFile);
-                IList<Sample> s = new Mp4SampleList(1, isoFile, baos);
-                foreach (Sample sample in s)
-                {
-                    //System.err.println("s: " + sample.getSize());
-                    sample.asByteBuffer();
-                }
+                //System.err.println("s: " + sample.getSize());
+                sample.asByteBuffer();
             }
         }
     }

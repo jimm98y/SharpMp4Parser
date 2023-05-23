@@ -71,41 +71,36 @@ namespace SharpMp4Parser.Tests.IsoParser
             DateTime start1 = DateTime.UtcNow;
             DateTime start2 = DateTime.UtcNow;
 
-            using (MemoryStream isoMs = new MemoryStream())
-            {
-                FileStream isoFis = File.OpenRead(originalFile);
-                isoFis.CopyTo(isoMs);
-                isoMs.Position = 0;
+            FileStream isoFis = File.OpenRead(originalFile);
 
-                var isoStream = new ByteStream(isoMs.ToArray());
+            var isoStream = new ByteStream(isoFis);
 
-                IsoFile isoFile = new IsoFile(isoStream);
+            IsoFile isoFile = new IsoFile(isoStream);
 
-                DateTime start3 = DateTime.UtcNow;
+            DateTime start3 = DateTime.UtcNow;
 
-                DateTime start4 = DateTime.UtcNow;
-                Walk.through(isoFile);
-                DateTime start5 = DateTime.UtcNow;
+            DateTime start4 = DateTime.UtcNow;
+            Walk.through(isoFile);
+            DateTime start5 = DateTime.UtcNow;
 
-                ByteStream baos = new ByteStream();
-                isoFile.getBox(Channels.newChannel(baos));
+            ByteStream baos = new ByteStream();
+            isoFile.getBox(Channels.newChannel(baos));
 
-                DateTime start6 = DateTime.UtcNow;
+            DateTime start6 = DateTime.UtcNow;
 
-                /*   System.err.println("Preparing tmp copy took: " + (start2 - start1) + "ms");
-                   System.err.println("Parsing took           : " + (start3 - start2) + "ms");
-                   System.err.println("Writing took           : " + (start6 - start3) + "ms");
-                   System.err.println("Walking took           : " + (start5 - start4) + "ms");*/
+            /*   System.err.println("Preparing tmp copy took: " + (start2 - start1) + "ms");
+                System.err.println("Parsing took           : " + (start3 - start2) + "ms");
+                System.err.println("Writing took           : " + (start6 - start3) + "ms");
+                System.err.println("Walking took           : " + (start5 - start4) + "ms");*/
 
-                IsoFile copyViaIsoFileReparsed = new IsoFile(new ByteBufferByteChannel(baos.toByteArray()));
-                BoxComparator.check(isoFile, copyViaIsoFileReparsed, "moov[0]/mvhd[0]", "moov[0]/trak[0]/tkhd[0]", "moov[0]/trak[0]/mdia[0]/mdhd[0]");
-                isoFile.close();
-                copyViaIsoFileReparsed.close();
-                // as windows cannot delete file when something is memory mapped and the garbage collector
-                // doesn't necessarily free the Buffers quickly enough we cannot delete the file here (we could but only for linux)
+            IsoFile copyViaIsoFileReparsed = new IsoFile(new ByteBufferByteChannel(baos.toByteArray()));
+            BoxComparator.check(isoFile, copyViaIsoFileReparsed, "moov[0]/mvhd[0]", "moov[0]/trak[0]/tkhd[0]", "moov[0]/trak[0]/mdia[0]/mdhd[0]");
+            isoFile.close();
+            copyViaIsoFileReparsed.close();
+            // as windows cannot delete file when something is memory mapped and the garbage collector
+            // doesn't necessarily free the Buffers quickly enough we cannot delete the file here (we could but only for linux)
 
-                isoFile.close();
-            }
+            isoFile.close();
         }
     }
 }

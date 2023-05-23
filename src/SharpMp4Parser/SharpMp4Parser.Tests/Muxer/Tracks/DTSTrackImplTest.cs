@@ -33,16 +33,11 @@ namespace SharpMp4Parser.Tests.Muxer.Tracks
                 ByteStream baos = new ByteStream();
                 c.writeContainer(Channels.newChannel(baos));
 
-                using (MemoryStream resMs = new MemoryStream())
-                {
-                    FileStream resFis = File.OpenRead("dts-sample.mp4");
-                    resFis.CopyTo(resMs);
-                    resMs.Position = 0;
+                FileStream resFis = File.OpenRead("dts-sample.mp4");
 
-                    var resBuff = new ByteStream(resMs.ToArray());
-                    IsoFile rf = new IsoFile(resBuff);
-                    BoxComparator.check(rf, c, "moov[0]/mvhd[0]", "moov[0]/trak[0]/tkhd[0]", "moov[0]/trak[0]/mdia[0]/mdhd[0]");
-                }
+                var resBuff = new ByteStream(resFis);
+                IsoFile rf = new IsoFile(resBuff);
+                BoxComparator.check(rf, c, "moov[0]/mvhd[0]", "moov[0]/trak[0]/tkhd[0]", "moov[0]/trak[0]/mdia[0]/mdhd[0]");
 
                 dtsFis.Close();
             }

@@ -11,35 +11,30 @@ namespace SharpMp4Parser.Tests.Streaming.Output
         [TestMethod]
         public async Task testMuxing()
         {
-            using (MemoryStream h264Ms = new MemoryStream())
-            {
-                FileStream h264Fis = File.OpenRead("tos.h264");
-                h264Fis.CopyTo(h264Ms);
-                h264Ms.Position = 0;
+            FileStream h264Fis = File.OpenRead("tos.h264");
 
-                var h264Stream = new ByteStream(h264Ms.ToArray());
-                H264AnnexBTrack b = new H264AnnexBTrack(h264Stream);
-                ByteStream baos = new ByteStream();
-                StandardMp4Writer writer = new StandardMp4Writer(new List<StreamingTrack>() { b }, Channels.newChannel(baos));
-                //FragmentedMp4Writer writer = new FragmentedMp4Writer(new List<StreamingTrack> { b }, Channels.newChannel(baos));
-                await Task.Run(() => b.call());
-                writer.close();
+            var h264Stream = new ByteStream(h264Fis);
+            H264AnnexBTrack b = new H264AnnexBTrack(h264Stream);
+            ByteStream baos = new ByteStream();
+            StandardMp4Writer writer = new StandardMp4Writer(new List<StreamingTrack>() { b }, Channels.newChannel(baos));
+            //FragmentedMp4Writer writer = new FragmentedMp4Writer(new List<StreamingTrack> { b }, Channels.newChannel(baos));
+            await Task.Run(() => b.call());
+            writer.close();
 
-                //using (var file = File.Create("output_standard.mp4"))
-                //{
-                //    baos.position(0);
-                //    baos.CopyTo(file);
-                //}
+            //using (var file = File.Create("output_standard.mp4"))
+            //{
+            //    baos.position(0);
+            //    baos.CopyTo(file);
+            //}
 
-                //Walk.through(isoFile);
-                //List<Sample> s = new Mp4SampleList(1, isoFile, new InMemRandomAccessSourceImpl(baos.toByteArray()));
-                //for (Sample sample : s) {
-                //            System.err.println("s: " + sample.getSize());
-                //          sample.asByteBuffer();
-                //    }
+            //Walk.through(isoFile);
+            //List<Sample> s = new Mp4SampleList(1, isoFile, new InMemRandomAccessSourceImpl(baos.toByteArray()));
+            //for (Sample sample : s) {
+            //            System.err.println("s: " + sample.getSize());
+            //          sample.asByteBuffer();
+            //    }
 
-                h264Fis.Close();
-            }
+            h264Fis.Close();
         }
     }
 }

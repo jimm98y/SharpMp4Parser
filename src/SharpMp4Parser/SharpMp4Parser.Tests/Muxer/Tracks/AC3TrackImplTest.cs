@@ -31,20 +31,13 @@ namespace SharpMp4Parser.Tests.Muxer.Tracks
                 //isoFile.writeContainer(fc);
                 //fc.close();
 
-                using (MemoryStream isoMs = new MemoryStream())
-                {
-                    FileStream isoFis = File.OpenRead("ac3-sample.mp4");
-                    isoFis.CopyTo(isoMs);
-                    isoMs.Position = 0;
+                FileStream isoFis = File.OpenRead("ac3-sample.mp4");
+                var isoBuff = new ByteStream(isoFis);
 
-                    var isoBuff = new ByteStream(isoMs.ToArray());
+                IsoFile isoFileReference = new IsoFile(isoBuff);
+                BoxComparator.check(isoFile, isoFileReference, "moov[0]/mvhd[0]", "moov[0]/trak[0]/tkhd[0]", "moov[0]/trak[0]/mdia[0]/mdhd[0]");
 
-                    IsoFile isoFileReference = new IsoFile(isoBuff);
-                    BoxComparator.check(isoFile, isoFileReference, "moov[0]/mvhd[0]", "moov[0]/trak[0]/tkhd[0]", "moov[0]/trak[0]/mdia[0]/mdhd[0]");
-
-                    isoFis.Close();
-                }
-
+                isoFis.Close();
                 ac3Fis.Close();
             }
         }

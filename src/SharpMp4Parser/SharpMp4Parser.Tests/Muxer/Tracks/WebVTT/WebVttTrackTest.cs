@@ -21,18 +21,12 @@ namespace SharpMp4Parser.Tests.Muxer.Tracks.WebVTT
 
         private static void TestVtt(string fileName, string culture, string expected)
         {
-            using (MemoryStream perMs = new MemoryStream())
-            {
-                FileStream perFis = File.OpenRead(fileName);
-                perFis.CopyTo(perMs);
-                perMs.Position = 0;
+            FileStream perFis = File.OpenRead(fileName);
+            var per = new ByteStream(perFis);
 
-                var per = new ByteStream(perMs.ToArray());
+            WebVttTrack t1 = new WebVttTrack(per, "test", FromISOName(culture));
 
-                WebVttTrack t1 = new WebVttTrack(per, "test", FromISOName(culture));
-
-                Assert.AreEqual(expected, Encoding.UTF8.GetString(t1.getSamples()[1].asByteBuffer().array().Skip(16).ToArray()));
-            }
+            Assert.AreEqual(expected, Encoding.UTF8.GetString(t1.getSamples()[1].asByteBuffer().array().Skip(16).ToArray()));
         }
 
         public static CultureInfo FromISOName(string name)

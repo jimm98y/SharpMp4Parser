@@ -33,20 +33,13 @@ namespace SharpMp4Parser.Tests.Muxer.Tracks
                 Container c = mp4Builder.build(m);
                 //c.writeContainer(new FileOutputStream("C:\\dev\\mp4parser\\isoparser\\src\\test\\resources\\com\\googlecode\\mp4parser\\authoring\\tracks\\aac-sample.mp4").getChannel());
 
-                using (MemoryStream isoMs = new MemoryStream())
-                {
-                    FileStream isoFis = File.OpenRead("aac-sample.mp4");
-                    isoFis.CopyTo(isoMs);
-                    isoMs.Position = 0;
+                FileStream isoFis = File.OpenRead("aac-sample.mp4");
+                var isoBuff = new ByteStream(isoFis);
 
-                    var isoBuff = new ByteStream(isoMs.ToArray());
+                IsoFile isoFileReference = new IsoFile(isoBuff);
+                BoxComparator.check(c, isoFileReference, "moov[0]/mvhd[0]", "moov[0]/trak[0]/tkhd[0]", "moov[0]/trak[0]/mdia[0]/mdhd[0]", "moov[0]/trak[0]/mdia[0]/minf[0]/stbl[0]/stco[0]");
 
-                    IsoFile isoFileReference = new IsoFile(isoBuff);
-                    BoxComparator.check(c, isoFileReference, "moov[0]/mvhd[0]", "moov[0]/trak[0]/tkhd[0]", "moov[0]/trak[0]/mdia[0]/mdhd[0]", "moov[0]/trak[0]/mdia[0]/minf[0]/stbl[0]/stco[0]");
-
-                    isoFis.Close();
-                }
-
+                isoFis.Close();
                 aacFis.Close();
             }
         }
