@@ -139,6 +139,15 @@ namespace SharpMp4Parser.Java
                 return ((MemoryStream)_ms).ToArray().Take(position()).ToArray();
             }
 
+            if(_ms is FileStream)
+            {
+                using(MemoryStream ms = new MemoryStream())
+                {
+                    ((FileStream)_ms).CopyTo(ms);
+                    return ms.ToArray().Take(position()).ToArray();
+                }
+            }
+
             throw new NotSupportedException();
         }
 
