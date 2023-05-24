@@ -391,6 +391,12 @@ namespace SharpMp4Parser.Java
         public abstract byte get();
 
         /// <summary>
+        /// Performance improvement for the <see cref="get"/> method that instead of throwing an exception simply returns -1;
+        /// </summary>
+        /// <returns>Reads a byte and returns -1 when end of buffer is reached.</returns>
+        public abstract int getByte();
+
+        /// <summary>
         /// Reads bytes from the current position into the specified byte array and
         /// increases the position by the number of bytes read.
         /// <para/>

@@ -96,6 +96,18 @@ namespace SharpMp4Parser.Java
             return backingArray[offset + _position++];
         }
 
+        /// <summary>
+        /// Performance improvement for the <see cref="get"/> method that instead of throwing an exception simply returns -1;
+        /// </summary>
+        /// <returns>Reads a byte and returns -1 when end of buffer is reached.</returns>
+        public override int getByte()
+        {
+            if (_position == _limit)
+            {
+                return -1;
+            }
+            return backingArray[offset + _position++];
+        }
 
         public override sealed byte get(int index)
         {

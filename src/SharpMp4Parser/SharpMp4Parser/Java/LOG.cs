@@ -37,9 +37,9 @@ namespace SharpMp4Parser.Java
 
         public static Action<string, Exception> SinkWarn = new Action<string, Exception>((m, ex) => { Debug.WriteLine(m); });
         public static Action<string, Exception> SinkError = new Action<string, Exception>((m, ex) => { Debug.WriteLine(m); });
-        public static Action<string, Exception> SinkTrace = new Action<string, Exception>((m, ex) => { Debug.WriteLine(m); });
+        public static Action<string, Exception> SinkTrace = new Action<string, Exception>((m, ex) => { });
         public static Action<string, Exception> SinkDebug = new Action<string, Exception>((m, ex) => { });
-        public static Action<string, Exception> SinkFinest = new Action<string, Exception>((m, ex) => { Debug.WriteLine(m); });
+        public static Action<string, Exception> SinkFinest = new Action<string, Exception>((m, ex) => { });
         public static Action<string, Exception> SinkInfo = new Action<string, Exception>((m, ex) => { });
     }
 }

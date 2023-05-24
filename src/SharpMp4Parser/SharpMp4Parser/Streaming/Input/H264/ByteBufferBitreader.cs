@@ -23,16 +23,7 @@ namespace SharpMp4Parser.Streaming.Input.H264
 
         public int get()
         {
-            try
-            {
-                int i = buffer.get();
-                i = i < 0 ? i + 256 : i;
-                return i;
-            }
-            catch (Exception)
-            {
-                return -1;
-            }
+            return buffer.getByte();
         }
 
         public int read1Bit()
