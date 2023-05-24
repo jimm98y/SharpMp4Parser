@@ -79,8 +79,6 @@ namespace SharpMp4Parser.IsoParser
             byte[] usertype = null;
             long contentSize;
 
-            Debug.WriteLine($"--- {type}");
-
             if (size == 1)
             {
                 header.limit(16);

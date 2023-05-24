@@ -25,7 +25,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
             }
             int last_payload_size_byte = (int)bsr.readBits(8);
             payloadSize += last_payload_size_byte;
-            Debug.WriteLine("payloadType " + payloadType);
+            Java.LOG.debug("payloadType " + payloadType);
             //sei_payload(payloadType, payloadSize );
         }
     }

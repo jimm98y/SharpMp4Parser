@@ -95,7 +95,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H263
                     {
                         decodingTimes = Mp4Arrays.copyOfAndAppend(decodingTimes, new long[] { time_code - last_time_code });
                     }
-                    Debug.WriteLine("Frame increment: " + (time_code - last_time_code) + " vop time increment: " + vop_time_increment + " last_sync_point: " + last_sync_point + " time_code: " + time_code);
+                    Java.LOG.debug("Frame increment: " + (time_code - last_time_code) + " vop time increment: " + vop_time_increment + " last_sync_point: " + last_sync_point + " time_code: " + time_code);
                     last_time_code = time_code;
                     nalsInSample.Add(origNal);
                     samples.Add(createSampleObject(nalsInSample));

@@ -38,9 +38,9 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Write
 
         public void writeU(int value, int n, string str)
         {
-            Debug.WriteLine(str + "\t");
+            //Debug.Write(str + "\t");
             writeNBit(value, n);
-            Debug.WriteLine("\t" + value);
+            //Debug.WriteLine("\t" + value);
         }
 
         public void writeUE(int value)
@@ -63,23 +63,23 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Write
 
         public void writeUE(int value, string str)
         {
-            Debug.Write(str + "\t");
+            //Debug.Write(str + "\t");
             writeUE(value);
-            Debug.WriteLine("\t" + value);
+            //Debug.WriteLine("\t" + value);
         }
 
         public void writeSE(int value, string str)
         {
-            Debug.Write(str + "\t");
+            //Debug.Write(str + "\t");
             writeUE((value << 1) * (value < 0 ? -1 : 1) + (value > 0 ? 1 : 0));
-            Debug.WriteLine("\t" + value);
+            //Debug.WriteLine("\t" + value);
         }
 
         public void writeBool(bool value, string str)
         {
-            Debug.Write(str + "\t");
+            //Debug.Write(str + "\t");
             write1Bit(value ? 1 : 0);
-            Debug.WriteLine("\t" + value);
+            //Debug.WriteLine("\t" + value);
         }
 
         public void writeU(int i, int n)
@@ -89,12 +89,12 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Write
 
         public void writeNBit(long value, int n, string str)
         {
-            Debug.Write(str + "\t");
+            //Debug.Write(str + "\t");
             for (int i = 0; i < n; i++)
             {
                 write1Bit((int)(value >> (n - i - 1)) & 0x1);
             }
-            Debug.WriteLine("\t" + value);
+            //Debug.WriteLine("\t" + value);
         }
 
         public void writeTrailingBits()

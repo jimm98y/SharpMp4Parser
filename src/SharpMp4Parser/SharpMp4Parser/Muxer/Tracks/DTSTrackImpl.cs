@@ -814,7 +814,7 @@ namespace SharpMp4Parser.Muxer.Tracks
                 mySamples.Add(new DTSTrackSample(this, finalSample));
                 //System.err.println(finalSample.remaining());
             }
-            Debug.WriteLine("all samples found");
+
             return mySamples;
         }
 
@@ -1031,7 +1031,6 @@ namespace SharpMp4Parser.Muxer.Tracks
 
             private void fillBuffer()
             {
-                Debug.WriteLine("Fill Buffer");
                 buffer = dataSource.map(bufferStartPos, Math.Min(dataEnd - bufferStartPos, BUFFER));
             }
 
@@ -1078,7 +1077,7 @@ namespace SharpMp4Parser.Muxer.Tracks
                 {
                     if (((bufferStartPos + inBufferPos) % (1024 * 1024)) == 0)
                     {
-                        Debug.WriteLine("" + ((bufferStartPos + inBufferPos) / 1024 / 1024));
+                        Java.LOG.debug("" + ((bufferStartPos + inBufferPos) / 1024 / 1024));
                     }
                     return ((buffer.get(inBufferPos) == a /*0x7F */ &&
                             buffer.get(inBufferPos + 1) == b/*0xfe*/ &&

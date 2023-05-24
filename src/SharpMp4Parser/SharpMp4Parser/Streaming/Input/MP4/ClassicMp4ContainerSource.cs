@@ -219,7 +219,7 @@ namespace SharpMp4Parser.Streaming.Input.MP4
 
                     if (firstInLine.getTrackHeaderBox().getTrackId() == 1)
                     {
-                        Debug.WriteLine("Pushing sample @" + offset + " of " + sampleSize + " bytes (i=" + index + ")");
+                        Java.LOG.debug("Pushing sample @" + offset + " of " + sampleSize + " bytes (i=" + index + ")");
                     }
                     tracks[firstInLine].getSampleSink().acceptSample(streamingSample, tracks[firstInLine]);
 
@@ -236,7 +236,7 @@ namespace SharpMp4Parser.Streaming.Input.MP4
             {
                 mp4StreamingTrack.close();
             }
-            Debug.WriteLine("All Samples read.");
+            Java.LOG.debug("All Samples read.");
         }
 
         public class Mp4StreamingTrack : StreamingTrack

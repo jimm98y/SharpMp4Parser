@@ -104,7 +104,7 @@ namespace SharpMp4Parser.Muxer.Tracks.Encryption
                         }
                         if (encSampleBuffer.remaining() > 0)
                         {
-                            Debug.WriteLine("Decrypted sample " + index + " but still data remaining: " + encSample.getSize());
+                            Java.LOG.debug("Decrypted sample " + index + " but still data remaining: " + encSample.getSize());
                         }
                         decSampleBuffer.put(cipher.doFinal());
                     }

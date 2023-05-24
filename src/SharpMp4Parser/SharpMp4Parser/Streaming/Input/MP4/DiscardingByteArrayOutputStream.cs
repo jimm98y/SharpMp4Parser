@@ -56,7 +56,7 @@ namespace SharpMp4Parser.Streaming.Input.MP4
             }
             catch (Exception e)
             {
-                Debug.WriteLine("start: " + start + " count: " + count + " startOffset:" + startOffset + " count:" + count + " len(buf):" + buf.Length + " (start - startOffset):" + (start - startOffset));
+                Java.LOG.debug("start: " + start + " count: " + count + " startOffset:" + startOffset + " count:" + count + " len(buf):" + buf.Length + " (start - startOffset):" + (start - startOffset));
                 throw e;
             }
             return result;

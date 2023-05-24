@@ -71,7 +71,6 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Write
          */
         public void write1Bit(int value)
         {
-            Debug.WriteLine(value);
             if (curBit == 8)
             {
                 curBit = 0;

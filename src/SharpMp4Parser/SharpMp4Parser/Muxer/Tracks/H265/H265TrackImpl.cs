@@ -78,19 +78,19 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
                     case H265NalUnitTypes.NAL_TYPE_PPS_NUT:
                         ((Java.Buffer)nal).position(2);
                         pps.Add(nal.slice());
-                        Debug.WriteLine("Stored PPS");
+                        Java.LOG.debug("Stored PPS");
                         break;
                     case H265NalUnitTypes.NAL_TYPE_VPS_NUT:
                         ((Java.Buffer)nal).position(2);
                         vps.Add(nal.slice());
-                        Debug.WriteLine("Stored VPS");
+                        Java.LOG.debug("Stored VPS");
                         break;
                     case H265NalUnitTypes.NAL_TYPE_SPS_NUT:
                         ((Java.Buffer)nal).position(2);
                         sps.Add(nal.slice());
                         ((Java.Buffer)nal).position(1);
                         new SequenceParameterSetRbsp(Channels.newInputStream(new ByteBufferByteChannel(nal.slice())));
-                        Debug.WriteLine("Stored SPS");
+                        Java.LOG.debug("Stored SPS");
                         break;
                     case H265NalUnitTypes.NAL_TYPE_PREFIX_SEI_NUT:
                         new SEIMessage(new BitReaderBuffer(nal.slice()));
@@ -110,7 +110,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
                         // ignore these
                         break;
                     default:
-                        Debug.WriteLine("Adding " + unitHeader.nalUnitType);
+                        Java.LOG.debug("Adding " + unitHeader.nalUnitType);
                         nals.Add(nal);
                         break;
                 }
@@ -214,17 +214,13 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
 
         public void wrapUp(List<ByteBuffer> nals, bool[] vclNalUnitSeenInAU, bool[] isIdr)
         {
-
             samples.Add(createSampleObject(nals));
-            Debug.Write("Create AU from " + nals.Count + " NALs");
+            Java.LOG.debug("Create AU from " + nals.Count + " NALs");
             if (isIdr[0])
             {
-                Debug.WriteLine("  IDR");
+                Java.LOG.debug("  IDR");
             }
-            else
-            {
-                Debug.WriteLine("");
-            }
+
             vclNalUnitSeenInAU[0] = false;
             isIdr[0] = true;
             nals.Clear();

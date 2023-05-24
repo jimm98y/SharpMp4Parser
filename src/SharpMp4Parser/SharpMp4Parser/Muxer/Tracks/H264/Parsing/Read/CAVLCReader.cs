@@ -206,7 +206,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264.Parsing.Read
             traceBuilder.Append(" (" + val + ")");
             debugBits.clear();
 
-            Debug.WriteLine(traceBuilder.ToString());
+            Java.LOG.debug(traceBuilder.ToString());
         }
     }
 }
