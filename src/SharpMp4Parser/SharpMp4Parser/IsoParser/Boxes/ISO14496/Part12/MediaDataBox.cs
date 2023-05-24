@@ -15,7 +15,6 @@
  */
 
 using SharpMp4Parser.Java;
-using System.IO;
 
 namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
 {
@@ -31,12 +30,11 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
      * so Media Data Box headers and free space may easily be skipped, and files without any box structure may
      * also be referenced and used.
      */
-#warning TODO refactoring of the file access
     public sealed class MediaDataBox : ParsableBox, Closeable
     {
         public const string TYPE = "mdat";
         ByteBuffer header;
-        System.IO.FileStream dataFile;
+        ITemporaryFile dataFile;
         long dataFilelength = 0;
 
         public string getType()
@@ -47,14 +45,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
         public void getBox(ByteStream writableByteChannel)
         {
             writableByteChannel.write((ByteBuffer)((Java.Buffer)header).rewind());
-            
-            dataFile.Seek(0, SeekOrigin.Begin);
-
-            using(MemoryStream ms = new MemoryStream())
-            {
-                dataFile.CopyTo(ms);
-                writableByteChannel.write(ms.ToArray());
-            }            
+            dataFile.Read(writableByteChannel._ms);
         }
 
         public long getSize()
@@ -68,7 +59,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
         public void parse(ByteStream dataSource, ByteBuffer header, long contentSize, BoxParser boxParser)
         {
             // fileName: "MediaDataBox" + base.ToString()
-            dataFile = System.IO.File.Create(System.IO.Path.GetRandomFileName(), (int)contentSize, FileOptions.DeleteOnClose);
+            dataFile = TemporaryFileAccess.Factory.Create(contentSize);
 
             this.header = ByteBuffer.allocate(header.limit());
             this.header.put(header);
@@ -78,7 +69,6 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12
             dataSource.read(data);
 
             dataFile.Write(data.array(), 0, (int)contentSize);
-            dataFile.Flush();
         }
 
         public void close()
