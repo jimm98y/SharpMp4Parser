@@ -6,7 +6,6 @@ using SharpMp4Parser.Java;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Xml;
 using System.Xml.XPath;
 
 namespace SharpMp4Parser.Muxer.Tracks.TTML
