@@ -152,6 +152,10 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
                     long num_negative_pics = bsr.readUE("num_negative_pics");
                     long num_positive_pics = bsr.readUE("num_positive_pics");
                     long delta_pocs = num_negative_pics + num_positive_pics;
+
+                    if (delta_pocs < 0 || delta_pocs > short.MaxValue)
+                        throw new Exception("Sanity check for delta_pocs has failed!");
+
                     num_delta_pocs[rpsIdx] = delta_pocs;
 
                     for (long i = 0; i < delta_pocs; ++i)

@@ -88,8 +88,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
                     case H265NalUnitTypes.NAL_TYPE_SPS_NUT:
                         ((Java.Buffer)nal).position(2);
                         sps.Add(nal.slice());
-                        ((Java.Buffer)nal).position(1);
-                        new SequenceParameterSetRbsp(Channels.newInputStream(new ByteBufferByteChannel(nal.slice())));
+                        new SequenceParameterSetRbsp(Channels.newInputStream(new ByteBufferByteChannel(nal.slice()).position(2)));
                         Java.LOG.debug("Stored SPS");
                         break;
                     case H265NalUnitTypes.NAL_TYPE_PREFIX_SEI_NUT:
