@@ -177,6 +177,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
             visualSampleEntry.setCompressorname("HEVC Coding");
 
             HevcConfigurationBox hevcConfigurationBox = new HevcConfigurationBox();
+            hevcConfigurationBox.getHevcDecoderConfigurationRecord().setGeneral_profile_idc(1);
 
             HevcDecoderConfigurationRecord.Array spsArray = new HevcDecoderConfigurationRecord.Array();
             spsArray.array_completeness = true;
@@ -198,7 +199,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
 
             HevcDecoderConfigurationRecord.Array vpsArray = new HevcDecoderConfigurationRecord.Array();
             vpsArray.array_completeness = true;
-            vpsArray.nal_unit_type = H265NalUnitTypes.NAL_TYPE_PPS_NUT;
+            vpsArray.nal_unit_type = H265NalUnitTypes.NAL_TYPE_VPS_NUT;
             vpsArray.nalUnits = new List<byte[]>();
             foreach (ByteBuffer vp in vps)
             {
