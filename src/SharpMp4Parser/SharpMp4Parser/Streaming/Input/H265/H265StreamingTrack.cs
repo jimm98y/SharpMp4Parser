@@ -1,12 +1,12 @@
 ﻿using SharpMp4Parser.Java;
 using SharpMp4Parser.Streaming.Extensions;
 
-namespace SharpMp4Parser.Streaming.Input.H264
+namespace SharpMp4Parser.Streaming.Input.H265
 {
     /**
-     * Created by Jimm98y on 5/20/2023.
-     */
-    public class H264StreamingTrack : H264NalConsumingTrack
+    * Created by Jimm98y on 5/25/2023.
+    */
+    public class H265StreamingTrack : H265NalConsumingTrack
     {
         public void ProcessNal(byte[] nal)
         {
@@ -15,7 +15,7 @@ namespace SharpMp4Parser.Streaming.Input.H264
 
         public void ProcessNalFinalize()
         {
-            pushSample(createSample(buffered, fvnd.sliceHeader, sliceNalUnitHeader), true, true);
+            pushSample(createSample(nals, sliceNalUnitHeader), true, true);
         }
 
         public override string ToString()
@@ -23,11 +23,11 @@ namespace SharpMp4Parser.Streaming.Input.H264
             TrackIdTrackExtension trackIdTrackExtension = this.getTrackExtension<TrackIdTrackExtension>(typeof(TrackIdTrackExtension));
             if (trackIdTrackExtension != null)
             {
-                return "H264StreamingTrack{trackId=" + trackIdTrackExtension.getTrackId() + "}";
+                return "H265StreamingTrack{trackId=" + trackIdTrackExtension.getTrackId() + "}";
             }
             else
             {
-                return "H264StreamingTrack{}";
+                return "H265StreamingTrack{}";
             }
         }
     }

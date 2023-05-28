@@ -4,7 +4,7 @@ using Container = SharpMp4Parser.IsoParser.Container;
 using System.Diagnostics;
 using System.Reflection;
 
-namespace SharpMp4Parser.Tests.Streaming.Input.H264
+namespace SharpMp4Parser.Tests.Streaming.Input
 {
     /**
      * Walks through a Container and its children to see that no getter throws any exception.
@@ -19,7 +19,7 @@ namespace SharpMp4Parser.Tests.Streaming.Input.H264
         {
             foreach (Box b in container.getBoxes())
             {
-                List<Box> myBoxes = (List<Box>)container.getBoxes<Box>(b.GetType());
+                List<Box> myBoxes = container.getBoxes<Box>(b.GetType());
                 bool found = false;
                 foreach (Box myBox in myBoxes)
                 {
@@ -35,7 +35,7 @@ namespace SharpMp4Parser.Tests.Streaming.Input.H264
 
                 if (b is Container)
                 {
-                    Walk.through((Container)b);
+                    through((Container)b);
                 }
 
                 b.ToString(); // Just test if some execption is trown
@@ -46,7 +46,7 @@ namespace SharpMp4Parser.Tests.Streaming.Input.H264
                 foreach (MethodInfo propertyDescriptor in propertyDescriptors)
                 {
                     string name = propertyDescriptor.Name;
-                    if(name.StartsWith("get") && propertyDescriptor.GetParameters().Length == 0)
+                    if (name.StartsWith("get") && propertyDescriptor.GetParameters().Length == 0)
                     {
                         propertyDescriptor.Invoke(b, null);
                     }

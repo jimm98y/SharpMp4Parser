@@ -31,6 +31,7 @@
     <None Remove="dts-sample.mp4" />
     <None Remove="h264-sample.h264" />
     <None Remove="h264-sample.mp4" />
+    <None Remove="hevc.h265" />
     <None Remove="MOV00006.3gp" />
     <None Remove="multiTrack.3gp" />
     <None Remove="output_audio-2ch-20s.mp4" />
@@ -92,6 +93,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="h264-sample.mp4">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="hevc.h265">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="MOV00006.3gp">

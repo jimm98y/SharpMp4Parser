@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SharpMp4Parser.Tests.Streaming.Input.H264
+namespace SharpMp4Parser.Tests.Streaming.Input
 {
     /**
       * Created by sannies on 15.08.2015.
@@ -20,12 +20,13 @@ namespace SharpMp4Parser.Tests.Streaming.Input.H264
             FileStream h264Fis = File.OpenRead("tos.h264");
             var h264Stream = new ByteStream(h264Fis);
 
-            H264AnnexBTrack.NalStreamTokenizer nst = new H264AnnexBTrack.NalStreamTokenizer(h264Stream);
+            NalStreamTokenizer nst = new NalStreamTokenizer(h264Stream);
 
             byte[] nal;
 
             int i = 0;
-            while ((nal = nst.getNext()) != null) {
+            while ((nal = nst.getNext()) != null)
+            {
                 //System.err.println(Hex.encodeHex(nal));
                 i++;
             }

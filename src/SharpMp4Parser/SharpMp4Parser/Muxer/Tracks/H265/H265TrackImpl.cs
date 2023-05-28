@@ -28,9 +28,18 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
             bool[] vclNalUnitSeenInAU = new bool[] { false };
             bool[] isIdr = new bool[] { true };
 
+            visualSampleEntry = new VisualSampleEntry("hvc1");
+            visualSampleEntry.setDataReferenceIndex(1);
+            visualSampleEntry.setDepth(24);
+            visualSampleEntry.setFrameCount(1);
+            visualSampleEntry.setHorizresolution(72);
+            visualSampleEntry.setVertresolution(72);
+            visualSampleEntry.setWidth(640);
+            visualSampleEntry.setHeight(480);
+            visualSampleEntry.setCompressorname("HEVC Coding");
+
             while ((nal = findNextNal(la)) != null)
             {
-
                 H265NalUnitHeader unitHeader = getNalUnitHeader(nal);
                 //
                 if (vclNalUnitSeenInAU[0])
@@ -130,7 +139,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
                 vclNalUnitSeenInAU[0] |= isVcl(unitHeader);
 
             }
-            visualSampleEntry = createSampleEntry();
+            visualSampleEntry = fillSampleEntry();
             decodingTimes = new long[samples.Count];
             getTrackMetaData().setTimescale(25);
             Arrays.fill(decodingTimes, 1);
@@ -164,18 +173,8 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
         //    c.writeContainer(new FileByteStreamBase("output.mp4").getChannel());
         //}
 
-        private VisualSampleEntry createSampleEntry()
-        {
-            VisualSampleEntry visualSampleEntry = new VisualSampleEntry("hvc1");
-            visualSampleEntry.setDataReferenceIndex(1);
-            visualSampleEntry.setDepth(24);
-            visualSampleEntry.setFrameCount(1);
-            visualSampleEntry.setHorizresolution(72);
-            visualSampleEntry.setVertresolution(72);
-            visualSampleEntry.setWidth(640);
-            visualSampleEntry.setHeight(480);
-            visualSampleEntry.setCompressorname("HEVC Coding");
-
+        private VisualSampleEntry fillSampleEntry()
+        {            
             HevcConfigurationBox hevcConfigurationBox = new HevcConfigurationBox();
             hevcConfigurationBox.getHevcDecoderConfigurationRecord().setGeneral_profile_idc(1);
 
@@ -228,7 +227,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
 
         public override List<SampleEntry> getSampleEntries()
         {
-            return null;
+            return new List<SampleEntry>() { visualSampleEntry };
         }
 
         public override string getHandler()

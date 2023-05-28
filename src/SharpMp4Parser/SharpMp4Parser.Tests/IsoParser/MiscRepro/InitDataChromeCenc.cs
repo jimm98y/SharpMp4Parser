@@ -1,6 +1,6 @@
 ﻿using SharpMp4Parser.IsoParser.Tools;
 using SharpMp4Parser.IsoParser;
-using SharpMp4Parser.Tests.Streaming.Input.H264;
+using SharpMp4Parser.Tests.Streaming.Input;
 
 namespace SharpMp4Parser.Tests.IsoParser.MiscRepro
 {

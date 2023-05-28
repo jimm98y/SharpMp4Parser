@@ -5,7 +5,6 @@ using SharpMp4Parser.Muxer;
 using SharpMp4Parser.Streaming;
 using SharpMp4Parser.Streaming.Input.AAC;
 using SharpMp4Parser.Streaming.Output.MP4;
-using SharpMp4Parser.Tests.Streaming.Input.H264;
 
 namespace SharpMp4Parser.Tests.Streaming.Input.AAC
 {

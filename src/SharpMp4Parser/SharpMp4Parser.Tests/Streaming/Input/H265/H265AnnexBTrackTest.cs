@@ -4,21 +4,20 @@ using SharpMp4Parser.Muxer.Container.MP4;
 using SharpMp4Parser.Muxer;
 using SharpMp4Parser.Streaming.Output.MP4;
 using SharpMp4Parser.Streaming;
-using SharpMp4Parser.Streaming.Input.H264;
+using SharpMp4Parser.Streaming.Input.H265;
 
-namespace SharpMp4Parser.Tests.Streaming.Input.H264
+namespace SharpMp4Parser.Tests.Streaming.Input.H265
 {
     [TestClass]
-    public class H264AnnexBTrackTest
+    public class H265AnnexBTrackTest
     {
         [TestMethod]
         public async Task testMuxing()
         {
-            FileStream h264Fis = File.OpenRead("tos.h264");
-            var h264Stream = new ByteStream(h264Fis);
+            FileStream h265Fis = File.OpenRead("hevc.h265");
+            var h265Stream = new ByteStream(h265Fis);
 
-            H264AnnexBTrack b = new H264AnnexBTrack(h264Stream);
-            //H264AnnexBTrack b = new H264AnnexBTrack(new FileInputStream("C:\\dev\\mp4parser\\out.264"));
+            H265AnnexBTrack b = new H265AnnexBTrack(h265Stream);
             ByteStream baos = new ByteStream();
             StandardMp4Writer writer = new StandardMp4Writer(new List<StreamingTrack> { b }, Channels.newChannel(baos));
             //FragmentedMp4Writer writer = new FragmentedMp4Writer(new List<StreamingTrack> { b }, Channels.newChannel(baos));
@@ -26,7 +25,7 @@ namespace SharpMp4Parser.Tests.Streaming.Input.H264
             await Task.Run(() => b.call());
             writer.close();
 
-            //File.WriteAllBytes("C:\\Temp\\BBB.mp4", baos.toByteArray());
+            File.WriteAllBytes("C:\\Temp\\AAA.mp4", baos.toByteArray());
 
             IsoFile isoFile = new IsoFile(Channels.newChannel(new ByteStream(baos.toByteArray())));
             Walk.through(isoFile);
@@ -37,7 +36,7 @@ namespace SharpMp4Parser.Tests.Streaming.Input.H264
                 sample.asByteBuffer();
             }
 
-            h264Fis.Close();
+            h265Fis.Close();
         }
     }
 }
