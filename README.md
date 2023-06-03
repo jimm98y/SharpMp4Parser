@@ -26,8 +26,67 @@ For the API you can refer to the tests as there are many examples for various us
 - TTML support (TBD)
 
 ### Known issues
-- `FragmentedMp4Writer` can only encode video without audio, video + audio is not supported and produces an invalid file (same limitation exists in the Java version).
+- `FragmentedMp4Writer` can only encode video without audio, video + audio is not supported and produces an invalid file (the same limitation exists in the Java version).
 Use `StandardMp4Writer` which supports both.
+
+## Extensibility
+
+### Logging
+By default all warnings and errors get written to the `System.Diagnostics.Debug` output, which is stripped out in Release. I did not want to add any heavy dependencies
+so the `SharpMp4Parser.Java.LOG` static class exposes multiple actions that can be assigned by the user:
+```cs
+SharpMp4Parser.Java.LOG.SinkError = (message, exception) => { Debug.WriteLine(message); };
+SharpMp4Parser.Java.LOG.SinkWarning = (message, exception) => { Debug.WriteLine(message); };
+```
+
+### Temporary files
+The parser is using temporary files to offload as much as possible from RAM onto the disk. This could be an issue on mobile platforms where file access is restricted. 
+While there is a default implementation in place that is using the `System.IO.FileStream` APIs, it is also possible to provide your own implementation based upon the
+`ITemporaryFile` interface:
+```cs
+public class MyTemporaryFile : ITemporaryFile
+{
+    private FileStream _stream;
+
+    public TemporaryFile(long contentSize)
+    {
+        _stream = System.IO.File.Create(System.IO.Path.GetRandomFileName(), (int)contentSize, FileOptions.DeleteOnClose);
+    }
+
+    public void Write(byte[] bytes, int offset, int count)
+    {
+        _stream.Write(bytes, offset, count);
+        _stream.Flush();
+    }
+
+    public void Read(Stream buffer)
+    {
+        _stream.Seek(0, SeekOrigin.Begin);
+        _stream.CopyTo(buffer);
+    }
+
+    public void Close()
+    {
+        _stream.Close();
+    }
+}
+```
+
+Then create a factory by implementing the `ITemporaryFileFactory` interface:
+```cs
+public class MyTemporaryFileFactory : ITemporaryFileFactory
+{
+    public ITemporaryFile Create(long contentSize)
+    {
+        return new MyTemporaryFile(contentSize);
+    }
+}
+```
+
+And finally replace the default factory implementation:
+```cs
+SharpMp4Parser.Java.TemporaryFileAccess.Factory = new MyTemporaryFileFactory();
+```
 
 ## Examples
 
@@ -141,6 +200,10 @@ outputFile.close();
 
 inputFile.close();
 ```
+
+## Thread safety
+The parser is NOT thread safe so thread synchronization is the responsibility of the caller. Multiple instances
+can be used simultaneously from multiple threads provided each instance is being accessed by the same thread that created it.
 
 ## Contribute
 Pull requests with fixes are welcome!
