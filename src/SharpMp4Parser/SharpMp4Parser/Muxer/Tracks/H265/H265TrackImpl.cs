@@ -3,8 +3,10 @@ using SharpMp4Parser.IsoParser.Boxes.ISO14496.Part15;
 using SharpMp4Parser.IsoParser.Boxes.SampleEntry;
 using SharpMp4Parser.IsoParser.Tools;
 using SharpMp4Parser.Java;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace SharpMp4Parser.Muxer.Tracks.H265
 {
@@ -19,14 +21,39 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
         List<Sample> samples = new List<Sample>();
 
         VisualSampleEntry visualSampleEntry;
+        private SequenceParameterSetRbsp parsedSPS;
+        private VideoParameterSet parsedVPS;
+        private PictureParameterSetRbsp parsedPPS;
+
+        protected override ByteBuffer findNextNal(LookAhead la)
+        {
+            try
+            {
+                while (!la.nextFourEquals0001())
+                {
+                    la.discardByte();
+                }
+                la.discardNext4AndMarkStart();
+
+                while (!la.nextFourEquals0000or0001orEof(allZeroIsEndOfSequence))
+                {
+                    la.discardByte();
+                }
+                return la.getNal();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
 
         public H265TrackImpl(DataSource dataSource) : base(dataSource)
         {
             List<ByteBuffer> nals = new List<ByteBuffer>();
             LookAhead la = new LookAhead(dataSource);
             ByteBuffer nal;
-            bool[] vclNalUnitSeenInAU = new bool[] { false };
-            bool[] isIdr = new bool[] { true };
+            bool vclNalUnitSeenInAU = false;
+            bool isIdr = true;
 
             visualSampleEntry = new VisualSampleEntry("hvc1");
             visualSampleEntry.setDataReferenceIndex(1);
@@ -41,15 +68,16 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
             while ((nal = findNextNal(la)) != null)
             {
                 H265NalUnitHeader unitHeader = getNalUnitHeader(nal);
+                Debug.WriteLine($"NAL Type: {unitHeader.nalUnitType}");
                 //
-                if (vclNalUnitSeenInAU[0])
+                if (vclNalUnitSeenInAU)
                 { // we need at least 1 VCL per AU
                   // This branch checks if we encountered the start of a samples/AU
                     if (isVcl(unitHeader))
                     {
-                        if ((nal.get(2) & -128) != 0)
+                        if ((nal.get(2) & 0xff) != 0)
                         { // this is: first_slice_segment_in_pic_flag  u(1)
-                            wrapUp(nals, vclNalUnitSeenInAU, isIdr);
+                            wrapUp(nals, ref vclNalUnitSeenInAU, ref isIdr);
                         }
                     }
                     else
@@ -76,7 +104,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
 
                             case H265NalUnitTypes.NAL_TYPE_EOB_NUT: // a bit special but also causes a sample to be formed
                             case H265NalUnitTypes.NAL_TYPE_EOS_NUT:
-                                wrapUp(nals, vclNalUnitSeenInAU, isIdr);
+                                wrapUp(nals, ref vclNalUnitSeenInAU, ref isIdr);
                                 break;
                         }
                     }
@@ -85,26 +113,31 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
                 switch (unitHeader.nalUnitType)
                 {
                     case H265NalUnitTypes.NAL_TYPE_PPS_NUT:
-                        ((Java.Buffer)nal).position(2);
-                        pps.Add(nal.slice());
+                        ((Java.Buffer)nal).position(2); // remove header as it'll be replaced by the array header
+                        pps.Add(nal.slice()); 
+                        byte[] bPPS = Streaming.Input.AnnexBUtils.RemoveEmulationPreventionBytes(pps[pps.Count - 1].array().Skip(pps[pps.Count - 1].arrayOffset()).Take(pps[pps.Count - 1].limit() + 3).ToArray());
+                        parsedPPS = new PictureParameterSetRbsp(ByteBuffer.wrap(bPPS));
                         Java.LOG.debug("Stored PPS");
                         break;
                     case H265NalUnitTypes.NAL_TYPE_VPS_NUT:
-                        ((Java.Buffer)nal).position(2);
+                        ((Java.Buffer)nal).position(2); // remove header as it'll be replaced by the array header
                         vps.Add(nal.slice());
-                        Java.LOG.debug("Stored VPS");
+                        byte[] bVPS = Streaming.Input.AnnexBUtils.RemoveEmulationPreventionBytes(vps[vps.Count - 1].array().Skip(vps[vps.Count - 1].arrayOffset()).Take(vps[vps.Count - 1].limit() + 3).ToArray());
+                        parsedVPS = new VideoParameterSet(ByteBuffer.wrap(bVPS));
+                        Java.LOG.debug("Stored VPS"); 
                         break;
                     case H265NalUnitTypes.NAL_TYPE_SPS_NUT:
-                        ((Java.Buffer)nal).position(2);
+                        ((Java.Buffer)nal).position(2); // remove header as it'll be replaced by the array header
                         sps.Add(nal.slice());
-                        new SequenceParameterSetRbsp(Channels.newInputStream(new ByteBufferByteChannel(nal.slice()).position(2)));
+                        byte[] bSPS = Streaming.Input.AnnexBUtils.RemoveEmulationPreventionBytes(sps[sps.Count - 1].array().Skip(sps[sps.Count - 1].arrayOffset()).Take(sps[sps.Count - 1].limit() + 3).ToArray());
+                        parsedSPS = new SequenceParameterSetRbsp(new ByteBufferByteChannel(bSPS));
                         Java.LOG.debug("Stored SPS");
                         break;
                     case H265NalUnitTypes.NAL_TYPE_PREFIX_SEI_NUT:
-                        new SEIMessage(new BitReaderBuffer(nal.slice()));
+                        ((Java.Buffer)nal).position(2);
+                        var sei = new SEIMessage(new BitReaderBuffer(nal.slice()));
                         break;
                 }
-
 
                 switch (unitHeader.nalUnitType)
                 {
@@ -115,10 +148,12 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
                     case H265NalUnitTypes.NAL_TYPE_EOS_NUT:
                     case H265NalUnitTypes.NAL_TYPE_AUD_NUT:
                     case H265NalUnitTypes.NAL_TYPE_FD_NUT:
+                    //case H265NalUnitTypes.NAL_TYPE_PREFIX_SEI_NUT:
                         // ignore these
                         break;
                     default:
                         Java.LOG.debug("Adding " + unitHeader.nalUnitType);
+                        nal.position(0);
                         nals.Add(nal);
                         break;
                 }
@@ -128,20 +163,19 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
                     {
                         case H265NalUnitTypes.NAL_TYPE_IDR_W_RADL:
                         case H265NalUnitTypes.NAL_TYPE_IDR_N_LP:
-                            isIdr[0] &= true;
+                            isIdr = true;
                             break;
                         default:
-                            isIdr[0] = false;
+                            isIdr = false;
                             break;
                     }
                 }
 
-                vclNalUnitSeenInAU[0] |= isVcl(unitHeader);
+                vclNalUnitSeenInAU |= isVcl(unitHeader);
 
             }
             visualSampleEntry = fillSampleEntry();
             decodingTimes = new long[samples.Count];
-            getTrackMetaData().setTimescale(25);
             Arrays.fill(decodingTimes, 1);
         }
 
@@ -163,20 +197,16 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
             return nalUnitHeader;
         }
 
-        //public static void main(String[] args) throws IOException
-        //{
-        //    Track track = new H265TrackImpl(new FileDataSourceImpl("c:\\content\\test-UHD-HEVC_01_FMV_Med_track1.hvc"));
-        //    Movie movie = new Movie();
-        //    movie.addTrack(track);
-        //    DefaultMp4Builder mp4Builder = new DefaultMp4Builder();
-        //    Container c = mp4Builder.build(movie);
-        //    c.writeContainer(new FileByteStreamBase("output.mp4").getChannel());
-        //}
-
         private VisualSampleEntry fillSampleEntry()
         {            
             HevcConfigurationBox hevcConfigurationBox = new HevcConfigurationBox();
-            hevcConfigurationBox.getHevcDecoderConfigurationRecord().setGeneral_profile_idc(1);
+            hevcConfigurationBox.getHevcDecoderConfigurationRecord().setGeneral_profile_idc(parsedSPS.general_profile_idc);
+            hevcConfigurationBox.getHevcDecoderConfigurationRecord().setConfigurationVersion(1);
+            hevcConfigurationBox.getHevcDecoderConfigurationRecord().setChromaFormat(parsedSPS.chroma_format_idc);
+            hevcConfigurationBox.getHevcDecoderConfigurationRecord().setGeneral_level_idc(parsedVPS.general_level_idc);
+            hevcConfigurationBox.getHevcDecoderConfigurationRecord().setGeneral_profile_compatibility_flags(parsedVPS.general_profile_compatibility_flags);
+            hevcConfigurationBox.getHevcDecoderConfigurationRecord().setGeneral_constraint_indicator_flags(parsedVPS.general_profile_constraint_indicator_flags);
+            hevcConfigurationBox.getHevcDecoderConfigurationRecord().setLengthSizeMinusOne(3); // 4 bytes size block inserted in between NAL units
 
             HevcDecoderConfigurationRecord.Array spsArray = new HevcDecoderConfigurationRecord.Array();
             spsArray.array_completeness = true;
@@ -208,20 +238,31 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
             hevcConfigurationBox.getArrays().AddRange(Arrays.asList(spsArray, vpsArray, ppsArray));
 
             visualSampleEntry.addBox(hevcConfigurationBox);
+
+            visualSampleEntry.setWidth(parsedSPS.pic_width_in_luma_samples);
+            visualSampleEntry.setHeight(parsedSPS.pic_height_in_luma_samples);
+
+            trackMetaData.setCreationTime(DateTime.UtcNow);
+            trackMetaData.setModificationTime(DateTime.UtcNow);
+            trackMetaData.setLanguage("enu");
+            trackMetaData.setTimescale(25); 
+            trackMetaData.setWidth(parsedSPS.pic_width_in_luma_samples);
+            trackMetaData.setHeight(parsedSPS.pic_height_in_luma_samples);
+
             return visualSampleEntry;
         }
 
-        public void wrapUp(List<ByteBuffer> nals, bool[] vclNalUnitSeenInAU, bool[] isIdr)
+        public void wrapUp(List<ByteBuffer> nals, ref bool vclNalUnitSeenInAU, ref bool isIdr)
         {
             samples.Add(createSampleObject(nals));
-            Java.LOG.debug("Create AU from " + nals.Count + " NALs");
-            if (isIdr[0])
+            Java.LOG.error("Create AU from " + nals.Count + " NALs");
+            if (isIdr)
             {
                 Java.LOG.debug("  IDR");
             }
 
-            vclNalUnitSeenInAU[0] = false;
-            isIdr[0] = true;
+            vclNalUnitSeenInAU = false;
+            isIdr = true;
             nals.Clear();
         }
 
@@ -243,6 +284,45 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
         bool isVcl(H265NalUnitHeader nalUnitHeader)
         {
             return nalUnitHeader.nalUnitType >= 0 && nalUnitHeader.nalUnitType <= 31;
+        }
+
+        /**
+         * Builds an MP4 sample from a list of NALs. Each NAL will be preceded by its
+         * 4 byte (unit32) length.
+         *
+         * @param nals a list of NALs that form the sample
+         * @return sample as it appears in the MP4 file
+         */
+        protected override Sample createSampleObject(List<ByteBuffer> nals)
+        {
+            ByteBuffer[] data = new ByteBuffer[nals.Count * 2];
+
+            for (int i = 0; i < nals.Count; i++)
+            {
+                byte[] sizeInfo = new byte[4];
+                ByteBuffer sizeBuf = ByteBuffer.wrap(sizeInfo);
+                int size = nals[i].remaining();
+
+                sizeBuf.putInt(size);
+
+                var header = ByteBuffer.wrap(sizeInfo);
+                var headerBytes = header.array().Skip(header.arrayOffset() + header.position()).Take(header.limit()).ToArray();
+
+                var nalBytes = nals[i].array().Skip(nals[i].arrayOffset() + nals[i].position()).Take(nals[i].limit()).ToArray();
+
+                Debug.WriteLine("Header start: {0:X2} {1:X2} {2:X2} {3:X2}", headerBytes[0], headerBytes[1], headerBytes[2], headerBytes[3]);
+                Debug.WriteLine("Header end:   {0:X2} {1:X2} {2:X2} {3:X2}", headerBytes[headerBytes.Length - 4], headerBytes[headerBytes.Length - 3], headerBytes[headerBytes.Length - 2], headerBytes[headerBytes.Length - 1]);
+                Debug.WriteLine("NAL start:    {0:X2} {1:X2} {2:X2} {3:X2}", nalBytes[0], nalBytes[1], nalBytes[2], nalBytes[3]);
+                Debug.WriteLine("NAL end:      {0:X2} {1:X2} {2:X2} {3:X2}", nalBytes[nalBytes.Length - 4], nalBytes[nalBytes.Length - 3], nalBytes[nalBytes.Length - 2], nalBytes[nalBytes.Length - 1]);
+                Debug.WriteLine("");
+
+                //data[2 * i] = header;
+                data[2 * i] = ByteBuffer.wrap(headerBytes);
+                //data[2 * i + 1] = nals[i];
+                data[2 * i + 1] = ByteBuffer.wrap(nalBytes);
+            }
+
+            return new SampleImpl(data, getCurrentSampleEntry());
         }
     }
 }

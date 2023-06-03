@@ -554,9 +554,7 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part15
                 List<byte[]>.Enumerator e1 = nalUnits.GetEnumerator();
                 List<byte[]>.Enumerator e2 = array.nalUnits.GetEnumerator();
 
-                bool m1;
-                bool m2 = false;
-                while ((m1 = e1.MoveNext()) && (m2 = e2.MoveNext()))
+                while (e1.MoveNext() && e2.MoveNext())
                 {
                     byte[] o1 = e1.Current;
                     byte[] o2 = e2.Current;

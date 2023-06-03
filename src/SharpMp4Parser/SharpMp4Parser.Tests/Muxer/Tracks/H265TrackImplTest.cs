@@ -41,7 +41,7 @@ namespace SharpMp4Parser.Tests.Muxer.Tracks
                 c.writeContainer(new ByteStream(fs));
                 fs.Close();
 
-                FileStream resFis = File.OpenRead("h265-sample.mp4");
+                FileStream resFis = File.OpenRead("C:\\Temp\\h265-sample.mp4");
 
                 var resBuff = new ByteStream(resFis);
                 IsoFile isoFileReference = new IsoFile(resBuff);

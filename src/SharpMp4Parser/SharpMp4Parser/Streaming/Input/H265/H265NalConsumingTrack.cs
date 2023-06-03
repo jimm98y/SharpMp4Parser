@@ -72,7 +72,7 @@ namespace SharpMp4Parser.Streaming.Input.H265
 
                         case H265NalUnitTypes.NAL_TYPE_EOB_NUT: // a bit special but also causes a sample to be formed
                         case H265NalUnitTypes.NAL_TYPE_EOS_NUT:
-                            wrapUp(nals, vclNalUnitSeenInAU, isIdr, sliceNalUnitHeader);
+                            wrapUp(nals, vclNalUnitSeenInAU, isIdr, unitHeader);
                             break;
                     }
                 }

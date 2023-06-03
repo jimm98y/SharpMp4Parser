@@ -9,12 +9,15 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
     {
         ByteBuffer vps;
 
-        int vps_parameter_set_id;
+        public int vps_parameter_set_id;
+        public int general_level_idc;
+        public long general_profile_compatibility_flags;
+        public long general_profile_constraint_indicator_flags;
 
         public VideoParameterSet(ByteBuffer vps)
         {
             this.vps = vps;
-            CAVLCReader r = new CAVLCReader(Channels.newInputStream(new ByteBufferByteChannel((ByteBuffer)((Java.Buffer)vps).position(0))));
+            CAVLCReader r = new CAVLCReader(new ByteBufferByteChannel(vps));
             vps_parameter_set_id = r.readU(4, "vps_parameter_set_id");
             int vps_reserved_three_2bits = r.readU(2, "vps_reserved_three_2bits");
             int vps_max_layers_minus1 = r.readU(6, "vps_max_layers_minus1");
@@ -90,20 +93,24 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
             int general_profile_space = r.readU(2, "general_profile_space ");
             bool general_tier_flag = r.readBool("general_tier_flag");
             int general_profile_idc = r.readU(5, "general_profile_idc");
-            bool[]
-            general_profile_compatibility_flag = new bool[32];
-            for (int j = 0; j < 32; j++)
-            {
-                general_profile_compatibility_flag[j] = r.readBool("general_profile_compatibility_flag[" + j + "]");
-            }
-            bool general_progressive_source_flag = r.readBool("general_progressive_source_flag");
-            bool general_interlaced_source_flag = r.readBool("general_interlaced_source_flag");
-            bool general_non_packed_constraint_flag = r.readBool("general_non_packed_constraint_flag");
-            bool general_frame_only_constraint_flag = r.readBool("general_frame_only_constraint_flag");
 
-            long general_reserved_zero_44bits = r.readU(44, "general_reserved_zero_44bits");
-            int general_level_idc = r.readU(8, "general_level_idc");
+            //bool[] general_profile_compatibility_flag = new bool[32];
+            //for (int j = 0; j < 32; j++)
+            //{
+            //    general_profile_compatibility_flag[j] = r.readBool("general_profile_compatibility_flag[" + j + "]");
+            //}
+            general_profile_compatibility_flags = r.readU(32, "general_profile_compatibility_flags");
 
+            // 48 bits constraint indicator flags
+            //bool general_progressive_source_flag = r.readBool("general_progressive_source_flag");
+            //bool general_interlaced_source_flag = r.readBool("general_interlaced_source_flag");
+            //bool general_non_packed_constraint_flag = r.readBool("general_non_packed_constraint_flag");
+            //bool general_frame_only_constraint_flag = r.readBool("general_frame_only_constraint_flag");
+            //long general_reserved_zero_44bits = r.readU(44, "general_reserved_zero_44bits");
+            general_profile_constraint_indicator_flags = r.readU(48, "general_profile_constraint_indicator_flags");
+
+            general_level_idc = r.readU(8, "general_level_idc");
+                 
             bool[] sub_layer_profile_present_flag = new bool[maxNumSubLayersMinus1];
             bool[] sub_layer_level_present_flag = new bool[maxNumSubLayersMinus1];
             for (int i = 0; i < maxNumSubLayersMinus1; i++)
@@ -111,6 +118,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
                 sub_layer_profile_present_flag[i] = r.readBool("sub_layer_profile_present_flag[" + i + "]");
                 sub_layer_level_present_flag[i] = r.readBool("sub_layer_level_present_flag[" + i + "]");
             }
+
             if (maxNumSubLayersMinus1 > 0)
             {
                 for (int i = maxNumSubLayersMinus1; i < 8; i++)
@@ -118,7 +126,6 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
                     r.readU(2, "reserved_zero_2bits");
                 }
             }
-
 
             int[] sub_layer_profile_space = new int[maxNumSubLayersMinus1];
             bool[] sub_layer_tier_flag = new bool[maxNumSubLayersMinus1];
