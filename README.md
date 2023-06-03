@@ -48,7 +48,7 @@ public class MyTemporaryFile : ITemporaryFile
 {
     private FileStream _stream;
 
-    public TemporaryFile(long contentSize)
+    public MyTemporaryFile(long contentSize)
     {
         _stream = System.IO.File.Create(System.IO.Path.GetRandomFileName(), (int)contentSize, FileOptions.DeleteOnClose);
     }
