@@ -59,12 +59,6 @@ namespace SharpMp4Parser.Streaming.Input
                                 if (nal[i + 2] == 3)
                                 {
                                     removeNext3 = true;
-
-                                    // special case for 0 0 3 ending, early return here
-                                    if (i + 2 == nal.Length - 1)
-                                    {
-                                        return ms.ToArray();
-                                    }
                                 }
                             }
                         }

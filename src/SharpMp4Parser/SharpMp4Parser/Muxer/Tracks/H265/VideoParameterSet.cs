@@ -1,7 +1,6 @@
 ﻿using SharpMp4Parser.IsoParser.Tools;
 using SharpMp4Parser.Java;
 using SharpMp4Parser.Muxer.Tracks.H264.Parsing.Read;
-using System;
 
 namespace SharpMp4Parser.Muxer.Tracks.H265
 {
@@ -13,6 +12,10 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
         public int general_level_idc;
         public long general_profile_compatibility_flags;
         public long general_profile_constraint_indicator_flags;
+
+        public bool vps_timing_info_present_flag;
+        public int vps_num_units_in_tick;
+        public int vps_time_scale;
 
         public VideoParameterSet(ByteBuffer vps)
         {
@@ -47,11 +50,11 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
                     layer_id_included_flag[i, j] = r.readBool("layer_id_included_flag[" + i + "][" + j + "]");
                 }
             }
-            bool vps_timing_info_present_flag = r.readBool("vps_timing_info_present_flag");
+            vps_timing_info_present_flag = r.readBool("vps_timing_info_present_flag");
             if (vps_timing_info_present_flag)
             {
-                long vps_num_units_in_tick = r.readU(32, "vps_num_units_in_tick");
-                long vps_time_scale = r.readU(32, "vps_time_scale");
+                vps_num_units_in_tick = r.readU(32, "vps_num_units_in_tick");
+                vps_time_scale = r.readU(32, "vps_time_scale");
                 bool vps_poc_proportional_to_timing_flag = r.readBool("vps_poc_proportional_to_timing_flag");
                 if (vps_poc_proportional_to_timing_flag)
                 {

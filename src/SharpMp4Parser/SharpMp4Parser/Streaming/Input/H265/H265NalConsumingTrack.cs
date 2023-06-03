@@ -90,7 +90,9 @@ namespace SharpMp4Parser.Streaming.Input.H265
                     nal.position(0);
                     pps.Add(nal.slice());
                     ((Java.Buffer)nal).position(2);
-                    byte[] bPPS = Streaming.Input.AnnexBUtils.RemoveEmulationPreventionBytes(pps[pps.Count - 1].array().Skip(pps[pps.Count - 1].arrayOffset() + 2).Take(pps[pps.Count - 1].limit()).Concat(new byte[] { 0, 0 }).ToArray());
+                    // emulation prevention bytes are already removed here, do not remove them again as it would have corrupted the PPS
+                    // TODO: appending zeroes at the end seems to be required because of the current parsing logic in order to prevent exception being thrown
+                    byte[] bPPS = pps[pps.Count - 1].array().Skip(pps[pps.Count - 1].arrayOffset() + 2).Take(pps[pps.Count - 1].limit()).Concat(new byte[] { 0 }).ToArray();
                     parsedPPS = new PictureParameterSetRbsp(ByteBuffer.wrap(bPPS));
                     Java.LOG.debug("Stored PPS");
                     break;
@@ -98,7 +100,9 @@ namespace SharpMp4Parser.Streaming.Input.H265
                     nal.position(0);
                     vps.Add(nal.slice());
                     ((Java.Buffer)nal).position(2);
-                    byte[] bVPS = Streaming.Input.AnnexBUtils.RemoveEmulationPreventionBytes(vps[vps.Count - 1].array().Skip(vps[vps.Count - 1].arrayOffset() + 2).Take(vps[vps.Count - 1].limit()).Concat(new byte[] { 0, 0 }).ToArray());
+                    // emulation prevention bytes are already removed here, do not remove them again as it would have corrupted the PPS
+                    // TODO: appending zeroes at the end seems to be required because of the current parsing logic in order to prevent exception being thrown
+                    byte[] bVPS = vps[vps.Count - 1].array().Skip(vps[vps.Count - 1].arrayOffset() + 2).Take(vps[vps.Count - 1].limit()).Concat(new byte[] { 0 }).ToArray();
                     parsedVPS = new VideoParameterSet(ByteBuffer.wrap(bVPS));
                     Java.LOG.debug("Stored VPS");
                     break;
@@ -106,7 +110,9 @@ namespace SharpMp4Parser.Streaming.Input.H265
                     nal.position(0);
                     sps.Add(nal.slice());
                     ((Java.Buffer)nal).position(2);
-                    byte[] bSPS = Streaming.Input.AnnexBUtils.RemoveEmulationPreventionBytes(sps[sps.Count - 1].array().Skip(sps[sps.Count - 1].arrayOffset() + 2).Take(sps[sps.Count - 1].limit()).Concat(new byte[] { 0, 0 }).ToArray());
+                    // emulation prevention bytes are already removed here, do not remove them again as it would have corrupted the PPS
+                    // TODO: appending zeroes at the end seems to be required because of the current parsing logic in order to prevent exception being thrown
+                    byte[] bSPS = sps[sps.Count - 1].array().Skip(sps[sps.Count - 1].arrayOffset() + 2).Take(sps[sps.Count - 1].limit()).Concat(new byte[] { 0 }).ToArray();
                     parsedSPS = new SequenceParameterSetRbsp(new ByteBufferByteChannel(bSPS));
                     Java.LOG.debug("Stored SPS");
                     break;
@@ -220,13 +226,15 @@ namespace SharpMp4Parser.Streaming.Input.H265
 
                 long _timescale;
                 long _frametick;
-                if (parsedSPS.vuiParameters != null)
+
+                if (parsedVPS.vps_timing_info_present_flag)
                 {
-                    _timescale = parsedSPS.vuiParameters.vui_time_scale; 
-                    _frametick = parsedSPS.vuiParameters.vui_num_units_in_tick;
+                    _timescale = parsedVPS.vps_time_scale;
+                    _frametick = parsedVPS.vps_num_units_in_tick;
+
                     if (_timescale == 0 || _frametick == 0)
                     {
-                        Java.LOG.warn("vuiParams contain invalid values: time_scale: " + _timescale + " and frame_tick: " + _frametick + ". Setting frame rate to 25fps");
+                        Java.LOG.warn("vps contains invalid values: time_scale: " + _timescale + " and frame_tick: " + _frametick + ". Setting frame rate to 25fps");
                         _timescale = 0;
                         _frametick = 0;
                     }
@@ -244,10 +252,36 @@ namespace SharpMp4Parser.Streaming.Input.H265
                 }
                 else
                 {
-                    Java.LOG.warn("Can't determine frame rate as SPS does not contain vuiParama");
-                    _timescale = 0;
-                    _frametick = 0;
+                    if (parsedSPS.vuiParameters != null && parsedSPS.vuiParameters.vui_timing_info_present_flag)
+                    {
+                        _timescale = parsedSPS.vuiParameters.vui_time_scale;
+                        _frametick = parsedSPS.vuiParameters.vui_num_units_in_tick;
+                        if (_timescale == 0 || _frametick == 0)
+                        {
+                            Java.LOG.warn("vuiParams contain invalid values: time_scale: " + _timescale + " and frame_tick: " + _frametick + ". Setting frame rate to 25fps");
+                            _timescale = 0;
+                            _frametick = 0;
+                        }
+                        if (_frametick > 0)
+                        {
+                            if (_timescale / _frametick > 100)
+                            {
+                                Java.LOG.warn("Framerate is " + (_timescale / _frametick) + ". That is suspicious.");
+                            }
+                        }
+                        else
+                        {
+                            Java.LOG.warn("Frametick is " + _frametick + ". That is suspicious.");
+                        }
+                    }
+                    else
+                    {
+                        Java.LOG.warn("Can't determine frame rate as SPS does not contain vuiParam");
+                        _timescale = 0;
+                        _frametick = 0;
+                    }
                 }
+
                 if (timescale == 0)
                 {
                     timescale = _timescale;
