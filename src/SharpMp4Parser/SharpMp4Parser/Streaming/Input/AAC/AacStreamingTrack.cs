@@ -13,7 +13,7 @@ namespace SharpMp4Parser.Streaming.Input.AAC
     public class AacStreamingTrack : AbstractStreamingTrack
     {
         SampleDescriptionBox stsd = null;
-        private bool closed;
+        //private bool closed;
         private string lang = "und";
         private long avgBitrate;
         private long maxBitrate;
@@ -105,7 +105,7 @@ namespace SharpMp4Parser.Streaming.Input.AAC
 
         public override void close()
         {
-            closed = true;
+            //closed = true;
         }
 
         public void ProcessFrame(byte[] frame)

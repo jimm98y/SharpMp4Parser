@@ -5,7 +5,27 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 	<Nullable>disable</Nullable>
+	<Title>SharpMp4Parser</Title>
+	<Version>0.0.1</Version>
+	<Authors>Lukas Volf</Authors>
+	<Copyright>MIT</Copyright>
+	<PackageProjectUrl>https://github.com/jimm98y/SharpMp4Parser</PackageProjectUrl>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<RepositoryUrl>https://github.com/jimm98y/SharpMp4Parser</RepositoryUrl>
+	<RepositoryType>git</RepositoryType>
+	<PackageTags>mp4;h264;h265;encoder;decoder;recording;parser;video;muxing;netstandard20</PackageTags>
+	<NeutralLanguage>en-US</NeutralLanguage>
+	<AssemblyVersion>0.0.1</AssemblyVersion>
+	<FileVersion>0.0.1</FileVersion>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="BouncyCastle.Cryptography" Version="2.2.1" />

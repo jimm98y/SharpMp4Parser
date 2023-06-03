@@ -292,7 +292,6 @@ namespace SharpMp4Parser.Java
 
         public virtual void close()
         {
-#warning TODO
         }
     }
 }

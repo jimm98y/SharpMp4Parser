@@ -51,7 +51,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H264
                 ByteBufferBitreader reader = new ByteBufferBitreader(input);
                 ReadSliceHeader(spss, ppss, IdrPicFlag, reader);
             }
-            catch (IOException e)
+            catch (IOException)
             {
                 throw;
             }

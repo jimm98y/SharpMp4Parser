@@ -26,23 +26,10 @@ namespace SharpMp4Parser.IsoParser
      * The most upper container for ISO Boxes. It is a container box that is a file.
      * Uses IsoBufferWrapper  to access the underlying file.
      */
-#warning TODO
     [DoNotParseDetail]
     public class IsoFile : BasicContainer /*, Closeable */
     {
         private readonly ByteStream ByteStreamBase;
-
-        //private FileByteStreamBase fis;
-
-        //public IsoFile(string file) : this(new File(file))
-        //{  }
-
-        //public IsoFile(File file)
-        //{
-        //    this.fis = new FileByteStreamBase(file);
-        //    this.ByteStreamBase = fis.getChannel();
-        //    initContainer(ByteStreamBase, -1, new PropertyBoxParserImpl());
-        //}
 
         /**
          * @param ByteStreamBase the data source
@@ -80,7 +67,6 @@ namespace SharpMp4Parser.IsoParser
             return Encoding.GetEncoding("ISO-8859-1").GetString(result);
         }
 
-
         public long getSize()
         {
             return getContainerSize();
@@ -112,20 +98,6 @@ namespace SharpMp4Parser.IsoParser
         public void close()
         {
             ByteStreamBase.close();
-            /*
-            if (this.fis != null)
-            {
-                this.fis.close();
-            }
-            
-            foreach (Box box in getBoxes())
-            {
-                if (box is Closeable)
-                {
-                    ((Closeable)box).close();
-                }
-            }
-            */
         }
 
         public override string ToString()
