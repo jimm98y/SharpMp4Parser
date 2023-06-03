@@ -153,8 +153,8 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
                 }
 
                 vclNalUnitSeenInAU |= isVcl(unitHeader);
-
             }
+
             visualSampleEntry = fillSampleEntry();
             decodingTimes = new long[samples.Count];
             Arrays.fill(decodingTimes, 1);

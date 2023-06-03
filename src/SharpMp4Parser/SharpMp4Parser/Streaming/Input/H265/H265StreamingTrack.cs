@@ -15,7 +15,7 @@ namespace SharpMp4Parser.Streaming.Input.H265
 
         public void ProcessNalFinalize()
         {
-            pushSample(createSample(nals, sliceNalUnitHeader), true, true);
+            pushSample(createSample(nals), true, true);
         }
 
         public override string ToString()

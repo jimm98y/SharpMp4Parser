@@ -1,12 +1,14 @@
-﻿using SharpMp4Parser.IsoParser.Boxes.ISO14496.Part15;
-using SharpMp4Parser.IsoParser.Boxes.SampleEntry;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using SharpMp4Parser.Java;
-using System.Collections.Generic;
+using SharpMp4Parser.Streaming.Extensions;
 using SharpMp4Parser.Muxer.Tracks.H265;
 using SharpMp4Parser.IsoParser.Tools;
+using SharpMp4Parser.IsoParser.Boxes.SampleEntry;
+using SharpMp4Parser.IsoParser.Boxes.ISO14496.Part1.ObjectDescriptors;
 using SharpMp4Parser.IsoParser.Boxes.ISO14496.Part12;
-using System.IO;
-using SharpMp4Parser.Streaming.Extensions;
+using SharpMp4Parser.IsoParser.Boxes.ISO14496.Part15;
 
 namespace SharpMp4Parser.Streaming.Input.H265
 {
@@ -23,11 +25,14 @@ namespace SharpMp4Parser.Streaming.Input.H265
 
         SampleDescriptionBox stsd;
         public List<ByteBuffer> nals = new List<ByteBuffer>();
-        bool[] vclNalUnitSeenInAU = new bool[] { false };
-        bool[] isIdr = new bool[] { true };
-        private SequenceParameterSetRbsp currentSeqParameterSet;
+        bool vclNalUnitSeenInAU = false;
+        bool isIdr = true;
 
         protected H265NalUnitHeader sliceNalUnitHeader;
+
+        private SequenceParameterSetRbsp parsedSPS;
+        private VideoParameterSet parsedVPS;
+        private PictureParameterSetRbsp parsedPPS;
 
         public H265NalConsumingTrack()
         {
@@ -38,14 +43,14 @@ namespace SharpMp4Parser.Streaming.Input.H265
             //Java.LOG.finest("Consume NAL of " + nal.position() + " bytes." + Hex.encodeHex(new byte[]{nal.get(0), nal.get(1), nal.get(2), nal.get(3), nal.get(4)}));
             H265NalUnitHeader unitHeader = getNalUnitHeader(nal);
             //
-            if (vclNalUnitSeenInAU[0])
+            if (vclNalUnitSeenInAU)
             { // we need at least 1 VCL per AU
               // This branch checks if we encountered the start of a samples/AU
                 if (isVcl(unitHeader))
                 {
                     if ((nal.get(2) & -128) != 0)
                     { // this is: first_slice_segment_in_pic_flag  u(1)
-                        wrapUp(nals, vclNalUnitSeenInAU, isIdr, unitHeader);
+                        wrapUp(nals, ref vclNalUnitSeenInAU, ref isIdr);
                     }
                 }
                 else
@@ -72,7 +77,7 @@ namespace SharpMp4Parser.Streaming.Input.H265
 
                         case H265NalUnitTypes.NAL_TYPE_EOB_NUT: // a bit special but also causes a sample to be formed
                         case H265NalUnitTypes.NAL_TYPE_EOS_NUT:
-                            wrapUp(nals, vclNalUnitSeenInAU, isIdr, unitHeader);
+                            wrapUp(nals, ref vclNalUnitSeenInAU, ref isIdr);
                             break;
                     }
                 }
@@ -82,31 +87,41 @@ namespace SharpMp4Parser.Streaming.Input.H265
             switch (unitHeader.nalUnitType)
             {
                 case H265NalUnitTypes.NAL_TYPE_PPS_NUT:
-                    ((Java.Buffer)nal).position(2);
+                    nal.position(0);
                     pps.Add(nal.slice());
+                    ((Java.Buffer)nal).position(2);
+                    byte[] bPPS = Streaming.Input.AnnexBUtils.RemoveEmulationPreventionBytes(pps[pps.Count - 1].array().Skip(pps[pps.Count - 1].arrayOffset() + 2).Take(pps[pps.Count - 1].limit()).Concat(new byte[] { 0, 0 }).ToArray());
+                    parsedPPS = new PictureParameterSetRbsp(ByteBuffer.wrap(bPPS));
                     Java.LOG.debug("Stored PPS");
                     break;
                 case H265NalUnitTypes.NAL_TYPE_VPS_NUT:
-                    ((Java.Buffer)nal).position(2);
+                    nal.position(0);
                     vps.Add(nal.slice());
+                    ((Java.Buffer)nal).position(2);
+                    byte[] bVPS = Streaming.Input.AnnexBUtils.RemoveEmulationPreventionBytes(vps[vps.Count - 1].array().Skip(vps[vps.Count - 1].arrayOffset() + 2).Take(vps[vps.Count - 1].limit()).Concat(new byte[] { 0, 0 }).ToArray());
+                    parsedVPS = new VideoParameterSet(ByteBuffer.wrap(bVPS));
                     Java.LOG.debug("Stored VPS");
                     break;
                 case H265NalUnitTypes.NAL_TYPE_SPS_NUT:
-                    ((Java.Buffer)nal).position(2);
+                    nal.position(0);
                     sps.Add(nal.slice());
-                    currentSeqParameterSet = new SequenceParameterSetRbsp(Channels.newInputStream(new ByteBufferByteChannel(nal.slice()).position(2)));                    
+                    ((Java.Buffer)nal).position(2);
+                    byte[] bSPS = Streaming.Input.AnnexBUtils.RemoveEmulationPreventionBytes(sps[sps.Count - 1].array().Skip(sps[sps.Count - 1].arrayOffset() + 2).Take(sps[sps.Count - 1].limit()).Concat(new byte[] { 0, 0 }).ToArray());
+                    parsedSPS = new SequenceParameterSetRbsp(new ByteBufferByteChannel(bSPS));
                     Java.LOG.debug("Stored SPS");
                     break;
                 case H265NalUnitTypes.NAL_TYPE_PREFIX_SEI_NUT:
-                    //new SEIMessage(new BitReaderBuffer(nal.slice()));
+                    ((Java.Buffer)nal).position(2);
+                    var sei = new SEIMessage(new BitReaderBuffer(nal.slice()));
                     break;
             }
 
             switch (unitHeader.nalUnitType)
             {
-                case H265NalUnitTypes.NAL_TYPE_SPS_NUT:
-                case H265NalUnitTypes.NAL_TYPE_VPS_NUT:
-                case H265NalUnitTypes.NAL_TYPE_PPS_NUT:
+                // for hvc1 these must be in mdat!!! Otherwise the video is not playable.
+                //case H265NalUnitTypes.NAL_TYPE_SPS_NUT:
+                //case H265NalUnitTypes.NAL_TYPE_VPS_NUT:
+                //case H265NalUnitTypes.NAL_TYPE_PPS_NUT:
                 case H265NalUnitTypes.NAL_TYPE_EOB_NUT:
                 case H265NalUnitTypes.NAL_TYPE_EOS_NUT:
                 case H265NalUnitTypes.NAL_TYPE_AUD_NUT:
@@ -124,16 +139,16 @@ namespace SharpMp4Parser.Streaming.Input.H265
                 {
                     case H265NalUnitTypes.NAL_TYPE_IDR_W_RADL:
                     case H265NalUnitTypes.NAL_TYPE_IDR_N_LP:
-                        isIdr[0] &= true;
+                        isIdr = true;
                         sliceNalUnitHeader = unitHeader;
                         break;
                     default:
-                        isIdr[0] = false;
+                        isIdr = false;
                         break;
                 }
             }
 
-            vclNalUnitSeenInAU[0] |= isVcl(unitHeader);
+            vclNalUnitSeenInAU |= isVcl(unitHeader);
         }
 
         public void configure()
@@ -151,16 +166,19 @@ namespace SharpMp4Parser.Streaming.Input.H265
                 visualSampleEntry.setCompressorname("HEVC Coding");
 
                 HevcConfigurationBox hevcConfigurationBox = new HevcConfigurationBox();
-                hevcConfigurationBox.getHevcDecoderConfigurationRecord().setGeneral_profile_idc(1);
+                hevcConfigurationBox.getHevcDecoderConfigurationRecord().setGeneral_profile_idc(parsedSPS.general_profile_idc);
+                hevcConfigurationBox.getHevcDecoderConfigurationRecord().setConfigurationVersion(1);
+                hevcConfigurationBox.getHevcDecoderConfigurationRecord().setChromaFormat(parsedSPS.chroma_format_idc);
+                hevcConfigurationBox.getHevcDecoderConfigurationRecord().setGeneral_level_idc(parsedVPS.general_level_idc);
+                hevcConfigurationBox.getHevcDecoderConfigurationRecord().setGeneral_profile_compatibility_flags(parsedVPS.general_profile_compatibility_flags);
+                hevcConfigurationBox.getHevcDecoderConfigurationRecord().setGeneral_constraint_indicator_flags(parsedVPS.general_profile_constraint_indicator_flags);
+                hevcConfigurationBox.getHevcDecoderConfigurationRecord().setLengthSizeMinusOne(3); // 4 bytes size block inserted in between NAL units
 
-                SequenceParameterSetRbsp sps = this.currentSeqParameterSet;
                 DimensionTrackExtension dte = this.getTrackExtension<DimensionTrackExtension>(typeof(DimensionTrackExtension));
                 if (dte == null)
                 {
-                    this.addTrackExtension(new DimensionTrackExtension(sps.pic_width_in_luma_samples, sps.pic_height_in_luma_samples));
+                    this.addTrackExtension(new DimensionTrackExtension(parsedSPS.pic_width_in_luma_samples, parsedSPS.pic_height_in_luma_samples));
                 }
-                visualSampleEntry.setWidth(sps.pic_width_in_luma_samples);
-                visualSampleEntry.setHeight(sps.pic_height_in_luma_samples);
 
                 HevcDecoderConfigurationRecord.Array spsArray = new HevcDecoderConfigurationRecord.Array();
                 spsArray.array_completeness = true;
@@ -189,18 +207,23 @@ namespace SharpMp4Parser.Streaming.Input.H265
                     vpsArray.nalUnits.Add(toArray(vp));
                 }
 
-                hevcConfigurationBox.getArrays().AddRange(Arrays.asList(spsArray, vpsArray, ppsArray));
+                // correct order is VPS, SPS, PPS. Other order produced ffmpeg errors such as "VPS 0 does not exist" and "SPS 0 does not exist."
+                hevcConfigurationBox.getArrays().AddRange(Arrays.asList(vpsArray, spsArray, ppsArray));
 
                 visualSampleEntry.addBox(hevcConfigurationBox);
+
+                visualSampleEntry.setWidth(parsedSPS.pic_width_in_luma_samples);
+                visualSampleEntry.setHeight(parsedSPS.pic_height_in_luma_samples);
+
                 stsd = new SampleDescriptionBox();
                 stsd.addBox(visualSampleEntry);
 
                 long _timescale;
                 long _frametick;
-                if (sps.vuiParameters != null)
+                if (parsedSPS.vuiParameters != null)
                 {
-                    _timescale = sps.vuiParameters.vui_time_scale >> 1; // Not sure why, but I found this in several places, and it works...
-                    _frametick = sps.vuiParameters.vui_num_units_in_tick;
+                    _timescale = parsedSPS.vuiParameters.vui_time_scale; 
+                    _frametick = parsedSPS.vuiParameters.vui_num_units_in_tick;
                     if (_timescale == 0 || _frametick == 0)
                     {
                         Java.LOG.warn("vuiParams contain invalid values: time_scale: " + _timescale + " and frame_tick: " + _frametick + ". Setting frame rate to 25fps");
@@ -258,21 +281,21 @@ namespace SharpMp4Parser.Streaming.Input.H265
             return b;
         }
 
-        public void wrapUp(List<ByteBuffer> nals, bool[] vclNalUnitSeenInAU, bool[] isIdr, H265NalUnitHeader unitHeader)
+        public void wrapUp(List<ByteBuffer> nals, ref bool vclNalUnitSeenInAU, ref bool isIdr)
         {
-            pushSample(createSample(nals, unitHeader), false, false);
+            pushSample(createSample(nals), false, false);
             Java.LOG.debug("Create AU from " + nals.Count + " NALs");
-            if (isIdr[0])
+            if (isIdr)
             {
                 Java.LOG.debug("  IDR");
             }
 
-            vclNalUnitSeenInAU[0] = false;
-            isIdr[0] = true;
+            vclNalUnitSeenInAU = false;
+            isIdr = true;
             nals.Clear();
         }
 
-        protected StreamingSample createSample(List<ByteBuffer> nals, H265NalUnitHeader nu)
+        protected StreamingSample createSample(List<ByteBuffer> nals)
         {
             Java.LOG.debug("Create Sample");
             configure();
@@ -282,26 +305,7 @@ namespace SharpMp4Parser.Streaming.Input.H265
             }
 
             StreamingSample ss = new StreamingSampleImpl(nals, frametick);
-            ss.addSampleExtension(createSampleFlagsSampleExtension(nu));
-            //ss.addSampleExtension(createPictureOrderCountType0SampleExtension(sliceHeader));
-
             return ss;
-        }
-
-        protected SampleFlagsSampleExtension createSampleFlagsSampleExtension(H265NalUnitHeader nu)
-        {
-            SampleFlagsSampleExtension sampleFlagsSampleExtension = new SampleFlagsSampleExtension();
-
-            if (H265NalUnitTypes.NAL_TYPE_IDR_N_LP == nu.nalUnitType || H265NalUnitTypes.NAL_TYPE_IDR_W_RADL != nu.nalUnitType)
-            {
-                sampleFlagsSampleExtension.setSampleDependsOn(2);
-            }
-            else
-            {
-                sampleFlagsSampleExtension.setSampleDependsOn(1);
-            }
-            sampleFlagsSampleExtension.setSampleIsNonSyncSample(H265NalUnitTypes.NAL_TYPE_IDR_N_LP != nu.nalUnitType && H265NalUnitTypes.NAL_TYPE_IDR_W_RADL != nu.nalUnitType);
-            return sampleFlagsSampleExtension;
         }
 
         public override string getHandler()
@@ -340,7 +344,6 @@ namespace SharpMp4Parser.Streaming.Input.H265
         {
             this.timescale = timescale;
         }
-
 
         protected void pushSample(StreamingSample ss, bool all, bool force)
         {

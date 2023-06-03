@@ -29,7 +29,7 @@ namespace SharpMp4Parser.Streaming.Input.H265
                 consumeNal(ByteBuffer.wrap(nal));
                 //Debug.WriteLine("NAL after consume");
             }
-            pushSample(createSample(nals, sliceNalUnitHeader), true, true);
+            pushSample(createSample(nals), true, true);
         }
 
         public override string ToString()

@@ -42,8 +42,6 @@ namespace SharpMp4Parser.Streaming.Input
                 s.put((byte)((nal.limit() & 0xff)));
                 s.put((ByteBuffer)((Java.Buffer)nal).rewind());
             }
-
-
         }
 
         public ByteBuffer getContent()
