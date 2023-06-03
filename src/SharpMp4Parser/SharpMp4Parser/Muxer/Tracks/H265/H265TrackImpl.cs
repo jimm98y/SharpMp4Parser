@@ -144,14 +144,14 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
 
                 switch (unitHeader.nalUnitType)
                 {
-                    case H265NalUnitTypes.NAL_TYPE_SPS_NUT:
-                    case H265NalUnitTypes.NAL_TYPE_VPS_NUT:
-                    case H265NalUnitTypes.NAL_TYPE_PPS_NUT:
+                    // for hvc1 these must be in mdat!!! Otherwise the video is not playable.
+                    //case H265NalUnitTypes.NAL_TYPE_SPS_NUT:
+                    //case H265NalUnitTypes.NAL_TYPE_VPS_NUT:
+                    //case H265NalUnitTypes.NAL_TYPE_PPS_NUT:
                     case H265NalUnitTypes.NAL_TYPE_EOB_NUT:
                     case H265NalUnitTypes.NAL_TYPE_EOS_NUT:
                     case H265NalUnitTypes.NAL_TYPE_AUD_NUT:
                     case H265NalUnitTypes.NAL_TYPE_FD_NUT:
-                    //case H265NalUnitTypes.NAL_TYPE_PREFIX_SEI_NUT:
                         // ignore these
                         break;
                     default:
@@ -238,7 +238,8 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
                 vpsArray.nalUnits.Add(toArray(vp));
             }
 
-            hevcConfigurationBox.getArrays().AddRange(Arrays.asList(spsArray, vpsArray, ppsArray));
+            // correct order is VPS, SPS, PPS. Other order produced ffmpeg errors such as "VPS 0 does not exist" and "SPS 0 does not exist."
+            hevcConfigurationBox.getArrays().AddRange(Arrays.asList(vpsArray, spsArray, ppsArray));
 
             visualSampleEntry.addBox(hevcConfigurationBox);
 
