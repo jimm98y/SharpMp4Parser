@@ -1,11 +1,6 @@
 ﻿using SharpMp4Parser.IsoParser;
 using SharpMp4Parser.Muxer.Builder;
 using SharpMp4Parser.Muxer;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SharpMp4Parser.Java;
 using SharpMp4Parser.IsoParser.Support;
 using SharpMp4Parser.Muxer.Tracks.H265;

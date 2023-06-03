@@ -2,6 +2,9 @@
 
 namespace SharpMp4Parser.Streaming.Input
 {
+    /**
+    * Created by Jimm98y on 5/29/2023.
+    */
     public static class AnnexBUtils
     {
         public static byte[] AddEmulationPreventionBytes(byte[] nal)

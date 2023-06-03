@@ -12,6 +12,9 @@ using SharpMp4Parser.IsoParser.Boxes.ISO14496.Part15;
 
 namespace SharpMp4Parser.Streaming.Input.H265
 {
+    /**
+    * Created by Jimm98y on 5/29/2023.
+    */
     public abstract class H265NalConsumingTrack : AbstractStreamingTrack
     {
         //private static Logger LOG = LoggerFactory.getLogger(H265NalConsumingTrack.class.getName());
