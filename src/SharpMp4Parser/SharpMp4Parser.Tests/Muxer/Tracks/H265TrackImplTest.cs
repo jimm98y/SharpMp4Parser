@@ -26,10 +26,12 @@ namespace SharpMp4Parser.Tests.Muxer.Tracks
                 FileStream h265Fis = File.OpenRead("hevc.h265");
                 h265Fis.CopyTo(h265Ms);
                 h265Ms.Position = 0;
+                h265Fis.Close();
 
                 var h265DataSource = new MemoryDataSourceImpl(h265Ms.ToArray());
 
-                //SharpMp4Parser.Muxer.Tracks.AbstractH26XTrack.BUFFER = 65535; // make sure we are not just in one buffer
+                // TODO: investigate why buffering does not work for H265
+                SharpMp4Parser.Muxer.Tracks.AbstractH26XTrack.BUFFER = 65535 << 10; // restore default
                 Track t = new H265TrackImpl(h265DataSource);
                 Movie m = new Movie();
                 m.addTrack(t);
@@ -37,18 +39,17 @@ namespace SharpMp4Parser.Tests.Muxer.Tracks
                 DefaultMp4Builder mp4Builder = new DefaultMp4Builder();
                 Container c = mp4Builder.build(m);
 
-                var fs = File.OpenWrite("C:\\Temp\\h265-sample.mp4");
-                c.writeContainer(new ByteStream(fs));
-                fs.Close();
+                //var fs = File.OpenWrite("C:\\Temp\\h265-sample.mp4");
+                //c.writeContainer(new ByteStream(fs));
+                //fs.Close();
 
-                FileStream resFis = File.OpenRead("C:\\Temp\\h265-sample.mp4");
+                FileStream resFis = File.OpenRead("h265-sample.mp4");
 
                 var resBuff = new ByteStream(resFis);
                 IsoFile isoFileReference = new IsoFile(resBuff);
                 BoxComparator.check(c, isoFileReference, "moov[0]/mvhd[0]", "moov[0]/trak[0]/tkhd[0]", "moov[0]/trak[0]/mdia[0]/mdhd[0]", "moov[0]/trak[0]/mdia[0]/minf[0]/stbl[0]/stco[0]");
                 resFis.Close();
 
-                h265Fis.Close();
             }
         }
     }

@@ -25,28 +25,6 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
         private VideoParameterSet parsedVPS;
         private PictureParameterSetRbsp parsedPPS;
 
-        protected override ByteBuffer findNextNal(LookAhead la)
-        {
-            try
-            {
-                while (!la.nextFourEquals0001())
-                {
-                    la.discardByte();
-                }
-                la.discardNext4AndMarkStart();
-
-                while (!la.nextFourEquals0000or0001orEof(allZeroIsEndOfSequence))
-                {
-                    la.discardByte();
-                }
-                return la.getNal();
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
         public H265TrackImpl(DataSource dataSource) : base(dataSource)
         {
             List<ByteBuffer> nals = new List<ByteBuffer>();

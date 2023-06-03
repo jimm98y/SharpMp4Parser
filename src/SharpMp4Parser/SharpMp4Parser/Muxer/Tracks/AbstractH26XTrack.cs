@@ -3,10 +3,6 @@ using SharpMp4Parser.IsoParser.Boxes.SampleEntry;
 using SharpMp4Parser.Java;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using static SharpMp4Parser.Muxer.Container.MP4.DefaultMp4SampleList;
 
 namespace SharpMp4Parser.Muxer.Tracks
 {
@@ -217,53 +213,6 @@ namespace SharpMp4Parser.Muxer.Tracks
                     throw new Exception("damn! NAL exceeds buffer");
                     // this can only happen if NAL is bigger than the buffer
                     // and that most likely cannot happen with correct inputs
-                }
-            }
-
-            public void discardNext4AndMarkStart()
-            {
-                inBufferPos += 4;
-                start = bufferStartPos + inBufferPos;
-            }
-
-            public bool nextFourEquals0001()
-            {
-                if (buffer.limit() - inBufferPos >= 4)
-                {
-                    return (buffer.get(inBufferPos) == 0 &&
-                            buffer.get(inBufferPos + 1) == 0 &&
-                            buffer.get(inBufferPos + 2) == 0 &&
-                            buffer.get(inBufferPos + 3) == 1);
-                }
-                if (bufferStartPos + inBufferPos + 4 >= dataSource.size())
-                {
-                    throw new Exception();
-                }
-                return false;
-            }
-
-            public bool nextFourEquals0000or0001orEof(bool quadZeroIsEndOfSequence)
-            {
-                if (buffer.limit() - inBufferPos >= 4)
-                {
-                    return ((buffer.get(inBufferPos) == 0 &&
-                            buffer.get(inBufferPos + 1) == 0 &&
-                            buffer.get(inBufferPos + 2) == 0 && 
-                            ((buffer.get(inBufferPos + 3) == 0 && quadZeroIsEndOfSequence) || buffer.get(inBufferPos + 3) == 1)));
-                }
-                else
-                {
-                    if (bufferStartPos + inBufferPos + 4 > dataSource.size())
-                    {
-                        return bufferStartPos + inBufferPos == dataSource.size();
-                    }
-                    else
-                    {
-                        bufferStartPos = start;
-                        inBufferPos = 0;
-                        fillBuffer();
-                        return nextFourEquals0000or0001orEof(quadZeroIsEndOfSequence);
-                    }
                 }
             }
         }
