@@ -113,23 +113,26 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
                 switch (unitHeader.nalUnitType)
                 {
                     case H265NalUnitTypes.NAL_TYPE_PPS_NUT:
-                        ((Java.Buffer)nal).position(2); // remove header as it'll be replaced by the array header
+                        nal.position(0);
                         pps.Add(nal.slice()); 
-                        byte[] bPPS = Streaming.Input.AnnexBUtils.RemoveEmulationPreventionBytes(pps[pps.Count - 1].array().Skip(pps[pps.Count - 1].arrayOffset()).Take(pps[pps.Count - 1].limit() + 3).ToArray());
+                        ((Java.Buffer)nal).position(2); 
+                        byte[] bPPS = Streaming.Input.AnnexBUtils.RemoveEmulationPreventionBytes(pps[pps.Count - 1].array().Skip(pps[pps.Count - 1].arrayOffset() + 2).Take(pps[pps.Count - 1].limit()).ToArray());
                         parsedPPS = new PictureParameterSetRbsp(ByteBuffer.wrap(bPPS));
                         Java.LOG.debug("Stored PPS");
                         break;
                     case H265NalUnitTypes.NAL_TYPE_VPS_NUT:
-                        ((Java.Buffer)nal).position(2); // remove header as it'll be replaced by the array header
+                        nal.position(0);
                         vps.Add(nal.slice());
-                        byte[] bVPS = Streaming.Input.AnnexBUtils.RemoveEmulationPreventionBytes(vps[vps.Count - 1].array().Skip(vps[vps.Count - 1].arrayOffset()).Take(vps[vps.Count - 1].limit() + 3).ToArray());
+                        ((Java.Buffer)nal).position(2); 
+                        byte[] bVPS = Streaming.Input.AnnexBUtils.RemoveEmulationPreventionBytes(vps[vps.Count - 1].array().Skip(vps[vps.Count - 1].arrayOffset() + 2).Take(vps[vps.Count - 1].limit()).ToArray());
                         parsedVPS = new VideoParameterSet(ByteBuffer.wrap(bVPS));
                         Java.LOG.debug("Stored VPS"); 
                         break;
                     case H265NalUnitTypes.NAL_TYPE_SPS_NUT:
-                        ((Java.Buffer)nal).position(2); // remove header as it'll be replaced by the array header
+                        nal.position(0);
                         sps.Add(nal.slice());
-                        byte[] bSPS = Streaming.Input.AnnexBUtils.RemoveEmulationPreventionBytes(sps[sps.Count - 1].array().Skip(sps[sps.Count - 1].arrayOffset()).Take(sps[sps.Count - 1].limit() + 3).ToArray());
+                        ((Java.Buffer)nal).position(2); 
+                        byte[] bSPS = Streaming.Input.AnnexBUtils.RemoveEmulationPreventionBytes(sps[sps.Count - 1].array().Skip(sps[sps.Count - 1].arrayOffset() + 2).Take(sps[sps.Count - 1].limit()).ToArray());
                         parsedSPS = new SequenceParameterSetRbsp(new ByteBufferByteChannel(bSPS));
                         Java.LOG.debug("Stored SPS");
                         break;
@@ -293,36 +296,36 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
          * @param nals a list of NALs that form the sample
          * @return sample as it appears in the MP4 file
          */
-        protected override Sample createSampleObject(List<ByteBuffer> nals)
-        {
-            ByteBuffer[] data = new ByteBuffer[nals.Count * 2];
+        //protected override Sample createSampleObject(List<ByteBuffer> nals)
+        //{
+        //    ByteBuffer[] data = new ByteBuffer[nals.Count * 2];
 
-            for (int i = 0; i < nals.Count; i++)
-            {
-                byte[] sizeInfo = new byte[4];
-                ByteBuffer sizeBuf = ByteBuffer.wrap(sizeInfo);
-                int size = nals[i].remaining();
+        //    for (int i = 0; i < nals.Count; i++)
+        //    {
+        //        byte[] sizeInfo = new byte[4];
+        //        ByteBuffer sizeBuf = ByteBuffer.wrap(sizeInfo);
+        //        int size = nals[i].remaining();
 
-                sizeBuf.putInt(size);
+        //        sizeBuf.putInt(size);
 
-                var header = ByteBuffer.wrap(sizeInfo);
-                var headerBytes = header.array().Skip(header.arrayOffset() + header.position()).Take(header.limit()).ToArray();
+        //        var header = ByteBuffer.wrap(sizeInfo);
+        //        var headerBytes = header.array().Skip(header.arrayOffset() + header.position()).Take(header.limit()).ToArray();
 
-                var nalBytes = nals[i].array().Skip(nals[i].arrayOffset() + nals[i].position()).Take(nals[i].limit()).ToArray();
+        //        var nalBytes = nals[i].array().Skip(nals[i].arrayOffset() + nals[i].position()).Take(nals[i].limit()).ToArray();
 
-                Debug.WriteLine("Header start: {0:X2} {1:X2} {2:X2} {3:X2}", headerBytes[0], headerBytes[1], headerBytes[2], headerBytes[3]);
-                Debug.WriteLine("Header end:   {0:X2} {1:X2} {2:X2} {3:X2}", headerBytes[headerBytes.Length - 4], headerBytes[headerBytes.Length - 3], headerBytes[headerBytes.Length - 2], headerBytes[headerBytes.Length - 1]);
-                Debug.WriteLine("NAL start:    {0:X2} {1:X2} {2:X2} {3:X2}", nalBytes[0], nalBytes[1], nalBytes[2], nalBytes[3]);
-                Debug.WriteLine("NAL end:      {0:X2} {1:X2} {2:X2} {3:X2}", nalBytes[nalBytes.Length - 4], nalBytes[nalBytes.Length - 3], nalBytes[nalBytes.Length - 2], nalBytes[nalBytes.Length - 1]);
-                Debug.WriteLine("");
+        //        Debug.WriteLine("Header start: {0:X2} {1:X2} {2:X2} {3:X2}", headerBytes[0], headerBytes[1], headerBytes[2], headerBytes[3]);
+        //        Debug.WriteLine("Header end:   {0:X2} {1:X2} {2:X2} {3:X2}", headerBytes[headerBytes.Length - 4], headerBytes[headerBytes.Length - 3], headerBytes[headerBytes.Length - 2], headerBytes[headerBytes.Length - 1]);
+        //        Debug.WriteLine("NAL start:    {0:X2} {1:X2} {2:X2} {3:X2}", nalBytes[0], nalBytes[1], nalBytes[2], nalBytes[3]);
+        //        Debug.WriteLine("NAL end:      {0:X2} {1:X2} {2:X2} {3:X2}", nalBytes[nalBytes.Length - 4], nalBytes[nalBytes.Length - 3], nalBytes[nalBytes.Length - 2], nalBytes[nalBytes.Length - 1]);
+        //        Debug.WriteLine("");
 
-                //data[2 * i] = header;
-                data[2 * i] = ByteBuffer.wrap(headerBytes);
-                //data[2 * i + 1] = nals[i];
-                data[2 * i + 1] = ByteBuffer.wrap(nalBytes);
-            }
+        //        //data[2 * i] = header;
+        //        data[2 * i] = ByteBuffer.wrap(headerBytes);
+        //        //data[2 * i + 1] = nals[i];
+        //        data[2 * i + 1] = ByteBuffer.wrap(nalBytes);
+        //    }
 
-            return new SampleImpl(data, getCurrentSampleEntry());
-        }
+        //    return new SampleImpl(data, getCurrentSampleEntry());
+        //}
     }
 }

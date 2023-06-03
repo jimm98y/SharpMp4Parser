@@ -826,7 +826,6 @@ namespace SharpMp4Parser.Muxer.Builder
                 ((Java.Buffer)bb).rewind();
                 writableByteChannel.write(bb);
                 long writtenBytes = 0;
-                long writtenMegaBytes = 0;
 
                 Java.LOG.debug($"About to write {contentSize}");
                 foreach (List<Sample> samples in chunkList)
@@ -835,15 +834,10 @@ namespace SharpMp4Parser.Muxer.Builder
                     {
                         sample.writeTo(writableByteChannel);
                         writtenBytes += sample.getSize();
-                        if (writtenBytes > 1024 * 1024)
-                        {
-                            writtenBytes -= 1024 * 1024;
-                            writtenMegaBytes++;
-                            Java.LOG.debug($"Written {writtenMegaBytes} MB");
-                        }
                     }
                 }
 
+                Java.LOG.debug($"Written {writtenBytes} B");
             }
         }
     }
