@@ -30,8 +30,8 @@ namespace SharpMp4Parser.Tests.Muxer.Tracks
 
                 var h265DataSource = new MemoryDataSourceImpl(h265Ms.ToArray());
 
-                // TODO: investigate why buffering does not work for H265
-                SharpMp4Parser.Muxer.Tracks.AbstractH26XTrack.BUFFER = 65535 << 10; // restore default
+                SharpMp4Parser.Muxer.Tracks.AbstractH26XTrack.BUFFER = 65535; 
+
                 Track t = new H265TrackImpl(h265DataSource);
                 Movie m = new Movie();
                 m.addTrack(t);

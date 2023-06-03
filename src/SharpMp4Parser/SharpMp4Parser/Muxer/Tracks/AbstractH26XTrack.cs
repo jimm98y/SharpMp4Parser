@@ -11,8 +11,9 @@ namespace SharpMp4Parser.Muxer.Tracks
      */
     public abstract class AbstractH26XTrack : AbstractTrack
     {
-
+        // the BUFFER size is just a hint and it can increase in the runtime in case a single NAL does not fit inside
         public static int BUFFER = 65535 << 10;
+
         protected long[] decodingTimes;
         protected List<CompositionTimeToSample.Entry> ctts = new List<CompositionTimeToSample.Entry>();
         protected List<SampleDependencyTypeBox.Entry> sdtp = new List<SampleDependencyTypeBox.Entry>();
@@ -144,8 +145,18 @@ namespace SharpMp4Parser.Muxer.Tracks
                 fillBuffer();
             }
 
+            long lastBufferStartPos = -1;
+
             public void fillBuffer()
             {
+                // fix for a case when a single NAL does not fit into the provided buffer size, which would have caused an infinite loop in the NAL parser
+                if(lastBufferStartPos == bufferStartPos)
+                {
+                    BUFFER = BUFFER * 2;
+                    Java.LOG.warn($"Increasing buffer size to {BUFFER} in order to fit the entire NAL");
+                }
+
+                lastBufferStartPos = bufferStartPos;
                 buffer = dataSource.map(bufferStartPos, Math.Min(dataSource.size() - bufferStartPos, BUFFER));
             }
 
