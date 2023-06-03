@@ -1,7 +1,7 @@
 # SharpMp4Parser
 
 A C# API to read, write and create MP4 container. It is a C# netstandard2.0 port of the Java mp4parser from https://github.com/sannies/mp4parser 
-with some additional fixes and improvements. The API was kept mostly the same as the Java implementation, so many examples from the original repo
+with some additional fixes and improvements. The API was kept mostly the same as the Java implementation so many examples from the original repo
 should work. Because it has no native dependencies (this is NOT another FFMPEG/Media Foundation wrapper), it is portable and can be used on
 Windows as well as Linux and MacOS.
 
@@ -20,14 +20,14 @@ For the API you can refer to the tests as there are many examples for various us
 ### Added features
 - H265 Streaming
 - H265 Muxing
-- API to directly pass H264/H265 NAL to the MP4 writer
+- API to directly pass H264/H265 NALs to the MP4 writer
 
 ### Missing features
 - TTML support (TBD)
 
 ### Known issues
-- FragmentedMp4Writer can only encode video without audio, video + audio is not supported and produces an invalid file (same limitation exists in the Java version).
-Use StandardMp4Writer which supports both.
+- `FragmentedMp4Writer` can only encode video without audio, video + audio is not supported and produces an invalid file (same limitation exists in the Java version).
+Use `StandardMp4Writer` which supports both.
 
 ## Examples
 
@@ -53,7 +53,7 @@ Create the MP4 writer with all the tracks that should be in the output:
 var writer = new StandardMp4Writer(new List<StreamingTrack>() { h264Track, aacTrack }, output);
 ```
 
-Pass the NAL units from another source (e.g. RTP, raw *.h264 file, etc.):
+Pass the NALs from another source (e.g. RTP, raw *.h264 file, etc.):
 ```cs
 List<byte[]> nals = ...; // retrieve the NALs from your source
 
@@ -96,7 +96,7 @@ Create the MP4 writer with all the tracks that should be in the output:
 var writer = new StandardMp4Writer(new List<StreamingTrack>() { h265Track }, output);
 ```
 
-Pass the NAL units from another source (e.g. RTP, raw *.h265 file, etc.):
+Pass the NALs from another source (e.g. RTP, raw *.h265 file, etc.):
 ```cs
 List<byte[]> nals = ...; // retrieve the NALs from your source
 
@@ -124,7 +124,7 @@ MOOV box to the beginning.
 var inputFile = new ByteStream(File.Open("output.mp4"));
 var inputMovie = MovieCreator.build(inputFile, "inmem");
 
-// create a new Movie where we will transfer all the tracks and info from the old Movie
+// create a new Movie where we will transfer all the tracks from the original Movie
 var outputMovie = new Movie();
 
 // move all tracks from the input to the new Movie
@@ -141,6 +141,9 @@ outputFile.close();
 
 inputFile.close();
 ```
+
+## Contribute
+Pull requests with fixes are welcome!
 
 ## Credits
 - This is a port of https://github.com/sannies/mp4parser into C#.
