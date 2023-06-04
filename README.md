@@ -136,7 +136,7 @@ To stop recording and save the file, call:
 ```cs
 h264Track.ProcessNalFinalize();
 writer.close();
-output.close();
+outputFile.close();
 ```
 
 ### Record H265 video
@@ -169,7 +169,7 @@ To stop recording and save the file, call:
 ```cs
 h265Track.ProcessNalFinalize();
 writer.close();
-output.close();
+outputFile.close();
 ```
 
 ### Move the MOOV box to the beginning of the MP4 file
