@@ -12,6 +12,7 @@ namespace SharpMp4Parser.Streaming.Input
             using (MemoryStream ms = new MemoryStream())
             {
                 int i;
+                int last3 = 0;
                 for (i = 0; i < nal.Length; i++)
                 {
                     if (i >= 2)
@@ -20,9 +21,13 @@ namespace SharpMp4Parser.Streaming.Input
                         {
                             if (nal[i - 2] == 0)
                             {
-                                if (nal[i] == 0x00 || nal[i] == 0x01 || nal[i] == 0x02)
+                                if (nal[i] == 0x00 || nal[i] == 0x01 || nal[i] == 0x02 || nal[i] == 0x03)
                                 {
-                                    ms.WriteByte(0x03);
+                                    if (i - last3 >= 2)
+                                    {
+                                        ms.WriteByte(0x03);
+                                        last3 = i;
+                                    }
                                 }
                             }
                         }

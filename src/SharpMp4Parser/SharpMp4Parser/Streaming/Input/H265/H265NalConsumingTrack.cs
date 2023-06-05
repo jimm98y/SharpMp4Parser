@@ -128,9 +128,16 @@ namespace SharpMp4Parser.Streaming.Input.H265
             switch (unitHeader.nalUnitType)
             {
                 // for hvc1 these must be in mdat!!! Otherwise the video is not playable.
-                //case H265NalUnitTypes.NAL_TYPE_SPS_NUT:
-                //case H265NalUnitTypes.NAL_TYPE_VPS_NUT:
-                //case H265NalUnitTypes.NAL_TYPE_PPS_NUT:
+                case H265NalUnitTypes.NAL_TYPE_SPS_NUT:
+                case H265NalUnitTypes.NAL_TYPE_VPS_NUT:
+                case H265NalUnitTypes.NAL_TYPE_PPS_NUT:
+                    Java.LOG.debug("Adding " + unitHeader.nalUnitType);
+                    nal.position(0);
+                    // in streaming, here we have to re-encode NALs by adding the emulation prevention bytes back
+                    byte[] encodedNal = AnnexBUtils.AddEmulationPreventionBytes(nal.array().Skip(nal.arrayOffset()).Take(nal.limit()).ToArray());
+                    nal.position(2);
+                    nals.Add(ByteBuffer.wrap(encodedNal));
+                    break;
                 case H265NalUnitTypes.NAL_TYPE_EOB_NUT:
                 case H265NalUnitTypes.NAL_TYPE_EOS_NUT:
                 case H265NalUnitTypes.NAL_TYPE_AUD_NUT:
@@ -170,17 +177,20 @@ namespace SharpMp4Parser.Streaming.Input.H265
                 visualSampleEntry.setFrameCount(1);
                 visualSampleEntry.setHorizresolution(72);
                 visualSampleEntry.setVertresolution(72);
-                visualSampleEntry.setWidth(640);
-                visualSampleEntry.setHeight(480);
+                visualSampleEntry.setWidth(parsedSPS.pic_width_in_luma_samples);
+                visualSampleEntry.setHeight(parsedSPS.pic_height_in_luma_samples);
                 visualSampleEntry.setCompressorname("HEVC Coding");
 
                 HevcConfigurationBox hevcConfigurationBox = new HevcConfigurationBox();
-                hevcConfigurationBox.getHevcDecoderConfigurationRecord().setGeneral_profile_idc(parsedSPS.general_profile_idc);
                 hevcConfigurationBox.getHevcDecoderConfigurationRecord().setConfigurationVersion(1);
+                hevcConfigurationBox.getHevcDecoderConfigurationRecord().setGeneral_profile_idc(parsedSPS.general_profile_idc);
                 hevcConfigurationBox.getHevcDecoderConfigurationRecord().setChromaFormat(parsedSPS.chroma_format_idc);
-                hevcConfigurationBox.getHevcDecoderConfigurationRecord().setGeneral_level_idc(parsedVPS.general_level_idc);
-                hevcConfigurationBox.getHevcDecoderConfigurationRecord().setGeneral_profile_compatibility_flags(parsedVPS.general_profile_compatibility_flags);
+                hevcConfigurationBox.getHevcDecoderConfigurationRecord().setGeneral_level_idc(parsedSPS.general_level_idc);
+                hevcConfigurationBox.getHevcDecoderConfigurationRecord().setGeneral_profile_compatibility_flags(parsedSPS.general_profile_compatibility_flags);
                 hevcConfigurationBox.getHevcDecoderConfigurationRecord().setGeneral_constraint_indicator_flags(parsedVPS.general_profile_constraint_indicator_flags);
+                hevcConfigurationBox.getHevcDecoderConfigurationRecord().setBitDepthChromaMinus8(parsedSPS.bit_depth_chroma_minus8);
+                hevcConfigurationBox.getHevcDecoderConfigurationRecord().setBitDepthLumaMinus8(parsedSPS.bit_depth_luma_minus8);
+                hevcConfigurationBox.getHevcDecoderConfigurationRecord().setTemporalIdNested(parsedSPS.sps_temporal_id_nesting_flag);
                 hevcConfigurationBox.getHevcDecoderConfigurationRecord().setLengthSizeMinusOne(3); // 4 bytes size block inserted in between NAL units
 
                 DimensionTrackExtension dte = this.getTrackExtension<DimensionTrackExtension>(typeof(DimensionTrackExtension));
@@ -220,9 +230,6 @@ namespace SharpMp4Parser.Streaming.Input.H265
                 hevcConfigurationBox.getArrays().AddRange(Arrays.asList(vpsArray, spsArray, ppsArray));
 
                 visualSampleEntry.addBox(hevcConfigurationBox);
-
-                visualSampleEntry.setWidth(parsedSPS.pic_width_in_luma_samples);
-                visualSampleEntry.setHeight(parsedSPS.pic_height_in_luma_samples);
 
                 stsd = new SampleDescriptionBox();
                 stsd.addBox(visualSampleEntry);

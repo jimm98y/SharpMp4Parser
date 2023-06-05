@@ -31,7 +31,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
 
             int sps_video_parameter_set_id = (int)bsr.readNBit(4, "sps_video_parameter_set_id");
             sps_max_sub_layers_minus1 = (int)bsr.readNBit(3, "sps_max_sub_layers_minus1");
-            bool sps_temporal_id_nesting_flag = bsr.readBool("sps_temporal_id_nesting_flag");
+            sps_temporal_id_nesting_flag = bsr.readBool("sps_temporal_id_nesting_flag");
             profile_tier_level(sps_max_sub_layers_minus1, bsr);
             int sps_seq_parameter_set_id = bsr.readUE("sps_seq_parameter_set_id");
             chroma_format_idc = bsr.readUE("chroma_format_idc");
@@ -194,7 +194,6 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
             }
         }
 
-
         private void profile_tier_level(int maxNumSubLayersMinus1, CAVLCReader bsr)
         {
             general_profile_space = bsr.readU(2, "general_profile_space");
@@ -221,7 +220,7 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
                     reserved_zero_2bits[i] = bsr.readU(2, "reserved_zero_2bits[" + i + "]");
                 }
             }
-            /*
+
             int[] sub_layer_profile_space = new int[maxNumSubLayersMinus1];
             bool[] sub_layer_tier_flag = new bool[maxNumSubLayersMinus1];
             int[] sub_layer_profile_idc = new int[maxNumSubLayersMinus1];
@@ -231,7 +230,6 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
             bool[] sub_layer_non_packed_constraint_flag = new bool[maxNumSubLayersMinus1];
             bool[] sub_layer_frame_only_constraint_flag = new bool[maxNumSubLayersMinus1];
             long[] sub_layer_reserved_zero_44bits = new long[maxNumSubLayersMinus1];
-            */
             int[] sub_layer_level_idc = new int[maxNumSubLayersMinus1];
 
 
@@ -239,7 +237,6 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
             {
                 if (sub_layer_profile_present_flag[i])
                 {
-                    /*
                     sub_layer_profile_space[i] = bsr.readU(2, "sub_layer_profile_space[" + i + "]");
                     sub_layer_tier_flag[i] = bsr.readBool("sub_layer_tier_flag[" + i + "]");
                     sub_layer_profile_idc[i] = bsr.readU(5, "sub_layer_profile_idc[" + i + "]");
@@ -252,10 +249,6 @@ namespace SharpMp4Parser.Muxer.Tracks.H265
                     sub_layer_non_packed_constraint_flag[i] = bsr.readBool("sub_layer_non_packed_constraint_flag[" + i + "]");
                     sub_layer_frame_only_constraint_flag[i] = bsr.readBool("sub_layer_frame_only_constraint_flag[" + i + "]");
                     sub_layer_reserved_zero_44bits[i] = bsr.readNBit(44);
-                    */
-                    bsr.readNBit(32);
-                    bsr.readNBit(32);
-                    bsr.readNBit(24);
                 }
                 if (sub_layer_level_present_flag[i])
                 {
