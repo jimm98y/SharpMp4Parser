@@ -145,6 +145,8 @@ namespace SharpMp4Parser.Streaming.Input.H265
                     // ignore these
                     break;
                 default:
+                    // TODO: Review whether the emulation prevention bytes should be added also for all the other NAL types, not only VPV/SPS/PPS
+#warning Review whether the emulation prevention bytes should be added also for all the other NAL types, not only VPV/SPS/PPS
                     Java.LOG.debug("Adding " + unitHeader.nalUnitType);
                     nals.Add(nal);
                     break;
