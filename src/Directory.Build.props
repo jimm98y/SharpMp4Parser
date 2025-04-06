@@ -1,0 +1,33 @@
+<Project>
+	<PropertyGroup>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<Nullable>disable</Nullable>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<Title>$(ProjectName)</Title>
+		<Version>0.0.5</Version>
+		<Authors>Lukas Volf</Authors>
+		<Copyright>MIT</Copyright>
+		<PackageProjectUrl>https://github.com/jimm98y/SharpMp4Parser</PackageProjectUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<RepositoryUrl>https://github.com/jimm98y/SharpMp4Parser</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageTags>mp4;h264;h265;encoder;decoder;recording;parser;video;muxing;netstandard20;netcore</PackageTags>
+		<NeutralLanguage>en-US</NeutralLanguage>
+		<AssemblyVersion>1.0.0</AssemblyVersion>
+		<FileVersion>$(Version)</FileVersion>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<Description>A C# API to read, write and create MP4 files. No native dependencies. Supports H264/H265 for video and AAC for audio. Ported into C# from Java mp4parser.</Description>
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<None Include="..\..\README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+
+	<PropertyGroup>
+		<PackageOutputPath>$(ProjectDir)..\..\nugets</PackageOutputPath>
+	</PropertyGroup>
+</Project>

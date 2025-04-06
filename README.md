@@ -1,6 +1,6 @@
 # SharpMp4Parser
 
-A C# API to read, write and create MP4 container. It is a C# netstandard2.0 port of the Java mp4parser from https://github.com/sannies/mp4parser 
+A C# API to read, write and create MP4 container. It is a C# port of the Java mp4parser from https://github.com/sannies/mp4parser 
 with some additional fixes and improvements. The API was kept mostly the same as the Java implementation so many examples from the original repo
 should work. Because it has no native dependencies (this is NOT another FFMPEG/Media Foundation wrapper), it is portable and can be used on
 Windows as well as Linux and MacOS.
