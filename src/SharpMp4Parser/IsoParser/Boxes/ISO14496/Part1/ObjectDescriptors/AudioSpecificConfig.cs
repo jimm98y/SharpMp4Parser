@@ -1097,7 +1097,11 @@ namespace SharpMp4Parser.IsoParser.Boxes.ISO14496.Part1.ObjectDescriptors
                 sb.Append(", extensionAudioObjectType=").Append(extensionAudioObjectType).Append(" (").Append(audioObjectTypeMap[extensionAudioObjectType]).Append(")");
                 sb.Append(", sbrPresentFlag=").Append(sbrPresentFlag);
                 sb.Append(", psPresentFlag=").Append(psPresentFlag);
-                sb.Append(", extensionSamplingFrequencyIndex=").Append(extensionSamplingFrequencyIndex).Append(" (").Append(samplingFrequencyIndexMap[extensionSamplingFrequencyIndex]).Append(")");
+                sb.Append($", extensionSamplingFrequencyIndex={extensionSamplingFrequencyIndex}");
+                if (samplingFrequencyIndexMap.TryGetValue(extensionSamplingFrequencyIndex, out var samplingFrequencyDescription))
+                {
+                    sb.Append($" ({samplingFrequencyDescription})");
+                }
                 sb.Append(", extensionSamplingFrequency=").Append(extensionSamplingFrequency);
                 sb.Append(", extensionChannelConfiguration=").Append(extensionChannelConfiguration);
             }
